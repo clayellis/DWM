@@ -118,7 +118,7 @@ final class RecordManager: RecordManagerProtocol {
     func removeAllCompletionRecords(for task: Task) {
         do {
             let records = try recordDataStore.retrieveAll()
-                .filter { $0.id == task.id }
+                .filter { $0.taskID == task.id }
             try recordDataStore.delete(records)
         } catch {
             // TODO: Log the error
