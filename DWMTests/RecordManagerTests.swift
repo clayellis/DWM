@@ -33,7 +33,7 @@ class RecordManagerTests: XCTestCase {
 
     func testTimeEngineBeginsUnfixed() {
         let first = timeEngine.now
-        sleep(0) // Evaluate
+        sleep(0)
         let second = timeEngine.now
         XCTAssertNotEqual(first, second)
     }
