@@ -157,17 +157,10 @@
 			path = Support;
 			sourceTree = "<group>";
 		};
-		6F4197941FBFADA400DB35F5 /* Assets */ = {
-			isa = PBXGroup;
-			children = (
-				6FFF717D1FB6A33D008B9870 /* Assets.xcassets */,
-			);
-			path = Assets;
-			sourceTree = "<group>";
-		};
 		6F4197951FBFADB200DB35F5 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6FFF717D1FB6A33D008B9870 /* Assets.xcassets */,
 				6FFF717F1FB6A33D008B9870 /* LaunchScreen.storyboard */,
 			);
 			path = Views;
@@ -251,9 +244,8 @@
 		6FFF71671FB6A33D008B9870 = {
 			isa = PBXGroup;
 			children = (
-				6F4197941FBFADA400DB35F5 /* Assets */,
-				6F4197931FBFADA000DB35F5 /* Support */,
 				6F4197921FBFAD9B00DB35F5 /* Sources */,
+				6F4197931FBFADA000DB35F5 /* Support */,
 				6F81B5AC1FB7486D00875C74 /* Tests */,
 				6FFF71711FB6A33D008B9870 /* Products */,
 			);
