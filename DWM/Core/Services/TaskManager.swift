@@ -97,16 +97,6 @@ final class TaskManager: TaskManagerProtocol {
     }
 
     func updateFrequency(of task: Task, to newFrequency: TaskFrequency) {
-        // Option 1: Replace the task entirely
-        //        do {
-        //            let updatedTask = Task(id: task.id, title: task.title, frequency: newFrequency)
-        //            let preparedUpdatedTask = updatedTask.prepareForStorage(in: taskDataStore.context)
-        //            try taskDataStore.updateEntity(withIdentifier: task.id, byReplacingWith: preparedUpdatedTask)
-        //        } catch {
-        //            // TODO: Log the error
-        //        }
-
-        // Option 2: Update the frequency on the stored task
         do {
             try taskDataStore.updateEntity(withIdentifier: task.id) { task in
                 task.frequency = newFrequency.rawValue
