@@ -51,6 +51,8 @@ class RecordManagerTests: XCTestCase {
         XCTAssert(recordManager.records.isEmpty)
     }
 
+    // TODO: Test object equality
+
     func testTaskCompletionRecord() {
         let id = UUID()
         let taskID = UUID()
@@ -248,5 +250,23 @@ class RecordManagerTests: XCTestCase {
         }
     }
 
-    // TODO: Test remove all completion records for task
+    func testRemoveAllRecordsForTask() {
+        do {
+            let task = Task(title: "Task", frequency: .daily)
+            let otherTask = Task(title: "Other", frequency: .weekly)
+            try recordManager.createCompletionRecord(for: task)
+            try recordManager.createCompletionRecord(for: task)
+            try recordManager.createCompletionRecord(for: task)
+            try recordManager.createCompletionRecord(for: otherTask)
+            try recordManager.createCompletionRecord(for: otherTask)
+            try recordManager.createCompletionRecord(for: otherTask)
+            XCTAssert(recordManager.records(for: task).count == 3)
+            XCTAssert(recordManager.records(for: otherTask).count == 3)
+            recordManager.removeAllCompletionRecords(for: task)
+            XCTAssert(recordManager.records(for: task).count == 0)
+            XCTAssert(recordManager.records(for: otherTask).count == 3)
+        } catch {
+            XCTFail()
+        }
+    }
 }
