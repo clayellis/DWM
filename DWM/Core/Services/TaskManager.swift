@@ -25,6 +25,9 @@ protocol TaskManagerProtocol {
     /// Updates the `frequency` of the `task` to the `newFrequency`
     func updateFrequency(of task: Task, to newFrequency: TaskFrequency)
 
+    /// Updates the `title` of the `task` to the `newTitle`
+    func updateTitle(of task: Task, to newTitle: String)
+
     /// Marks the `task` as completed or incomplete
     func markTask(_ task: Task, asCompleted completed: Bool)
 
@@ -113,6 +116,17 @@ final class TaskManager: TaskManagerProtocol {
         }
 
         // TODO: Create a delegate and inform it of task changes
+    }
+
+    func updateTitle(of task: Task, to newTitle: String) {
+        do {
+            try taskDataStore.updateEntity(withIdentifier: task.id) { task in
+                task.title = newTitle
+            }
+        } catch {
+            // TODO: Log the error
+            // FIXME: In this case, it would be a good idea to propogate the error up so the view can react
+        }
     }
 
     func markTask(_ task: Task, asCompleted completed: Bool) {
