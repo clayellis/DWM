@@ -137,6 +137,42 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		6F4197921FBFAD9B00DB35F5 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				6FFF71881FB6A397008B9870 /* Core */,
+				6F2D46771FB8BB8600C94596 /* Services */,
+				6F2D46761FB8BB7400C94596 /* Models */,
+				6F4197951FBFADB200DB35F5 /* Views */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		6F4197931FBFADA000DB35F5 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				6FE721E51FBBFD6A0012EB39 /* TODO.md */,
+				6FFF71821FB6A33D008B9870 /* Info.plist */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		6F4197941FBFADA400DB35F5 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				6FFF717D1FB6A33D008B9870 /* Assets.xcassets */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		6F4197951FBFADB200DB35F5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6FFF717F1FB6A33D008B9870 /* LaunchScreen.storyboard */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		6F59FDE71FB8CC7D0098D4FD /* Storage */ = {
 			isa = PBXGroup;
 			children = (
@@ -215,7 +251,9 @@
 		6FFF71671FB6A33D008B9870 = {
 			isa = PBXGroup;
 			children = (
-				6FFF71721FB6A33D008B9870 /* DWM */,
+				6F4197941FBFADA400DB35F5 /* Assets */,
+				6F4197931FBFADA000DB35F5 /* Support */,
+				6F4197921FBFAD9B00DB35F5 /* Sources */,
 				6F81B5AC1FB7486D00875C74 /* DWMTests */,
 				6FFF71711FB6A33D008B9870 /* Products */,
 			);
@@ -230,25 +268,11 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		6FFF71721FB6A33D008B9870 /* DWM */ = {
-			isa = PBXGroup;
-			children = (
-				6FE721E51FBBFD6A0012EB39 /* TODO.md */,
-				6FFF71731FB6A33D008B9870 /* AppDelegate.swift */,
-				6FFF717D1FB6A33D008B9870 /* Assets.xcassets */,
-				6FFF717F1FB6A33D008B9870 /* LaunchScreen.storyboard */,
-				6FFF71821FB6A33D008B9870 /* Info.plist */,
-				6FFF71881FB6A397008B9870 /* Core */,
-			);
-			path = DWM;
-			sourceTree = "<group>";
-		};
 		6FFF71881FB6A397008B9870 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				6FFF71731FB6A33D008B9870 /* AppDelegate.swift */,
 				6F81B5B91FB74A6600875C74 /* Utilities.swift */,
-				6F2D46761FB8BB7400C94596 /* Models */,
-				6F2D46771FB8BB8600C94596 /* Services */,
 			);
 			path = Core;
 			sourceTree = "<group>";
