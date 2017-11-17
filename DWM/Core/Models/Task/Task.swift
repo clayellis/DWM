@@ -27,7 +27,11 @@ extension Task: Hashable {
     }
 
     static func == (lhs: Task, rhs: Task) -> Bool {
-        return lhs.hashValue == rhs.hashValue
+        guard lhs.hashValue == rhs.hashValue else { return false }
+        guard lhs.id == rhs.id else { return false }
+        guard lhs.title == rhs.title else { return false }
+        guard lhs.frequency == rhs.frequency else { return false }
+        return true
     }
 }
 
