@@ -101,7 +101,10 @@ class RecordManagerTests: XCTestCase {
             try recordManager.createCompletionRecord(for: task)
             let records = recordManager.records
             XCTAssert(records.count == 1)
-            let record = records.first!
+            guard let record = records.first else {
+                XCTFail()
+                return
+            }
             XCTAssertEqual(record.taskID, task.id)
             XCTAssertEqual(record.timestamp, timeEngine.now)
         } catch {
