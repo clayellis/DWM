@@ -152,9 +152,9 @@ final class TaskManager: TaskManagerProtocol {
 
     func partitionedTasks(occuring frequency: TaskFrequency) -> TaskManagerProtocol.PartitionedTaskList {
         var tasks = self.tasks(ocurring: frequency)
-        let paritionIndex = tasks.partition(by: { isTaskComplete($0) })
-        let incomplete = Array(tasks[...paritionIndex])
-        let complete = Array(tasks[paritionIndex...])
+        let partitionIndex = tasks.partition(by: { isTaskComplete($0) })
+        let incomplete = Array(tasks[..<partitionIndex])
+        let complete = Array(tasks[partitionIndex...])
         return (complete: complete, incomplete: incomplete)
     }
 
