@@ -232,7 +232,7 @@
 			path = Task;
 			sourceTree = "<group>";
 		};
-		6F81B5AC1FB7486D00875C74 /* DWMTests */ = {
+		6F81B5AC1FB7486D00875C74 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				6F4197911FBFABC900DB35F5 /* TODO.md */,
@@ -245,7 +245,7 @@
 				6FE625AF1FBAA5A7008B9F03 /* RecordManagerTests.swift */,
 				6FE625AD1FBA99DD008B9F03 /* TaskManagerTests.swift */,
 			);
-			path = DWMTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		6FFF71671FB6A33D008B9870 = {
@@ -254,7 +254,7 @@
 				6F4197941FBFADA400DB35F5 /* Assets */,
 				6F4197931FBFADA000DB35F5 /* Support */,
 				6F4197921FBFAD9B00DB35F5 /* Sources */,
-				6F81B5AC1FB7486D00875C74 /* DWMTests */,
+				6F81B5AC1FB7486D00875C74 /* Tests */,
 				6FFF71711FB6A33D008B9870 /* Products */,
 			);
 			sourceTree = "<group>";
