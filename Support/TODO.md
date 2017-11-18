@@ -1,4 +1,6 @@
-### TODO
+# TODO
+
+## Services
 
 - `TaskListManager`? (I'm not convinced that we need one, but the abstraction would be nice)
     - Initialized with a `TaskFrequency`
@@ -15,7 +17,8 @@
     - insert vs store
     - "all", "records", "noun(s)" vs retrieve
 
-- Start work on basic UI
+## Views
+    - AppCoordinator
     - List carousel view
     - Lists
 
