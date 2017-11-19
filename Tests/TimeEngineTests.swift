@@ -39,7 +39,7 @@ class TimeEngineTests: XCTestCase {
             let daily = try timeEngine.currentPeriod(for: .daily)
             let formatter = DateFormatter(format: "yyyy/M/dd HH:mm:ss")
             let targetStart = formatter.date(from: "1/1/1 00:00:00")!
-            let targetEnd = formatter.date(from: "1/1/2 00:00:00")!
+            let targetEnd = formatter.date(from: "1/1/1 23:59:59")!
             XCTAssertEqual(daily.start, targetStart)
             XCTAssertEqual(daily.end, targetEnd)
         } catch {
@@ -54,7 +54,7 @@ class TimeEngineTests: XCTestCase {
             let weekly = try timeEngine.currentPeriod(for: .weekly)
             let formatter = DateFormatter(format: "yyyy/M/dd HH:mm:ss")
             let targetStart = formatter.date(from: "2017/11/5 00:00:00")!
-            let targetEnd = formatter.date(from: "2017/11/12 00:00:00")!
+            let targetEnd = formatter.date(from: "2017/11/11 23:59:59")!
             XCTAssertEqual(weekly.start, targetStart)
             XCTAssertEqual(weekly.end, targetEnd)
         } catch {
@@ -68,7 +68,7 @@ class TimeEngineTests: XCTestCase {
             let monthly = try timeEngine.currentPeriod(for: .monthly)
             let formatter = DateFormatter(format: "yyyy/M/dd HH:mm:ss")
             let targetStart = formatter.date(from: "1/1/1 00:00:00")!
-            let targetEnd = formatter.date(from: "1/2/1 00:00:00")!
+            let targetEnd = formatter.date(from: "1/1/31 23:59:59")!
             XCTAssertEqual(monthly.start, targetStart)
             XCTAssertEqual(monthly.end, targetEnd)
         } catch {
