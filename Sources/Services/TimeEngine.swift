@@ -58,9 +58,10 @@ final class TimeEngine: TimeEngineProtocol {
         case .weekly: component = .weekOfYear
         case .monthly: component = .month
         }
-        guard let interval = calendar.dateInterval(of: component, for: now) else {
+        guard var interval = calendar.dateInterval(of: component, for: now) else {
             throw TimeEngineError.internalError
         }
+        interval.end.addTimeInterval(-1)
         return interval
     }
 
