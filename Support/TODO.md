@@ -6,6 +6,7 @@
     - Initialized with a `TaskFrequency`
     - Contains a `TaskManager`
     - Manages the list reminder
+    - Manages the custom start times (really only for `weekly` (beginning of week))
     - The order of tasks (v2, don't spend any time on this for now)
 
 - Determine a good error handling strategy
@@ -20,7 +21,7 @@
 ## Views
     - AppCoordinator
     - List carousel view
-    - Lists
+    - TaskListCarousel
 
 
 ### v1.1
