@@ -29,7 +29,28 @@ class DependencyContainer {
     private lazy var taskManager: TaskManagerProtocol = TaskManager(timeEngine: timeEngine, recordManager: recordManager, taskDataStore: taskDataStore)
 }
 
+protocol TaskListCarouselFactory {
+    func makeTaskListCarouselController() -> TaskListCarouselViewController
+    func makeTaskListCarouselViewModel() -> TaskListCarouselViewModelProtocol
+    func makeTaskListCarouselView() -> TaskListCarouselViewProtocol & UIView
+}
+
+extension DependencyContainer: TaskListCarouselFactory {
+    func makeTaskListCarouselView() -> UIView & TaskListCarouselViewProtocol {
+        return TaskListCarouselView()
+    }
+
+    func makeTaskListCarouselViewModel() -> TaskListCarouselViewModelProtocol {
+        return TaskListCarouselViewModel()
+    }
+
+    func makeTaskListCarouselController() -> TaskListCarouselViewController {
+        return TaskListCarouselViewController(factory: self)
+    }
+}
+
 protocol TaskListFactory {
+    func makeEmbeddedTaskListController(for taskFrequency: TaskFrequency) -> TaskListNavigationController
     func makeTaskListController(for taskFrequency: TaskFrequency) -> TaskListViewController
     func makeTaskListViewModel(for taskFrequency: TaskFrequency) -> TaskListViewModelProtocol
     func makeTaskListView() -> TaskListViewProtocol & UIView
@@ -46,6 +67,11 @@ extension DependencyContainer: TaskListFactory {
 
     func makeTaskListController(for taskFrequency: TaskFrequency) -> TaskListViewController {
         return TaskListViewController(factory: self, for: taskFrequency)
+    }
+
+    func makeEmbeddedTaskListController(for taskFrequency: TaskFrequency) -> TaskListNavigationController {
+        let taskListController = makeTaskListController(for: taskFrequency)
+        return TaskListNavigationController(taskListController: taskListController)
     }
 }
 
