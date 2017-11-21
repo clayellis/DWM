@@ -9,7 +9,7 @@
 import Foundation
 
 /// Defines an observer that watches for day changes
-protocol DayChangeObserverProtocol {
+protocol DayChangeObserverProtocol: class {
     /// Starts observing day changes
     func startObserving()
 
