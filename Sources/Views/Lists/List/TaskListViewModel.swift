@@ -35,15 +35,29 @@ protocol TaskListViewModelProtocol: class {
     var editButtonTitle: String { get }
     /// Closure called whenever editing changes.
     /// Parameter is `true` if editing, otherwise `false`.
-    var editingDidChange: ((Bool) -> ())? { get set }
-    /// Returns `true` if `indexPath` represents a new task row
-    func indexPathRepresentsNewTaskRow(_ indexPath: IndexPath) -> Bool
+    var editingStateDidChange: ((Bool) -> ())? { get set }
     ///
     func beginCreatingNewTask()
     ///
     func updateNewTask(title: String)
     ///
     func commitNewTask()
+    /// Returns `true` if `indexPath` represents a new task row
+    func indexPathRepresentsNewTaskRow(_ indexPath: IndexPath) -> Bool
+    ///
+    func beginEditingTask(at indexPath: IndexPath)
+    ///
+    func updateEditingTask(title: String)
+    ///
+    func commitEditingTask()
+    ///
+    func indexPathRepresentsEditingTaskRow(_ indexPath: IndexPath) -> Bool
+    ///
+    func selectedRow(at indexPath: IndexPath)
+    ///
+    var didBeginEditing: ((IndexPath) -> ())? { get set }
+    ///
+    var isEditingEnabled: Bool { get }
 }
 
 /// Describes a list of tasks
@@ -68,12 +82,15 @@ final class TaskListViewModel: TaskListViewModelProtocol {
     var state: State {
         didSet {
             let editing = state == .editing
-            editingDidChange?(editing)
+            editingStateDidChange?(editing)
             reloadData()
         }
     }
 
-    var editingDidChange: ((Bool) -> ())? = nil
+    // TODO: Consider renaming this, editingStateDidChange
+    var editingStateDidChange: ((Bool) -> ())? = nil
+
+    var didBeginEditing: ((IndexPath) -> ())? = nil
 
     // MARK: Data
 
@@ -84,7 +101,7 @@ final class TaskListViewModel: TaskListViewModelProtocol {
 
     enum Row {
         case task(Task)
-        // case editingTask(Task)
+        // case editingTask(Task) - I don't think we'll need this because it doesn't actually add a row
         case newEditingTask(String)
         case newTask
     }
@@ -234,7 +251,12 @@ final class TaskListViewModel: TaskListViewModelProtocol {
     func titleForTask(at indexPath: IndexPath) -> String? {
         let row = self.rows(in: indexPath.section)[indexPath.row]
         switch row {
-        case .task(let task): return task.title
+        case .task(let task):
+            if let editingTask = editingTask, indexPathRepresentsEditingTaskRow(indexPath) {
+                return editingTask.title
+            } else {
+                return task.title
+            }
         case .newTask: return nil
         case .newEditingTask(let editing): return editing
         }
@@ -281,15 +303,6 @@ final class TaskListViewModel: TaskListViewModelProtocol {
 
     // MARK: New Task
 
-    func indexPathRepresentsNewTaskRow(_ indexPath: IndexPath) -> Bool {
-        let row = self.rows(in: indexPath.section)[indexPath.row]
-        switch row {
-        case .newTask: return true
-        case .newEditingTask: return true
-        default: return false
-        }
-    }
-
     var newTask: Task? = nil
 
     func beginCreatingNewTask() {
@@ -309,5 +322,57 @@ final class TaskListViewModel: TaskListViewModelProtocol {
         }
         self.newTask = nil
         reloadData()
+    }
+
+    func indexPathRepresentsNewTaskRow(_ indexPath: IndexPath) -> Bool {
+        let row = self.rows(in: indexPath.section)[indexPath.row]
+        switch row {
+        case .newTask: return true
+        case .newEditingTask: return true
+        default: return false
+        }
+    }
+
+    // MARK: Edit Task
+
+    var editingTask: Task? = nil
+
+    func beginEditingTask(at indexPath: IndexPath) {
+        editingTask = tasks(in: indexPath.section)[indexPath.row]
+    }
+
+    func updateEditingTask(title: String) {
+        guard let editingTask = editingTask else { return }
+        self.editingTask = Task(id: editingTask.id, title: title, frequency: editingTask.frequency)
+    }
+
+    func commitEditingTask() {
+        guard let editingTask = editingTask else { return }
+        // TODO: Determine if deleting a task title should delete the task itself - for now, no
+        // TODO: Once updateTitle can throw, propogate the error through a "handleError: (Error) -> ()" closure
+        taskManager.updateTitle(of: editingTask, to: editingTask.title)
+    }
+
+    func indexPathRepresentsEditingTaskRow(_ indexPath: IndexPath) -> Bool {
+        guard let editingTask = editingTask else { return false }
+        let task = tasks(in: indexPath.section)[indexPath.row]
+        return task.id == editingTask.id
+    }
+
+    func selectedRow(at indexPath: IndexPath) {
+        if isEditing {
+            if indexPathRepresentsNewTaskRow(indexPath) {
+                beginCreatingNewTask()
+            } else {
+                beginEditingTask(at: indexPath)
+            }
+            didBeginEditing?(indexPath)
+        } else {
+            toggleTaskCompletionStatus(at: indexPath)
+        }
+    }
+
+    var isEditingEnabled: Bool {
+        return isEditing
     }
 }

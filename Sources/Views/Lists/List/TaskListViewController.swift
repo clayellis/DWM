@@ -8,6 +8,9 @@
 
 import UIKit
 
+// TODO: Adjust content inset bottom when keyboard shows
+// TODO: Scroll to row that's being edited so that it doesn't sit behind the keyboard
+
 /// A `UIViewContoller` subclass for presenting a list of tasks
 final class TaskListViewController: UIViewController {
 
@@ -17,8 +20,8 @@ final class TaskListViewController: UIViewController {
     let viewModel: TaskListViewModelProtocol
     let taskListView: TaskListViewProtocol & UIView
 
-    private lazy var newTaskTextViewDelegate = NewTaskTextViewDelegate(viewModel: viewModel)
-    private lazy var editTaskTextViewDelegate = EditTaskTextViewDelegate(viewModel: viewModel)
+    private lazy var newTaskTextViewDelegate = NewTaskTextViewDelegate(controller: self)
+    private lazy var editTaskTextViewDelegate = EditTaskTextViewDelegate(controller: self)
 
     init(factory: Factory, for taskFrequency: TaskFrequency) {
         self.factory = factory
@@ -57,14 +60,25 @@ final class TaskListViewController: UIViewController {
             self?.taskListView.tableView.reloadData()
         }
 
-        viewModel.editingDidChange = { [weak self] editing in
+        viewModel.editingStateDidChange = { [weak self] editing in
             guard let rightButton = self?.navigationItem.rightBarButtonItem else { return }
             rightButton.title = self?.viewModel.editButtonTitle
+        }
+
+        viewModel.didBeginEditing = { [weak self] indexPath in
+            guard let cell = self?.taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
+            cell.textView.becomeFirstResponder()
         }
     }
 
     @objc func rightButtonTapped(_ button: UIBarButtonItem) {
         viewModel.toggleEditing()
+    }
+
+    func indexPath(from subview: UIView) -> IndexPath? {
+        guard let superview = subview.superview else { return nil }
+        let point = taskListView.tableView.convert(subview.center, from: superview)
+        return taskListView.tableView.indexPathForRow(at: point)
     }
 }
 
@@ -99,34 +113,27 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TaskListCell.reuseIdentifier, for: indexPath) as! TaskListCell
         cell.textView.text = viewModel.titleForTask(at: indexPath)
+        cell.textView.isEditable = viewModel.isEditingEnabled
+        cell.textView.isUserInteractionEnabled = viewModel.isEditingEnabled
         if viewModel.indexPathRepresentsNewTaskRow(indexPath) {
             cell.textView.delegate = newTaskTextViewDelegate
-            cell.textView.isEditable = true
-            cell.textView.isUserInteractionEnabled = true
         } else {
             cell.textView.delegate = editTaskTextViewDelegate
-            cell.textView.isEditable = false
-            cell.textView.isUserInteractionEnabled = false
         }
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let cell = tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
-        if viewModel.indexPathRepresentsNewTaskRow(indexPath) {
-            cell.textView.becomeFirstResponder()
-        } else {
-            viewModel.toggleTaskCompletionStatus(at: indexPath)
-        }
+        viewModel.selectedRow(at: indexPath)
     }
 }
 
 private class TextViewDelegate: NSObject, UITextViewDelegate {
-    let viewModel: TaskListViewModelProtocol
+    weak var controller: TaskListViewController?
 
-    init(viewModel: TaskListViewModelProtocol) {
-        self.viewModel = viewModel
+    init(controller: TaskListViewController) {
+        self.controller = controller
         super.init()
     }
 
@@ -146,30 +153,33 @@ private class TextViewDelegate: NSObject, UITextViewDelegate {
     }
 }
 
+// FIXME: There was a case once where a word auto corrected in the label, but the editingTask wasn't updated, so when done was tapped, the uncorrected word was displayed
+
 private final class NewTaskTextViewDelegate: TextViewDelegate {
     override func textViewDidBeginEditing(_ textView: UITextView) {
-        viewModel.beginCreatingNewTask()
+        controller?.viewModel.beginCreatingNewTask()
     }
 
     override func textViewDidChange(_ textView: UITextView) {
-        viewModel.updateNewTask(title: textView.text)
+        controller?.viewModel.updateNewTask(title: textView.text)
     }
 
     override func textViewDidEndEditing(_ textView: UITextView) {
-        viewModel.commitNewTask()
+        controller?.viewModel.commitNewTask()
     }
 }
 
 private final class EditTaskTextViewDelegate: TextViewDelegate {
     override func textViewDidBeginEditing(_ textView: UITextView) {
-//        viewModel.beginCreatingNewTask()
+        guard let indexPath = controller?.indexPath(from: textView) else { return }
+        controller?.viewModel.beginEditingTask(at: indexPath)
     }
 
     override func textViewDidChange(_ textView: UITextView) {
-//        viewModel.updateNewTask(title: textView.text)
+        controller?.viewModel.updateEditingTask(title: textView.text)
     }
 
     override func textViewDidEndEditing(_ textView: UITextView) {
-//        viewModel.commitNewTask()
+        controller?.viewModel.commitEditingTask()
     }
 }
