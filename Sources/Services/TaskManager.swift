@@ -173,6 +173,9 @@ final class TaskManager: TaskManagerProtocol {
 
     func updateTitle(of task: Task, to newTitle: String) {
         do {
+
+            // TODO: Disallow duplicate titles, throw an error if duplicate
+
             try taskDataStore.updateEntity(withIdentifier: task.id) { task in
                 task.title = newTitle
             }
