@@ -74,7 +74,7 @@ class MockTaskManager: TaskManagerProtocol {
         replace(task, with: updated)
     }
 
-    func updateDisplayOrder(of task: Task, to newDisplayOrder: Int) {
+    func updateDisplayOrder(of task: Task, precedes nextTask: Task?) {
         // TODO: Implement
     }
 
