@@ -20,6 +20,13 @@ extension TaskData: CoreDataConfigurable {
     }
 }
 
+extension TaskData {
+    public override func prepareForDeletion() {
+        // TODO: Delete associated records
+        super.prepareForDeletion()
+    }
+}
+
 extension TaskData: Retrievable {
     typealias KeyType = UUID
 
