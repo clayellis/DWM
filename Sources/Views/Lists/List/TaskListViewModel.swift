@@ -58,6 +58,8 @@ protocol TaskListViewModelProtocol: class {
     var didBeginEditing: ((IndexPath) -> ())? { get set }
     ///
     var isEditingEnabled: Bool { get }
+    ///
+    func deleteTask(at indexPath: IndexPath)
 }
 
 /// Describes a list of tasks
@@ -376,5 +378,11 @@ final class TaskListViewModel: TaskListViewModelProtocol {
 
     var isEditingEnabled: Bool {
         return isEditing
+    }
+
+    func deleteTask(at indexPath: IndexPath) {
+        let task = tasks(in: indexPath.section)[indexPath.row]
+        taskManager.deleteTask(task)
+        reloadData()
     }
 }

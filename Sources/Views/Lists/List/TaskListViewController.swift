@@ -8,7 +8,6 @@
 
 import UIKit
 
-// TODO: Delete task
 // TODO: Move task to another list
 
 // TODO: (This will be on the carousel level) End editing when swiping between lists
@@ -47,6 +46,7 @@ final class TaskListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationBar()
+        configureGestureRecognizers()
         configure(tableView: taskListView.tableView)
         observeViewModel()
     }
@@ -71,30 +71,29 @@ final class TaskListViewController: UIViewController {
             action: #selector(rightButtonTapped(_:)))
     }
 
+    func configureGestureRecognizers() {
+        let tapToDismissGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tappedToDismissKeyboard(_:)))
+        tapToDismissGestureRecognizer.delegate = self
+        view.addGestureRecognizer(tapToDismissGestureRecognizer)
+    }
+
     func observeViewModel() {
         viewModel.dataDidChange = { [weak self] in
             self?.taskListView.tableView.reloadData()
         }
 
         viewModel.editingStateDidChange = { [weak self] editing in
-            guard let rightButton = self?.navigationItem.rightBarButtonItem else { return }
-            rightButton.title = self?.viewModel.editButtonTitle
+            if let rightButton = self?.navigationItem.rightBarButtonItem {
+                rightButton.title = self?.viewModel.editButtonTitle
+            }
+            self?.taskListView.tableView.setEditing(editing, animated: true)
         }
 
         viewModel.didBeginEditing = { [weak self] indexPath in
-            guard let cell = self?.taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
-            cell.textView.becomeFirstResponder()
+            if let cell = self?.taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell {
+                cell.textView.becomeFirstResponder()
+            }
         }
-    }
-
-    @objc func rightButtonTapped(_ button: UIBarButtonItem) {
-        viewModel.toggleEditing()
-    }
-
-    func indexPath(from subview: UIView) -> IndexPath? {
-        guard let superview = subview.superview else { return nil }
-        let point = taskListView.tableView.convert(subview.center, from: superview)
-        return taskListView.tableView.indexPathForRow(at: point)
     }
 
     func observeNotifications() {
@@ -104,6 +103,19 @@ final class TaskListViewController: UIViewController {
     func stopObservingNotifications() {
         NotificationCenter.default.removeObserver(self)
     }
+
+    // MARK: Helpers
+
+    func indexPath(from subview: UIView) -> IndexPath? {
+        guard let superview = subview.superview else { return nil }
+        let point = taskListView.tableView.convert(subview.center, from: superview)
+        return taskListView.tableView.indexPathForRow(at: point)
+    }
+}
+
+// MARK: Selectors
+
+extension TaskListViewController {
 
     @objc func keyboardWillChange(_ notification: NSNotification) {
         guard let keyboardBeginFrame = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as AnyObject).cgRectValue,
@@ -116,7 +128,17 @@ final class TaskListViewController: UIViewController {
             taskListView.tableView.contentInset.bottom = 0
         }
     }
+
+    @objc func rightButtonTapped(_ button: UIBarButtonItem) {
+        viewModel.toggleEditing()
+    }
+
+    @objc func tappedToDismissKeyboard(_ gestureRecognizer: UITapGestureRecognizer) {
+        view.endEditing(true)
+    }
 }
+
+// MARK: Table View
 
 extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
     func configure(tableView: UITableView) {
@@ -163,7 +185,28 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         viewModel.selectedRow(at: indexPath)
     }
+
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        guard viewModel.isEditingEnabled else { return .none }
+
+        if viewModel.indexPathRepresentsNewTaskRow(indexPath) {
+            return .none
+        } else {
+            return .delete
+        }
+    }
+
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        guard viewModel.isEditingEnabled else { return false }
+        return !viewModel.indexPathRepresentsNewTaskRow(indexPath)
+    }
+
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        viewModel.deleteTask(at: indexPath)
+    }
 }
+
+// MARK: Text View
 
 private class TextViewDelegate: NSObject, UITextViewDelegate {
     weak var controller: TaskListViewController?
@@ -217,5 +260,19 @@ private final class EditTaskTextViewDelegate: TextViewDelegate {
 
     override func textViewDidEndEditing(_ textView: UITextView) {
         controller?.viewModel.commitEditingTask()
+    }
+}
+
+// MARK: Gesture Recognizer
+
+extension TaskListViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        let touchPoint = touch.location(in: taskListView.tableView)
+        for cell in taskListView.tableView.visibleCells {
+            if cell.frame.contains(touchPoint) {
+                return false
+            }
+        }
+        return true
     }
 }
