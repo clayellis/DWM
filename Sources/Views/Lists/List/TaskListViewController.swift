@@ -15,12 +15,12 @@ final class TaskListViewController: UIViewController {
     let factory: Factory
 
     let viewModel: TaskListViewModelProtocol
-    let listView: TaskListViewProtocol & UIView
+    let taskListView: TaskListViewProtocol & UIView
 
     init(factory: Factory, for taskFrequency: TaskFrequency) {
         self.factory = factory
         self.viewModel = factory.makeTaskListViewModel(for: taskFrequency)
-        self.listView = factory.makeTaskListView()
+        self.taskListView = factory.makeTaskListView()
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -29,13 +29,13 @@ final class TaskListViewController: UIViewController {
     }
 
     override func loadView() {
-        view = listView
+        view = taskListView
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationBar()
-        configure(tableView: listView.tableView)
+        configure(tableView: taskListView.tableView)
         observeViewModel()
     }
 
@@ -45,7 +45,7 @@ final class TaskListViewController: UIViewController {
 
     func observeViewModel() {
         viewModel.dataDidChange = { [weak self] in
-            self?.listView.tableView.reloadData()
+            self?.taskListView.tableView.reloadData()
         }
     }
 }
