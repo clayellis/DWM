@@ -60,8 +60,17 @@ extension UIView {
         )
     }
 
-    @discardableResult
-    public func fillSuperviewLayoutMargins(priority p: UILayoutPriority = .required) -> (left: NSLayoutConstraint, right: NSLayoutConstraint, top: NSLayoutConstraint, bottom: NSLayoutConstraint) {
+    public func fillSuperviewSafeArea(priority p: UILayoutPriority = .required) {
+        guard let superview = self.superview else { return }
+        activate(
+            leftAnchor.constraint(equalTo: superview.safeLeft, priority: p),
+            rightAnchor.constraint(equalTo: superview.safeRight, priority: p),
+            topAnchor.constraint(equalTo: superview.safeTop, priority: p),
+            bottomAnchor.constraint(equalTo: superview.safeBottom, priority: p)
+        )
+    }
+
+    @discardableResult public func fillSuperviewLayoutMargins(priority p: UILayoutPriority = .required) -> (left: NSLayoutConstraint, right: NSLayoutConstraint, top: NSLayoutConstraint, bottom: NSLayoutConstraint) {
         guard let superview = self.superview else {
             fatalError("\(self) has not been added as a subview")
         }
@@ -124,7 +133,40 @@ extension UIView {
     public var heightMargin: NSLayoutDimension {
         return layoutMarginsGuide.heightAnchor
     }
+
+    public var safeTop: NSLayoutYAxisAnchor {
+        return safeAreaLayoutGuide.topAnchor
+    }
+
+    public var safeBottom: NSLayoutYAxisAnchor {
+        return safeAreaLayoutGuide.bottomAnchor
+    }
+
+    public var safeCenterY: NSLayoutYAxisAnchor {
+        return safeAreaLayoutGuide.centerYAnchor
+    }
+
+    public var safeLeft: NSLayoutXAxisAnchor {
+        return safeAreaLayoutGuide.leftAnchor
+    }
+
+    public var safeLeading: NSLayoutXAxisAnchor {
+        return safeAreaLayoutGuide.leadingAnchor
+    }
+
+    public var safeRight: NSLayoutXAxisAnchor {
+        return safeAreaLayoutGuide.rightAnchor
+    }
+
+    public var safeTrailing: NSLayoutXAxisAnchor {
+        return safeAreaLayoutGuide.trailingAnchor
+    }
+
+    public var safeCenterX: NSLayoutXAxisAnchor {
+        return safeAreaLayoutGuide.centerXAnchor
+    }
 }
+
 
 // MARK: - Subview Retrieval
 
