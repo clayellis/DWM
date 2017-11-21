@@ -42,7 +42,11 @@ final class TaskListViewController: UIViewController {
     func configureNavigationBar() {
         title = viewModel.title
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(rightButtonTapped(_:)))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: viewModel.editButtonTitle,
+            style: .plain,
+            target: self,
+            action: #selector(rightButtonTapped(_:)))
     }
 
     func observeViewModel() {
@@ -52,11 +56,7 @@ final class TaskListViewController: UIViewController {
 
         viewModel.editingDidChange = { [weak self] editing in
             guard let rightButton = self?.navigationItem.rightBarButtonItem else { return }
-            if editing {
-                rightButton.title = "Done"
-            } else {
-                rightButton.title = "Edit"
-            }
+            rightButton.title = self?.viewModel.editButtonTitle
         }
     }
 

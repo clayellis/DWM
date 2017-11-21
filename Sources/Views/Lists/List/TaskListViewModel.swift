@@ -31,6 +31,8 @@ protocol TaskListViewModelProtocol: class {
     func endEditing()
     /// Toggles editing the task list
     func toggleEditing()
+    /// Title for edit button (changes with state)
+    var editButtonTitle: String { get }
     /// Closure called whenever editing changes.
     /// Parameter is `true` if editing, otherwise `false`.
     var editingDidChange: ((Bool) -> ())? { get set }
@@ -266,6 +268,14 @@ final class TaskListViewModel: TaskListViewModelProtocol {
         switch state {
         case .normal: beginEditing()
         case .editing: endEditing()
+        }
+    }
+
+    var editButtonTitle: String {
+        if isEditing {
+            return "Done"
+        } else {
+            return "Edit"
         }
     }
 
