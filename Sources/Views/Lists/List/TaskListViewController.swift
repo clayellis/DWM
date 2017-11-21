@@ -10,6 +10,10 @@ import UIKit
 
 // TODO: Adjust content inset bottom when keyboard shows
 // TODO: Scroll to row that's being edited so that it doesn't sit behind the keyboard
+// TODO: Delete task
+// TODO: Move task to another list
+
+// TODO: When you enter edit mode, there should only be one section (not incomplete and complete)
 
 /// A `UIViewContoller` subclass for presenting a list of tasks
 final class TaskListViewController: UIViewController {

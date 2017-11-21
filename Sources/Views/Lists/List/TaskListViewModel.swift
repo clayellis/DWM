@@ -145,22 +145,24 @@ final class TaskListViewModel: TaskListViewModelProtocol {
 
     func reloadData() {
         var data = [Section]()
-        let (complete, incomplete) = taskManager.partitionedTasks(occuring: taskFrequency)
-        var incompleteRows = incomplete.map(toTaskRow)
-        let completeRows = complete.map(toTaskRow)
-        switch state {
-        case .editing:
+        if isEditing {
+            let tasks = taskManager.tasks(ocurring: taskFrequency)
+            var taskRows = tasks.map(toTaskRow)
             if let newTask = newTask {
-                incompleteRows.append(.newEditingTask(newTask.title))
+                taskRows.append(.newEditingTask(newTask.title))
             }
-            incompleteRows.append(.newTask)
-        case .normal: break
-        }
-        if !incompleteRows.isEmpty {
-            data.append(.incomplete(incompleteRows))
-        }
-        if !completeRows.isEmpty {
-            data.append(.complete(completeRows))
+            taskRows.append(.newTask)
+            data.append(.incomplete(taskRows))
+        } else {
+            let (complete, incomplete) = taskManager.partitionedTasks(occuring: taskFrequency)
+            let incompleteRows = incomplete.map(toTaskRow)
+            let completeRows = complete.map(toTaskRow)
+            if !incompleteRows.isEmpty {
+                data.append(.incomplete(incompleteRows))
+            }
+            if !completeRows.isEmpty {
+                data.append(.complete(completeRows))
+            }
         }
         self.data = data
     }
