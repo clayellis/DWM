@@ -77,6 +77,22 @@ final class TaskManager: TaskManagerProtocol {
         return lhs.displayOrder < rhs.displayOrder
     }
 
+    func byCompletionDate(_ lhs: TaskData, _ rhs: TaskData) -> Bool {
+        guard let lhsTask = try? Task(from: lhs),
+            let lhsRecord = recordManager.latestRecordInCurrentPeriod(for: lhsTask)
+            else {
+            return false
+        }
+
+        guard let rhsTask = try? Task(from: rhs),
+            let rhsRecord = recordManager.latestRecordInCurrentPeriod(for: rhsTask)
+            else {
+                return false
+        }
+
+        return lhsRecord.timestamp < rhsRecord.timestamp
+    }
+
     func toTask(_ taskData: TaskData) -> Task? {
         do {
             return try Task(from: taskData)
@@ -213,7 +229,7 @@ final class TaskManager: TaskManagerProtocol {
                 return isTaskComplete(task)
             }
             let incomplete = Array(_tasks[..<partitionIndex]).sorted(by: byDisplayOrder).flatMap(toTask)
-            let complete = Array(_tasks[partitionIndex...]).sorted(by: byDisplayOrder).flatMap(toTask)
+            let complete = Array(_tasks[partitionIndex...]).sorted(by: byCompletionDate).flatMap(toTask)
             return (complete: complete, incomplete: incomplete)
         } catch {
             // TODO: Handle the error
