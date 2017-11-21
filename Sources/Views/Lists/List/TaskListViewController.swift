@@ -9,7 +9,7 @@
 import UIKit
 
 /// A `UIViewContoller` subclass for presenting a list of tasks
-class TaskListViewController: UIViewController {
+final class TaskListViewController: UIViewController {
 
     typealias Factory = TaskListFactory
     let factory: Factory

@@ -12,7 +12,7 @@ protocol TaskListViewProtocol {
     var tableView: UITableView { get }
 }
 
-class TaskListView: UIView, TaskListViewProtocol {
+final class TaskListView: UIView, TaskListViewProtocol {
 
     let tableView = UITableView(frame: .zero, style: .grouped)
 

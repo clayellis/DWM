@@ -28,7 +28,7 @@ protocol TaskListViewModelProtocol: class {
 }
 
 /// Describes a list of tasks
-class TaskListViewModel: TaskListViewModelProtocol {
+final class TaskListViewModel: TaskListViewModelProtocol {
 
     // MARK: Members
 
