@@ -2,7 +2,7 @@
 //  TaskData+CoreDataProperties.swift
 //  DWM
 //
-//  Created by Clay Ellis on 11/12/17.
+//  Created by Clay Ellis on 11/21/17.
 //  Copyright © 2017 Test. All rights reserved.
 //
 //
@@ -20,5 +20,6 @@ extension TaskData {
     @NSManaged public var frequency: String?
     @NSManaged public var id: UUID?
     @NSManaged public var title: String?
+    @NSManaged public var displayOrder: Int16
 
 }
