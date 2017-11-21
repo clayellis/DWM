@@ -12,7 +12,7 @@ import CoreData
 struct Task {
     let id: UUID
     let title: String
-    var frequency: TaskFrequency
+    let frequency: TaskFrequency
 
     init(id: UUID = UUID(), title: String, frequency: TaskFrequency) {
         self.id = id
