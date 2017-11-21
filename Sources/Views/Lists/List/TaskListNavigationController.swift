@@ -11,8 +11,8 @@ import UIKit
 /// A `UINavigationController` subclass that provides the default navigation bar behavior
 /// and styling for a list of tasks
 final class TaskListNavigationController: UINavigationController {
-    init(listController: TaskListViewController) {
-        super.init(rootViewController: listController)
+    init(taskListController: TaskListViewController) {
+        super.init(rootViewController: taskListController)
     }
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
