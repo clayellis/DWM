@@ -13,8 +13,6 @@ import UIKit
 // TODO: Delete task
 // TODO: Move task to another list
 
-// TODO: When you enter edit mode, there should only be one section (not incomplete and complete)
-
 /// A `UIViewContoller` subclass for presenting a list of tasks
 final class TaskListViewController: UIViewController {
 
