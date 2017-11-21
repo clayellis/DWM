@@ -17,6 +17,9 @@ final class TaskListViewController: UIViewController {
     let viewModel: TaskListViewModelProtocol
     let taskListView: TaskListViewProtocol & UIView
 
+    private lazy var newTaskTextViewDelegate = NewTaskTextViewDelegate(viewModel: viewModel)
+    private lazy var editTaskTextViewDelegate = EditTaskTextViewDelegate(viewModel: viewModel)
+
     init(factory: Factory, for taskFrequency: TaskFrequency) {
         self.factory = factory
         self.viewModel = factory.makeTaskListViewModel(for: taskFrequency)
@@ -95,12 +98,13 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TaskListCell.reuseIdentifier, for: indexPath) as! TaskListCell
-        cell.textView.delegate = self
         cell.textView.text = viewModel.titleForTask(at: indexPath)
         if viewModel.indexPathRepresentsNewTaskRow(indexPath) {
+            cell.textView.delegate = newTaskTextViewDelegate
             cell.textView.isEditable = true
             cell.textView.isUserInteractionEnabled = true
         } else {
+            cell.textView.delegate = editTaskTextViewDelegate
             cell.textView.isEditable = false
             cell.textView.isUserInteractionEnabled = false
         }
@@ -118,29 +122,54 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-extension TaskListViewController: UITextViewDelegate {
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        viewModel.beginCreatingNewTask()
+private class TextViewDelegate: NSObject, UITextViewDelegate {
+    let viewModel: TaskListViewModelProtocol
+
+    init(viewModel: TaskListViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init()
     }
 
-    func textViewDidChange(_ textView: UITextView) {
-        viewModel.updateNewTask(title: textView.text)
-    }
+    func textViewDidBeginEditing(_ textView: UITextView) {}
 
-    func textViewDidEndEditing(_ textView: UITextView) {
-        viewModel.commitNewTask()
-    }
+    func textViewDidChange(_ textView: UITextView) {}
+
+    func textViewDidEndEditing(_ textView: UITextView) {}
 
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
-            endEditing()
+            textView.resignFirstResponder()
             return false
         } else {
             return true
         }
     }
+}
 
-    func endEditing() {
-        view.endEditing(true)
+private final class NewTaskTextViewDelegate: TextViewDelegate {
+    override func textViewDidBeginEditing(_ textView: UITextView) {
+        viewModel.beginCreatingNewTask()
+    }
+
+    override func textViewDidChange(_ textView: UITextView) {
+        viewModel.updateNewTask(title: textView.text)
+    }
+
+    override func textViewDidEndEditing(_ textView: UITextView) {
+        viewModel.commitNewTask()
+    }
+}
+
+private final class EditTaskTextViewDelegate: TextViewDelegate {
+    override func textViewDidBeginEditing(_ textView: UITextView) {
+//        viewModel.beginCreatingNewTask()
+    }
+
+    override func textViewDidChange(_ textView: UITextView) {
+//        viewModel.updateNewTask(title: textView.text)
+    }
+
+    override func textViewDidEndEditing(_ textView: UITextView) {
+//        viewModel.commitNewTask()
     }
 }
