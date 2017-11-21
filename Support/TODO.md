@@ -3,7 +3,10 @@
 ## General
 
 - Add documentation
-- Determine if `Task` should maintain its `displayOrder` or if that should just be on `TaskData` and is set by the `TaskManager`
+- Determine what's allowed
+    - Tasks can have the same name
+    - Tasks can have the same name if they are in different lists
+    - Tasks cannot have the same name
 
 ## Services
 
@@ -25,8 +28,8 @@
 
 ## Views
     - AppCoordinator
-    - List carousel view
-    - TaskListCarousel
+    - Task list carousel collection view (centered cells)
+    - Task list (style)
 
 
 ### v1.1
@@ -34,3 +37,5 @@
 - Reminders
     - How to create them, store them, schedule them, delete them
 
+
+- Add some confetti when tasks are completed. Add some fireworks when task lists are completed. In increasing intensity (daily, weekly, monthly)
