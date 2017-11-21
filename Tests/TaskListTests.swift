@@ -74,6 +74,10 @@ class MockTaskManager: TaskManagerProtocol {
         replace(task, with: updated)
     }
 
+    func updateDisplayOrder(of task: Task, to newDisplayOrder: Int) {
+        // TODO: Implement
+    }
+
     func markTask(_ task: Task, asCompleted completed: Bool) {
         // TODO: Implement
     }
