@@ -67,7 +67,6 @@ final class TaskListViewController: UIViewController {
 
 extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
     func configure(tableView: UITableView) {
-//        tableView.register(UITableViewCell.self, forCellReuseIdentifier: UITableViewCell.reuseIdentifier)
         tableView.register(TaskListCell.self, forCellReuseIdentifier: TaskListCell.reuseIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
