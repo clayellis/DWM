@@ -8,10 +8,10 @@
 
 import UIKit
 
-// TODO: Adjust content inset bottom when keyboard shows
-// TODO: Scroll to row that's being edited so that it doesn't sit behind the keyboard
 // TODO: Delete task
 // TODO: Move task to another list
+
+// TODO: (This will be on the carousel level) End editing when swiping between lists
 
 /// A `UIViewContoller` subclass for presenting a list of tasks
 final class TaskListViewController: UIViewController {
@@ -36,6 +36,10 @@ final class TaskListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        stopObservingNotifications()
+    }
+
     override func loadView() {
         view = taskListView
     }
@@ -45,6 +49,16 @@ final class TaskListViewController: UIViewController {
         configureNavigationBar()
         configure(tableView: taskListView.tableView)
         observeViewModel()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        observeNotifications()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopObservingNotifications()
     }
 
     func configureNavigationBar() {
@@ -81,6 +95,26 @@ final class TaskListViewController: UIViewController {
         guard let superview = subview.superview else { return nil }
         let point = taskListView.tableView.convert(subview.center, from: superview)
         return taskListView.tableView.indexPathForRow(at: point)
+    }
+
+    func observeNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(_:)), name: .UIKeyboardWillChangeFrame, object: nil)
+    }
+
+    func stopObservingNotifications() {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    @objc func keyboardWillChange(_ notification: NSNotification) {
+        guard let keyboardBeginFrame = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as AnyObject).cgRectValue,
+            let keyboardEndFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
+            else { return }
+        let showing = keyboardBeginFrame.origin.y > keyboardEndFrame.origin.y
+        if showing {
+            taskListView.tableView.contentInset.bottom = keyboardEndFrame.height
+        } else {
+            taskListView.tableView.contentInset.bottom = 0
+        }
     }
 }
 
