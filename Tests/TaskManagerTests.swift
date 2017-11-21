@@ -9,7 +9,11 @@
 import XCTest
 @testable import DWM
 
-// TODO: Test deleteAllTasks
+// TODO: Test createTask adjusts other tasks' ordering
+// TODO: Test deleteTask adjusts other tasks' ordering
+// TODO: Test updateTaskFrequency adjusts task's ordering (on the end)
+// TODO: Test updateTaskDisplayOrder
+// TODO: Test updateTaskDipslayOrder adjusts other tasks' ordering
 
 class TaskManagerTests: XCTestCase {
 
