@@ -9,6 +9,8 @@
 import XCTest
 @testable import DWM
 
+// TODO: Test deleteAllTasks
+
 class TaskManagerTests: XCTestCase {
 
     var timeEngine: TimeEngineProtocol = TimeEngine()
@@ -150,6 +152,34 @@ class TaskManagerTests: XCTestCase {
         XCTAssert(taskManager.tasks.count == 1)
         taskManager.deleteTask(task)
         XCTAssert(taskManager.tasks.count == 0)
+    }
+
+    func testDeleteAllTasks() {
+        let taskOne = Task(title: "One", frequency: .daily)
+        let taskTwo = Task(title: "Two", frequency: .monthly)
+        let taskThree = Task(title: "Three", frequency: .monthly)
+        taskManager.createTask(taskOne)
+        taskManager.createTask(taskTwo)
+        taskManager.createTask(taskThree)
+        XCTAssert(taskManager.tasks.count == 3)
+        taskManager.deleteAllTasks()
+        XCTAssert(taskManager.tasks.count == 0)
+    }
+
+    func testDeleteAllTasksWithCompletionRecords() {
+        let taskOne = Task(title: "One", frequency: .daily)
+        let taskTwo = Task(title: "Two", frequency: .monthly)
+        let taskThree = Task(title: "Three", frequency: .monthly)
+        taskManager.createTask(taskOne)
+        taskManager.createTask(taskTwo)
+        taskManager.createTask(taskThree)
+        XCTAssert(taskManager.tasks.count == 3)
+        taskManager.markTask(taskOne, asCompleted: true)
+        taskManager.markTask(taskTwo, asCompleted: true)
+        XCTAssert(recordManager.records.count == 2)
+        taskManager.deleteAllTasks()
+        XCTAssert(taskManager.tasks.count == 0)
+        XCTAssert(recordManager.records.count == 0)
     }
 
     func testUpdateTaskFrequency() {

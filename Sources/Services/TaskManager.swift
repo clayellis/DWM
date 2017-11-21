@@ -22,6 +22,9 @@ protocol TaskManagerProtocol {
     /// Deletes a `Task` and all `TaskCompletionRecord`s associated with it
     func deleteTask(_ task: Task)
 
+    /// Deletes all `Task`s
+    func deleteAllTasks()
+
     /// Updates the `frequency` of the `task` to the `newFrequency`
     func updateFrequency(of task: Task, to newFrequency: TaskFrequency)
 
@@ -78,6 +81,7 @@ final class TaskManager: TaskManagerProtocol {
         }
     }
 
+    // TODO: Disallow tasks with duplicate names, throw an error
     func createTask(_ task: Task) {
         do {
             let preparedTask = task.prepareForStorage(in: taskDataStore.context)
@@ -91,6 +95,15 @@ final class TaskManager: TaskManagerProtocol {
         do {
             try taskDataStore.deleteEntity(withIdentifier: task.id)
             recordManager.removeAllCompletionRecords(for: task)
+        } catch {
+            // TODO: Log the error
+        }
+    }
+
+    func deleteAllTasks() {
+        do {
+            try taskDataStore.deleteAll()
+            recordManager.removeAllCompletionRecords()
         } catch {
             // TODO: Log the error
         }
