@@ -14,9 +14,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        let container = DependencyContainer()
+//        let dataPopulator = container.makeDataPopulator()
+//        dataPopulator.populateData()
+
         // TODO: Delegate window and view state to AppCoordinator
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = ListsViewController()
+        let carousel = container.makeTaskListCarouselController()
+        let navigationController = BaseNavigationController(rootViewController: carousel)
+        window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
         return true
     }
