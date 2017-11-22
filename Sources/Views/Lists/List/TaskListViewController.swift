@@ -83,11 +83,13 @@ final class TaskListViewController: UIViewController {
                     tableView.deleteRows(at: changes.deletedRows, with: .automatic)
                     tableView.insertRows(at: changes.insertedRows, with: .automatic)
                     changes.movedRows.forEach { tableView.moveRow(at: $0.from, to: $0.to) }
-                    changes.deletedSections.forEach { tableView.deleteSections($0, with: .fade) }
-                    changes.insertedSections.forEach { tableView.insertSections($0, with: .fade) }
-                    // FIXME: Reload the complete section header title without having to reload the entire section
-                    // If you reload the section, you lose the animation
-                }, completion: nil)
+                    changes.deletedSections.forEach { tableView.deleteSections($0, with: .automatic) }
+                    changes.insertedSections.forEach { tableView.insertSections($0, with: .automatic) }
+                }, completion: { finished in
+                    // Reload once the animations are complete in order to refresh the section headers
+                    let indexSets = self?.viewModel.indexSetsToReloadAfterUpdates
+                    indexSets?.forEach { tableView.reloadSections($0, with: .fade) }
+                })
             }
         }
 

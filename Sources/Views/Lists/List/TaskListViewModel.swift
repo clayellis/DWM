@@ -60,6 +60,8 @@ protocol TaskListViewModelProtocol: class {
     var isEditingEnabled: Bool { get }
     ///
     func deleteTask(at indexPath: IndexPath)
+    ///
+    var indexSetsToReloadAfterUpdates: [IndexSet] { get }
 }
 
 /// Describes a list of tasks
@@ -418,5 +420,18 @@ final class TaskListViewModel: TaskListViewModelProtocol {
         let task = tasks(in: indexPath.section)[indexPath.row]
         taskManager.deleteTask(task)
         reloadData()
+    }
+
+    var indexSetsToReloadAfterUpdates: [IndexSet] {
+        guard isEditing else { return [] }
+
+        var indexSets = [IndexSet]()
+        for (index, section) in data.enumerated() {
+            switch section {
+            case .complete: indexSets.append(IndexSet(integer: index))
+            case .incomplete: break
+            }
+        }
+        return indexSets
     }
 }
