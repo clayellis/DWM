@@ -86,9 +86,8 @@ final class TaskListViewController: UIViewController {
                     changes.deletedSections.forEach { tableView.deleteSections($0, with: .automatic) }
                     changes.insertedSections.forEach { tableView.insertSections($0, with: .automatic) }
                 }, completion: { finished in
-                    // Reload once the animations are complete in order to refresh the section headers
-                    let indexSets = self?.viewModel.indexSetsToReloadAfterUpdates
-                    indexSets?.forEach { tableView.reloadSections($0, with: .fade) }
+                    // Reload once the animations are complete in order to refresh the section headers and the cell settings
+                    tableView.reloadData()
                 })
             }
         }
@@ -202,7 +201,6 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
         guard viewModel.isEditingEnabled else { return .none }
-
         if viewModel.indexPathRepresentsNewTaskRow(indexPath) {
             return .none
         } else {
