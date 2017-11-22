@@ -92,6 +92,9 @@ final class TaskListViewController: UIViewController {
         }
 
         viewModel.editingStateDidChange = { [weak self] editing in
+            if !editing {
+                self?.view.endEditing(true)
+            }
             if let rightButton = self?.navigationItem.rightBarButtonItem {
                 rightButton.title = self?.viewModel.editButtonTitle
             }
@@ -139,8 +142,6 @@ extension TaskListViewController {
     }
 
     @objc func rightButtonTapped(_ button: UIBarButtonItem) {
-        viewModel.commitNewTask()
-        viewModel.commitEditingTask()
         viewModel.toggleEditing()
     }
 
