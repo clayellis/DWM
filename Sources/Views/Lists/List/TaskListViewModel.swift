@@ -24,7 +24,7 @@ protocol TaskListViewModelProtocol: class {
     /// Toggles completion status for task at `indexPath`
     func toggleTaskCompletionStatus(at indexPath: IndexPath)
     /// Closure called whenever data changes
-    var dataDidChange: (() -> ())? { get set }
+    var dataDidChange: ((Delta.Changes) -> ())? { get set }
     /// Begins editing the task list
     func beginEditing()
     /// Ends editing the task list
@@ -101,20 +101,48 @@ final class TaskListViewModel: TaskListViewModelProtocol {
         case complete([Row])
     }
 
-    enum Row {
+    enum Row: Hashable {
         case task(Task)
-        // case editingTask(Task) - I don't think we'll need this because it doesn't actually add a row
         case newEditingTask(String)
         case newTask
+
+        var hashValue: Int {
+            switch self {
+            case .task(let task): return task.hashValue
+            case .newEditingTask: return "newEditingTask".hashValue
+            case .newTask: return "newTask".hashValue
+            }
+        }
+
+        static func == (lhs: Row, rhs: Row) -> Bool {
+            switch (lhs, rhs) {
+            case (.newTask, .newTask): return true
+            case (.newEditingTask, .newEditingTask): return true
+            case (.task(let lhsTask), .task(let rhsTask)): return lhsTask == rhsTask
+            default: return false
+            }
+        }
     }
 
     var data: [Section] {
         didSet {
-            dataDidChange?()
+            func rows(from sections: [Section]) -> [[Row]] {
+                return sections.map { section -> [Row] in
+                    switch section {
+                    case .complete(let rows): return rows
+                    case .incomplete(let rows): return rows
+                    }
+                }
+            }
+
+            let oldRows = rows(from: oldValue)
+            let newRows = rows(from: data)
+            let changes = Delta.changes(between: oldRows, and: newRows)
+            dataDidChange?(changes)
         }
     }
 
-    var dataDidChange: (() -> ())? = nil
+    var dataDidChange: ((Delta.Changes) -> ())? = nil
 
     // MARK: - Init
 
@@ -155,16 +183,17 @@ final class TaskListViewModel: TaskListViewModelProtocol {
             }
             taskRows.append(.newTask)
             data.append(.incomplete(taskRows))
+            data.append(.complete([]))
         } else {
             let (complete, incomplete) = taskManager.partitionedTasks(occuring: taskFrequency)
             let incompleteRows = incomplete.map(toTaskRow)
             let completeRows = complete.map(toTaskRow)
-            if !incompleteRows.isEmpty {
+//            if !incompleteRows.isEmpty {
                 data.append(.incomplete(incompleteRows))
-            }
-            if !completeRows.isEmpty {
+//            }
+//            if !completeRows.isEmpty {
                 data.append(.complete(completeRows))
-            }
+//            }
         }
         self.data = data
     }
@@ -244,7 +273,12 @@ final class TaskListViewModel: TaskListViewModelProtocol {
     func titleForSection(_ section: Int) -> String? {
         switch data[section] {
         case .incomplete: return nil
-        case .complete: return "DONE"
+        case .complete(let tasks):
+            if tasks.isEmpty {
+                return nil
+            } else {
+                return "DONE"
+            }
         }
     }
 
