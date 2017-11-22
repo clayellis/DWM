@@ -9,7 +9,6 @@
 import UIKit
 
 // TODO: Move task to another list
-
 // TODO: (This will be on the carousel level) End editing when swiping between lists
 
 /// A `UIViewContoller` subclass for presenting a list of tasks
@@ -78,8 +77,18 @@ final class TaskListViewController: UIViewController {
     }
 
     func observeViewModel() {
-        viewModel.dataDidChange = { [weak self] in
-            self?.taskListView.tableView.reloadData()
+        viewModel.dataDidChange = { [weak self] changes in
+            if let tableView = self?.taskListView.tableView {
+                tableView.performBatchUpdates({
+                    tableView.deleteRows(at: changes.deletedRows, with: .automatic)
+                    tableView.insertRows(at: changes.insertedRows, with: .automatic)
+                    changes.movedRows.forEach { tableView.moveRow(at: $0.from, to: $0.to) }
+                    changes.deletedSections.forEach { tableView.deleteSections($0, with: .fade) }
+                    changes.insertedSections.forEach { tableView.insertSections($0, with: .fade) }
+                    // FIXME: Reload the complete section header title without having to reload the entire section
+                    // If you reload the section, you lose the animation
+                }, completion: nil)
+            }
         }
 
         viewModel.editingStateDidChange = { [weak self] editing in
