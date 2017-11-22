@@ -32,10 +32,11 @@ extension Task: Hashable {
         // But that doubt is coming up because I want to disallow duplicate titles.
         // And really we should just disallow duplicate titles in the same list.
         // Because sometimes a user might want "Sweep floors" in daily and monthly
-        guard lhs.hashValue == rhs.hashValue else { return false }
+        
+//        guard lhs.hashValue == rhs.hashValue else { return false }
         guard lhs.id == rhs.id else { return false }
-        guard lhs.title == rhs.title else { return false }
-        guard lhs.frequency == rhs.frequency else { return false }
+//        guard lhs.title == rhs.title else { return false }
+//        guard lhs.frequency == rhs.frequency else { return false }
         return true
     }
 }
