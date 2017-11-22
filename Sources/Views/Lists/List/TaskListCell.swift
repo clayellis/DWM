@@ -8,6 +8,8 @@
 
 import UIKit
 
+// TODO: Add a placeholder to the textView
+
 class TaskListCell: UITableViewCell {
 
     let textView = UITextView()
