@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F0C10721FC517DF0017D6A5 /* Delta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0C10711FC517DF0017D6A5 /* Delta.swift */; };
+		6F0C10741FC51F980017D6A5 /* DeltaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0C10731FC51F980017D6A5 /* DeltaTests.swift */; };
 		6F2D42BB1FC2134E00485A21 /* TaskListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2D42B91FC2133300485A21 /* TaskListTests.swift */; };
 		6F2D42C11FC2871800485A21 /* DependencyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2D42C01FC2871800485A21 /* DependencyManager.swift */; };
 		6F2D42C31FC28DF900485A21 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2D42C21FC28DF900485A21 /* DependencyContainer.swift */; };
@@ -71,6 +73,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6F0C10711FC517DF0017D6A5 /* Delta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delta.swift; sourceTree = "<group>"; };
+		6F0C10731FC51F980017D6A5 /* DeltaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeltaTests.swift; sourceTree = "<group>"; };
 		6F2D42B91FC2133300485A21 /* TaskListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListTests.swift; sourceTree = "<group>"; };
 		6F2D42C01FC2871800485A21 /* DependencyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyManager.swift; sourceTree = "<group>"; };
 		6F2D42C21FC28DF900485A21 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
@@ -176,6 +180,7 @@
 				6F81B5A11FB7481400875C74 /* RecordManager.swift */,
 				6F81B5A31FB7481E00875C74 /* TaskManager.swift */,
 				6F81B5A51FB7482900875C74 /* ReminderManager.swift */,
+				6F0C10711FC517DF0017D6A5 /* Delta.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -313,6 +318,7 @@
 				6F7199571FB8E35B00617BC0 /* TestModel.xcdatamodeld */,
 				6F81B5AF1FB7486D00875C74 /* Info.plist */,
 				6F81B5B71FB749CD00875C74 /* Utilities.swift */,
+				6F0C10731FC51F980017D6A5 /* DeltaTests.swift */,
 				6F81B5B51FB748AF00875C74 /* TimeEngineTests.swift */,
 				6F2D46741FB7999700C94596 /* DayChangeObserverTests.swift */,
 				6F7199551FB8E27900617BC0 /* CoreDataStoreTests.swift */,
@@ -465,6 +471,7 @@
 				6F81B5B61FB748AF00875C74 /* TimeEngineTests.swift in Sources */,
 				6F7199591FB8E35B00617BC0 /* TestModel.xcdatamodeld in Sources */,
 				6F2D46751FB7999700C94596 /* DayChangeObserverTests.swift in Sources */,
+				6F0C10741FC51F980017D6A5 /* DeltaTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -500,6 +507,7 @@
 				6F2D42C71FC2935200485A21 /* DataPopulator.swift in Sources */,
 				6F7199701FB9675D00617BC0 /* TaskData+CoreDataClass.swift in Sources */,
 				6F4197AA1FC0BB1600DB35F5 /* TaskListViewController.swift in Sources */,
+				6F0C10721FC517DF0017D6A5 /* Delta.swift in Sources */,
 				6F41979B1FBFB0D200DB35F5 /* UIViewExtensions.swift in Sources */,
 				6F59FDE91FB8CD410098D4FD /* CoreDataStore.swift in Sources */,
 				6FFF71741FB6A33D008B9870 /* AppDelegate.swift in Sources */,
