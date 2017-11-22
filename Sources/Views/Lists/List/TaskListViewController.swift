@@ -159,6 +159,7 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.keyboardDismissMode = .onDrag
+        tableView.allowsSelectionDuringEditing = true
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -257,6 +258,7 @@ private final class NewTaskTextViewDelegate: TextViewDelegate {
 
     override func textViewDidEndEditing(_ textView: UITextView) {
         controller?.viewModel.commitNewTask()
+        textView.text = ""
     }
 }
 
