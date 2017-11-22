@@ -139,6 +139,8 @@ extension TaskListViewController {
     }
 
     @objc func rightButtonTapped(_ button: UIBarButtonItem) {
+        viewModel.commitNewTask()
+        viewModel.commitEditingTask()
         viewModel.toggleEditing()
     }
 
