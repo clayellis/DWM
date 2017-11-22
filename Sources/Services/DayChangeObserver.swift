@@ -85,7 +85,9 @@ class DayChangeObserver: DayChangeObserverProtocol {
     }
 
     @objc private func changesObserved() {
-        onChangesObserved?()
+        DispatchQueue.main.async {
+            self.onChangesObserved?()
+        }
     }
 
     func reset() {

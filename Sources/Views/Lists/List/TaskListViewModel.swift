@@ -84,7 +84,9 @@ final class TaskListViewModel: TaskListViewModelProtocol {
     var state: State {
         didSet {
             let editing = state == .editing
-            editingStateDidChange?(editing)
+            DispatchQueue.main.async {
+                self.editingStateDidChange?(editing)
+            }
             reloadData()
         }
     }
@@ -138,7 +140,9 @@ final class TaskListViewModel: TaskListViewModelProtocol {
             let oldRows = rows(from: oldValue)
             let newRows = rows(from: data)
             let changes = Delta.changes(between: oldRows, and: newRows)
-            dataDidChange?(changes)
+            DispatchQueue.main.async {
+                self.dataDidChange?(changes)
+            }
         }
     }
 
