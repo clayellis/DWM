@@ -140,9 +140,11 @@ final class TaskListViewModel: TaskListViewModelProtocol {
             let oldRows = rows(from: oldValue)
             let newRows = rows(from: data)
             let changes = Delta.changes(between: oldRows, and: newRows)
-//            DispatchQueue.main.asyncAfter(deadline: .now()) {
-                self.dataDidChange?(changes)
-//            }
+            if changes.hasChanges {
+//                DispatchQueue.main.asyncAfter(deadline: .now()) {
+                    self.dataDidChange?(changes)
+//                }
+            }
         }
     }
 
