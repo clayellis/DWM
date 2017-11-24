@@ -12,6 +12,8 @@ import Foundation
 protocol TaskListViewModelProtocol: class {
     /// Title of the task list
     var title: String { get }
+    /// Closure called when the title should reload
+    var titleShouldReload: (() -> ())? { get set }
     /// Number of sections in the task list
     var numberOfSections: Int { get }
     /// Title for `section`
@@ -167,6 +169,7 @@ final class TaskListViewModel: TaskListViewModelProtocol {
 
         self.dayChangeObserver.startObserving(identifier: taskFrequency.rawValue) { [weak self] in
             self?.reloadData()
+            self?.titleShouldReload?()
         }
 
         reloadData()
@@ -289,6 +292,8 @@ final class TaskListViewModel: TaskListViewModelProtocol {
             }
         }
     }
+
+    var titleShouldReload: (() -> ())? = nil
 
     func numberOfItems(in section: Int) -> Int {
         return rows(in: section).count

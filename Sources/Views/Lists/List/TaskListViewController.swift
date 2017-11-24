@@ -82,6 +82,10 @@ final class TaskListViewController: UIViewController {
     }
 
     func observeViewModel() {
+        viewModel.titleShouldReload = { [weak self] in
+            self?.title = self?.viewModel.title
+        }
+
         viewModel.dataDidChange = { [weak self] changes in
             if let tableView = self?.taskListView.tableView {
                 tableView.performBatchUpdates({
@@ -95,8 +99,6 @@ final class TaskListViewController: UIViewController {
                     tableView.reloadData()
                 })
             }
-
-            self?.title = self?.viewModel.title
         }
 
         viewModel.editingStateDidChange = { [weak self] editing in
