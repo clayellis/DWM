@@ -104,3 +104,18 @@ extension DependencyContainer: DataPopulatorFactory {
         return DataPopulator(factory: self)
     }
 }
+
+protocol SimulatorFactory {
+    func makeTimeEngine() -> TimeEngineProtocol
+    func makeDayChangeObserver() -> DayChangeObserverProtocol
+}
+
+extension DependencyContainer: SimulatorFactory {
+    func makeTimeEngine() -> TimeEngineProtocol {
+        return timeEngine
+    }
+
+    func makeDayChangeObserver() -> DayChangeObserverProtocol {
+        return dayChangeObserver
+    }
+}
