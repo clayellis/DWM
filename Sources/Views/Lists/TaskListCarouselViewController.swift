@@ -35,6 +35,7 @@ class TaskListCarouselViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureNavigationBar()
         configure(collectionView: carouselView.collectionView)
     }
 
@@ -42,6 +43,11 @@ class TaskListCarouselViewController: UIViewController {
         super.viewDidLayoutSubviews()
 //        listsView.collectionViewLayout.prepareForCentering(in: view)
     }
+
+    func configureNavigationBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Simulate", style: .plain, target: self, action: #selector(tappedSimulateDayChange(_:)))
+    }
+
 
     func taskListController(for taskFrequency: TaskFrequency) -> TaskListNavigationController {
         if let cached = taskListControllerCache[taskFrequency] {
@@ -54,7 +60,32 @@ class TaskListCarouselViewController: UIViewController {
             return controller
         }
     }
+
+    func taskListController(at indexPath: IndexPath) -> TaskListNavigationController {
+        let taskFrequency = viewModel.taskFrequency(at: indexPath)
+        return taskListController(for: taskFrequency)
+    }
+
+    // MARK: Helpers
+
+    func simulateDayChange() {
+        if let simulator = (factory as? SimulatorFactory) {
+            let timeEngine = simulator.makeTimeEngine()
+            timeEngine.now = timeEngine.now.addingTimeInterval(86_400)
+            NotificationCenter.default.post(name: .NSCalendarDayChanged, object: nil)
+        }
+    }
 }
+
+// MARK: Selectors
+
+extension TaskListCarouselViewController {
+    @objc func tappedSimulateDayChange(_ button: UIBarButtonItem) {
+        simulateDayChange()
+    }
+}
+
+// MARK: Collection View
 
 extension TaskListCarouselViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
