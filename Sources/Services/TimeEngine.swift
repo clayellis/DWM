@@ -14,7 +14,10 @@ protocol TimeEngineProtocol: class {
     var calendar: Calendar { get }
 
     /// Internal present moment in time
-    var now: Date { get set }
+    var now: Date { get }
+
+    /// The simulation mode for simulating `now`
+    var simulationMode: TimeEngineSimulationMode? { get set }
 
     /// Returns a `DateInterval` which defines the current period for a `TaskFrenquency`
     ///
@@ -28,27 +31,42 @@ protocol TimeEngineProtocol: class {
 
     /// Returns if the `date` is in the same day as `now`
     func isDateToday(_ date: Date) -> Bool
-
-    /// Resyncs the internal time
-    func resync()
 }
 
 enum TimeEngineError: Swift.Error {
     case internalError
 }
 
+/// Mode for simulating time in a time engine
+enum TimeEngineSimulationMode {
+    /// Simulates a fixed point in time
+    case fixed(Date)
+    /// Simulates a non-fixed time by offsetting actual now
+    case offset(TimeInterval)
+}
+
 final class TimeEngine: TimeEngineProtocol {
     let calendar: Calendar
     var now: Date {
-        get { return fixedNow ?? Date() }
-        set { fixedNow = newValue }
+        if let mode = simulationMode {
+            switch mode {
+            case .fixed(let fixedDate): return fixedDate
+            case .offset(let offset): return Date().addingTimeInterval(offset)
+            }
+        } else {
+            return Date()
+        }
     }
 
-    private var fixedNow: Date?
+    var simulationMode: TimeEngineSimulationMode?
 
-    init(calendar: Calendar = .current, fixedNow: Date? = nil) {
+    init(calendar: Calendar = .current, simulationMode: TimeEngineSimulationMode? = nil) {
         self.calendar = calendar
-        self.fixedNow = fixedNow
+        self.simulationMode = simulationMode
+    }
+
+    convenience init(calendar: Calendar = .current, fixedNow: Date) {
+        self.init(calendar: calendar, simulationMode: .fixed(fixedNow))
     }
 
     func currentPeriod(for frequency: TaskFrequency) throws -> DateInterval {
@@ -72,9 +90,5 @@ final class TimeEngine: TimeEngineProtocol {
 
     func isDateToday(_ date: Date) -> Bool {
         return calendar.isDate(date, inSameDayAs: now)
-    }
-
-    func resync() {
-        fixedNow = nil
     }
 }
