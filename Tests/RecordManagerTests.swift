@@ -28,7 +28,7 @@ class RecordManagerTests: XCTestCase {
     override func tearDown() {
         super.tearDown()
         try? recordDataStore.deleteAll()
-        timeEngine.resync()
+        timeEngine.simulationMode = nil
     }
 
     func testTimeEngineBeginsUnfixed() {
@@ -96,7 +96,7 @@ class RecordManagerTests: XCTestCase {
 
     func testCreateRetrieveRecord() {
         do {
-            timeEngine.now = date(month: 1, day: 1)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 1)!)
             let task = Task(title: "Hello", frequency: .daily)
             try recordManager.createCompletionRecord(for: task)
             let records = recordManager.records
@@ -142,9 +142,9 @@ class RecordManagerTests: XCTestCase {
     func testLatestRecordShouldExist() {
         do {
             let task = Task(title: "Hello", frequency: .daily)
-            timeEngine.now = date(month: 1, day: 1, hour: 2)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 1, hour: 2)!)
             let firstRecord = try recordManager.createCompletionRecord(for: task)
-            timeEngine.now = date(month: 1, day: 1, hour: 10)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 1, hour: 10)!)
             let secondRecord = try recordManager.createCompletionRecord(for: task)
             guard let latest = recordManager.latestRecord(for: task) else {
                 XCTFail("latest record should exist")
@@ -167,11 +167,11 @@ class RecordManagerTests: XCTestCase {
     func testLatestRecordInCurrentPeriodExists() {
         do {
             let task = Task(title: "Hello", frequency: .daily)
-            timeEngine.now = date(month: 1, day: 1, hour: 2)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 1, hour: 2)!)
             try recordManager.createCompletionRecord(for: task)
-            timeEngine.now = date(month: 1, day: 1, hour: 10)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 1, hour: 10)!)
             try recordManager.createCompletionRecord(for: task)
-            timeEngine.now = date(month: 1, day: 2, hour: 5)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 2, hour: 5)!)
             let thirdRecord = try recordManager.createCompletionRecord(for: task)
             guard let latest = recordManager.latestRecordInCurrentPeriod(for: task) else {
                 XCTFail("latest record should exist")
@@ -186,11 +186,11 @@ class RecordManagerTests: XCTestCase {
     func testLatestRecordInCurrentPeriodDoesNotExist() {
         do {
             let task = Task(title: "Hello", frequency: .daily)
-            timeEngine.now = date(month: 1, day: 1, hour: 2)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 1, hour: 2)!)
             try recordManager.createCompletionRecord(for: task)
-            timeEngine.now = date(month: 1, day: 1, hour: 10)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 1, hour: 10)!)
             try recordManager.createCompletionRecord(for: task)
-            timeEngine.now = date(month: 1, day: 2, hour: 5)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 2, hour: 5)!)
             let latest = recordManager.latestRecordInCurrentPeriod(for: task)
             XCTAssertNil(latest)
         } catch {
@@ -201,10 +201,10 @@ class RecordManagerTests: XCTestCase {
     func testRemoveRecordExists() {
         do {
             let task = Task(title: "Hello", frequency: .daily)
-            timeEngine.now = date(month: 1, day: 1)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 1)!)
             let record = try recordManager.createCompletionRecord(for: task)
             XCTAssert(recordManager.records.count == 1)
-            timeEngine.now = date(month: 1, day: 1, hour: 10)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 1, hour: 10)!)
             guard let removed = recordManager.removeCompletionRecord(for: task) else {
                 XCTFail("removed record should exist")
                 return
@@ -218,7 +218,7 @@ class RecordManagerTests: XCTestCase {
 
     func testRemoveRecordDoesNotExist() {
         let task = Task(title: "Hello", frequency: .daily)
-        timeEngine.now = date(month: 1, day: 1)!
+        timeEngine.simulationMode = .fixed(date(month: 1, day: 1)!)
         let removed = recordManager.removeCompletionRecord(for: task)
         XCTAssertNil(removed)
     }
@@ -226,10 +226,10 @@ class RecordManagerTests: XCTestCase {
     func testRemoveRecordDoesNotExistAfterPeriodChange() {
         do {
             let task = Task(title: "Hello", frequency: .daily)
-            timeEngine.now = date(month: 1, day: 1)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 1)!)
             try recordManager.createCompletionRecord(for: task)
             XCTAssert(recordManager.records.count == 1)
-            timeEngine.now = date(month: 1, day: 2)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 2)!)
             let latest = recordManager.latestRecordInCurrentPeriod(for: task)
             XCTAssertNil(latest)
             XCTAssert(recordManager.records.count == 1)
@@ -241,9 +241,9 @@ class RecordManagerTests: XCTestCase {
     func testRemoveAllRecords() {
         do {
             let task = Task(title: "Hello", frequency: .daily)
-            timeEngine.now = date(month: 1, day: 1, hour: 2)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 1, hour: 2)!)
             try recordManager.createCompletionRecord(for: task)
-            timeEngine.now = date(month: 1, day: 1, hour: 10)!
+            timeEngine.simulationMode = .fixed(date(month: 1, day: 1, hour: 10)!)
             try recordManager.createCompletionRecord(for: task)
             XCTAssert(recordManager.records.count == 2)
             recordManager.removeAllCompletionRecords()

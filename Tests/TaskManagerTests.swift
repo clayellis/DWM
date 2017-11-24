@@ -43,7 +43,7 @@ class TaskManagerTests: XCTestCase {
         super.tearDown()
         recordManager.removeAllCompletionRecords()
         try? taskDataStore.deleteAll()
-        timeEngine.resync()
+        timeEngine.simulationMode = nil
     }
 
     func testTimeEngineBeginsUnfixed() {
@@ -125,19 +125,19 @@ class TaskManagerTests: XCTestCase {
         XCTAssertNotEqual(first, copy)
     }
 
-    func testTaskEqualityShouldNotEqualDifferentTitle() {
-        let id = UUID()
-        let first = Task(id: id, title: "First", frequency: .daily)
-        let copy = Task(id: id, title: "Not The Same", frequency: .daily)
-        XCTAssertNotEqual(first, copy)
-    }
-
-    func testTaskEqualityShouldNotEqualDifferentFrequency() {
-        let id = UUID()
-        let first = Task(id: id, title: "First", frequency: .daily)
-        let copy = Task(id: id, title: "First", frequency: .weekly)
-        XCTAssertNotEqual(first, copy)
-    }
+//    func testTaskEqualityShouldNotEqualDifferentTitle() {
+//        let id = UUID()
+//        let first = Task(id: id, title: "First", frequency: .daily)
+//        let copy = Task(id: id, title: "Not The Same", frequency: .daily)
+//        XCTAssertNotEqual(first, copy)
+//    }
+//
+//    func testTaskEqualityShouldNotEqualDifferentFrequency() {
+//        let id = UUID()
+//        let first = Task(id: id, title: "First", frequency: .daily)
+//        let copy = Task(id: id, title: "First", frequency: .weekly)
+//        XCTAssertNotEqual(first, copy)
+//    }
 
     func testCreatedTaskEqualsInputTask() {
         let task = Task(title: "Task", frequency: .weekly)
@@ -231,7 +231,7 @@ class TaskManagerTests: XCTestCase {
     func testMarkTestComplete() {
         let task = Task(title: "Task", frequency: .daily)
         taskManager.createTask(task)
-        timeEngine.now = date(month: 1, day: 1)!
+        timeEngine.simulationMode = .fixed(date(month: 1, day: 1)!)
         do {
             taskManager.markTask(task, asCompleted: true)
             XCTAssert(recordManager.records.count == 1)
@@ -315,9 +315,9 @@ class TaskManagerTests: XCTestCase {
 
     func testPartitionedTasksByFrequencyOverPeriodChange() {
         let daily = create(4, tasksOccuring: .daily)
-        timeEngine.now = date(month: 1, day: 1)!
+        timeEngine.simulationMode = .fixed(date(month: 1, day: 1)!)
         taskManager.markTask(daily[0], asCompleted: true)
-        timeEngine.now = date(month: 1, day: 3)!
+        timeEngine.simulationMode = .fixed(date(month: 1, day: 3)!)
         taskManager.markTask(daily[1], asCompleted: true)
         let partitions = taskManager.partitionedTasks(occuring: .daily)
         XCTAssertEqual(partitions.complete.count, 1)
@@ -359,11 +359,11 @@ class TaskManagerTests: XCTestCase {
         let daily = create(2, tasksOccuring: .daily)
         let weekly = create(3, tasksOccuring: .weekly)
         let monthly = create(5, tasksOccuring: .monthly)
-        timeEngine.now = date(month: 1, day: 1)!
+        timeEngine.simulationMode = .fixed(date(month: 1, day: 1)!)
         taskManager.markTask(daily[1], asCompleted: true)
-        timeEngine.now = date(month: 1, day: 8)!
+        timeEngine.simulationMode = .fixed(date(month: 1, day: 8)!)
         taskManager.markTask(weekly[0], asCompleted: true)
-        timeEngine.now = date(month: 1, day: 20)!
+        timeEngine.simulationMode = .fixed(date(month: 1, day: 20)!)
         taskManager.markTask(weekly[1], asCompleted: true)
         taskManager.markTask(monthly[0], asCompleted: true)
         let taskList = taskManager.generatePartitionedTaskLists()

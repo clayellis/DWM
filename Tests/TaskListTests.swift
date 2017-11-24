@@ -22,7 +22,7 @@ class TaskListTests: XCTestCase {
         let timeEngine = TimeEngine()
         let dayChangeObserver = DayChangeObserver(storage: store, timeEngine: timeEngine)
         let viewModel = TaskListViewModel(taskFrequency: .daily, timeEngine: timeEngine, dayChangeObserver: dayChangeObserver, taskManager: MockTaskManager(tasks: []))
-        timeEngine.now = date(month: 11, day: 19, year: 2017)!
+        timeEngine.simulationMode = .fixed(date(month: 11, day: 19, year: 2017)!)
         XCTAssertEqual(viewModel.title, "Sunday, Nov. 19")
     }
 
@@ -30,7 +30,7 @@ class TaskListTests: XCTestCase {
         let timeEngine = TimeEngine()
         let dayChangeObserver = DayChangeObserver(storage: store, timeEngine: timeEngine)
         let viewModel = TaskListViewModel(taskFrequency: .weekly, timeEngine: timeEngine, dayChangeObserver: dayChangeObserver, taskManager: MockTaskManager(tasks: []))
-        timeEngine.now = date(month: 11, day: 19, year: 2017)!
+        timeEngine.simulationMode = .fixed(date(month: 11, day: 19, year: 2017)!)
         XCTAssertEqual(viewModel.title, "November 19-25")
     }
 
@@ -38,7 +38,7 @@ class TaskListTests: XCTestCase {
         let timeEngine = TimeEngine()
         let dayChangeObserver = DayChangeObserver(storage: store, timeEngine: timeEngine)
         let viewModel = TaskListViewModel(taskFrequency: .weekly, timeEngine: timeEngine, dayChangeObserver: dayChangeObserver, taskManager: MockTaskManager(tasks: []))
-        timeEngine.now = date(month: 11, day: 26, year: 2017)!
+        timeEngine.simulationMode = .fixed(date(month: 11, day: 26, year: 2017)!)
         XCTAssertEqual(viewModel.title, "Nov. 26 - Dec. 2")
     }
 
@@ -46,7 +46,7 @@ class TaskListTests: XCTestCase {
         let timeEngine = TimeEngine()
         let dayChangeObserver = DayChangeObserver(storage: store, timeEngine: timeEngine)
         let viewModel = TaskListViewModel(taskFrequency: .monthly, timeEngine: timeEngine, dayChangeObserver: dayChangeObserver, taskManager: MockTaskManager(tasks: []))
-        timeEngine.now = date(month: 11, day: 19, year: 2017)!
+        timeEngine.simulationMode = .fixed(date(month: 11, day: 19, year: 2017)!)
         XCTAssertEqual(viewModel.title, "November 2017")
     }
 }
