@@ -163,8 +163,7 @@ final class TaskListViewModel: TaskListViewModelProtocol {
         state = .normal
         data = []
 
-        self.dayChangeObserver.startObserving()
-        self.dayChangeObserver.onChangesObserved = { [weak self] in
+        self.dayChangeObserver.startObserving(identifier: taskFrequency.rawValue) { [weak self] in
             self?.reloadData()
         }
 
@@ -172,7 +171,7 @@ final class TaskListViewModel: TaskListViewModelProtocol {
     }
 
     deinit {
-        dayChangeObserver.stopObserving()
+        dayChangeObserver.stopObserving(identifier: taskFrequency.rawValue)
     }
 
     // MARK: Helpers
