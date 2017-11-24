@@ -34,6 +34,14 @@ class TaskListTests: XCTestCase {
         XCTAssertEqual(viewModel.title, "November 19-25")
     }
 
+    func testListTitleWeeklySplitMonth() {
+        let timeEngine = TimeEngine()
+        let dayChangeObserver = DayChangeObserver(storage: store, timeEngine: timeEngine)
+        let viewModel = TaskListViewModel(taskFrequency: .weekly, timeEngine: timeEngine, dayChangeObserver: dayChangeObserver, taskManager: MockTaskManager(tasks: []))
+        timeEngine.now = date(month: 11, day: 26, year: 2017)!
+        XCTAssertEqual(viewModel.title, "Nov. 26 - Dec. 2")
+    }
+
     func testListTitleMonthly() {
         let timeEngine = TimeEngine()
         let dayChangeObserver = DayChangeObserver(storage: store, timeEngine: timeEngine)
