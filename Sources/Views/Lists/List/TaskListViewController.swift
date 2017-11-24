@@ -10,6 +10,11 @@ import UIKit
 
 // TODO: Move task to another list
 // TODO: (This will be on the carousel level) End editing when swiping between lists
+// TODO: Display some sort of fun popup message at midnight (on day changes)
+// - "Didn't expect to see you here at this hour! Don't mind me, I'm just renewing your tasks."
+// - "What are you doing up this late? Don't mind me..."
+// - "Shouldn't you be in bed?"
+// ... in order to give some context as to why the list is suddenly refreshing
 
 /// A `UIViewContoller` subclass for presenting a list of tasks
 final class TaskListViewController: UIViewController {
