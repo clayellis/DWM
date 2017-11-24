@@ -22,14 +22,14 @@ class DayChangeObserverTests: XCTestCase {
         let timeEngine = TimeEngine(fixedNow: date(month: 1, day: 1))
         let observer = DayChangeObserver(storage: storage, timeEngine: timeEngine)
         XCTAssertNil(observer.lastObservedDate)
-        observer.startObserving()
+        observer.startObserving(identifier: "id") {}
         XCTAssertEqual(observer.lastObservedDate, timeEngine.now)
     }
 
     func testNoChange() {
         let timeEngine = TimeEngine(fixedNow: date(month: 1, day: 1))
         let observer = DayChangeObserver(storage: storage, timeEngine: timeEngine)
-        observer.startObserving()
+        observer.startObserving(identifier: "id") {}
         timeEngine.now = date(month: 1, day: 1, hour: 3)!
         let didChange = observer.checkForChanges()
         XCTAssertFalse(didChange)
@@ -38,7 +38,7 @@ class DayChangeObserverTests: XCTestCase {
     func testChange() {
         let timeEngine = TimeEngine(fixedNow: date(month: 1, day: 1))
         let observer = DayChangeObserver(storage: storage, timeEngine: timeEngine)
-        observer.startObserving()
+        observer.startObserving(identifier: "id") {}
         timeEngine.now = date(month: 1, day: 2)!
         let didChange = observer.checkForChanges()
         XCTAssertTrue(didChange)
@@ -48,10 +48,9 @@ class DayChangeObserverTests: XCTestCase {
         let timeEngine = TimeEngine(fixedNow: date(month: 1, day: 1))
         let observer = DayChangeObserver(storage: storage, timeEngine: timeEngine)
         var flag = false
-        observer.onChangesObserved = {
+        observer.startObserving(identifier: "id") {
             flag = true
         }
-        observer.startObserving()
         timeEngine.now = date(month: 1, day: 1, hour: 3)!
         NotificationCenter.default.post(name: NSNotification.Name.NSCalendarDayChanged, object: nil)
         XCTAssertTrue(flag)
@@ -60,7 +59,7 @@ class DayChangeObserverTests: XCTestCase {
     func testResetObserver() {
         let timeEngine = TimeEngine(fixedNow: date(month: 1, day: 1))
         let observer = DayChangeObserver(storage: storage, timeEngine: timeEngine)
-        observer.startObserving()
+        observer.startObserving(identifier: "id") {}
         XCTAssertNotNil(observer.lastObservedDate)
         observer.reset()
         XCTAssertNil(observer.lastObservedDate)
