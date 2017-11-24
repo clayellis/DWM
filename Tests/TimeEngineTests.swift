@@ -9,6 +9,8 @@
 import XCTest
 @testable import DWM
 
+// TODO: Test offset simulation mode 
+
 class TimeEngineTests: XCTestCase {
 
     func testFixedNow() {
