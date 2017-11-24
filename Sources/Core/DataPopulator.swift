@@ -37,13 +37,6 @@ class DataPopulator {
         let m2 = Task(title: "Montly Two", frequency: .monthly)
 
         [d1, d2, d3, d4, d5, d6, w1, w2, m1, m2].forEach(taskManager.createTask)
-
-        do {
-            try recordManager.createCompletionRecord(for: d1)
-            try recordManager.createCompletionRecord(for: d2)
-        } catch {
-
-        }
     }
 
     func clearData() {
