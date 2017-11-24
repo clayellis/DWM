@@ -121,6 +121,14 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
+
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        taskListController(at: indexPath).viewWillAppear(false)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        taskListController(at: indexPath).viewDidDisappear(false)
+    }
 }
 
 extension UICollectionViewCell {
