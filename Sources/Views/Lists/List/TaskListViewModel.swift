@@ -234,37 +234,40 @@ final class TaskListViewModel: TaskListViewModelProtocol {
     // MARK: - Protocol
 
     var title: String {
-        switch taskFrequency {
-        case .daily:
-            do {
-                let formatter = DateFormatter(format: "EEEE, MMM. d")
-                let date = try timeEngine.currentPeriod(for: .daily).start
-                return formatter.string(from: date)
-            } catch {
-                // TODO: Handle the error
-                return "Daily"
-            }
-        case .weekly:
-            do {
-                let formatterOne = DateFormatter(format: "MMMM d")
-                let formatterTwo = DateFormatter(format: "d")
-                let range = try timeEngine.currentPeriod(for: .weekly)
-                let first = formatterOne.string(from: range.start)
-                let second = formatterTwo.string(from: range.end)
-                return "\(first)-\(second)"
+        do {
+            let date = try timeEngine.currentPeriod(for: taskFrequency)
+            let formatter = DateFormatter()
+            switch taskFrequency {
+            case .daily:
+                formatter.dateFormat = "EEEE, MMM. d"
 
-            } catch {
-                // TODO: Handle the error
-                return "Weekly"
+            case .weekly:
+                let startFormatter = DateFormatter()
+                let endFormatter = DateFormatter()
+                switch timeEngine.calendar.compare(date.start, to: date.end, toGranularity: .month) {
+                case .orderedSame:
+                    startFormatter.dateFormat = "MMMM d"
+                    endFormatter.dateFormat = "d"
+                default:
+                    startFormatter.dateFormat = "MMM. d "
+                    endFormatter.dateFormat = " MMM. d"
+                }
+                let start = startFormatter.string(from: date.start)
+                let end = endFormatter.string(from: date.end)
+                return "\(start)-\(end)"
+
+            case .monthly:
+                formatter.dateFormat = "MMMM yyyy"
+
             }
-        case .monthly:
-            do {
-                let formatter = DateFormatter(format: "MMMM yyyy")
-                let date = try timeEngine.currentPeriod(for: .monthly).start
-                return formatter.string(from: date)
-            } catch {
-                // TODO: Handle the error
-                return "Monthly"
+            return formatter.string(from: date.start)
+
+        } catch {
+            // TODO: Handle the error
+            switch taskFrequency {
+            case .daily: return "Daily"
+            case .weekly: return "Weekly"
+            case .monthly: return "Monthly"
             }
         }
     }
