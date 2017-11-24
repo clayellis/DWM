@@ -90,6 +90,8 @@ final class TaskListViewController: UIViewController {
                     tableView.reloadData()
                 })
             }
+
+            self?.title = self?.viewModel.title
         }
 
         viewModel.editingStateDidChange = { [weak self] editing in
