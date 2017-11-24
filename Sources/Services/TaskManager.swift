@@ -90,7 +90,7 @@ final class TaskManager: TaskManagerProtocol {
                 return false
         }
 
-        return lhsRecord.timestamp < rhsRecord.timestamp
+        return lhsRecord.timestamp > rhsRecord.timestamp
     }
 
     func toTask(_ taskData: TaskData) -> Task? {
