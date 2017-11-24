@@ -9,7 +9,7 @@
 import Foundation
 
 /// Defines an engine that keeps track of, measures, and compares time
-protocol TimeEngineProtocol {
+protocol TimeEngineProtocol: class {
     /// Internal `Calendar`
     var calendar: Calendar { get }
 
