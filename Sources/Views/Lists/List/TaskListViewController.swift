@@ -158,6 +158,11 @@ extension TaskListViewController {
     @objc func tappedToDismissKeyboard(_ gestureRecognizer: UITapGestureRecognizer) {
         view.endEditing(true)
     }
+
+    @objc func cellStatusIndicatorTapped(_ button: UIButton) {
+        guard let indexPath = self.indexPath(from: button) else { return }
+        viewModel.toggleTaskCompletionStatus(at: indexPath)
+    }
 }
 
 // MARK: Table View
@@ -169,6 +174,7 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         tableView.delegate = self
         tableView.keyboardDismissMode = .onDrag
         tableView.allowsSelectionDuringEditing = true
+        tableView.forceDelaysContentTouches(false)
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -193,6 +199,7 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TaskListCell.reuseIdentifier, for: indexPath) as! TaskListCell
+        cell.statusIndicator.addTarget(self, action: #selector(cellStatusIndicatorTapped(_:)), for: .touchUpInside)
         cell.textView.text = viewModel.titleForTask(at: indexPath)
         cell.textView.isEditable = viewModel.isEditingEnabled
         cell.textView.isUserInteractionEnabled = viewModel.isEditingEnabled
@@ -201,12 +208,29 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         } else {
             cell.textView.delegate = editTaskTextViewDelegate
         }
+        cell.applyStyling(asComplete: viewModel.isTaskComplete(at: indexPath))
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        viewModel.selectedRow(at: indexPath)
+        if let cell = tableView.cellForRow(at: indexPath) as? TaskListCell {
+
+            // TODO: Use completion blocks instead of asyncAfter
+            cell.toggleStyling()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                self.viewModel.selectedRow(at: indexPath)
+            }
+        } else {
+            viewModel.selectedRow(at: indexPath)
+        }
+//        if let cell = tableView.cellForRow(at: indexPath) as? TaskListCell {
+//            cell.toggleStyling(completion: {
+//                self.viewModel.selectedRow(at: indexPath)
+//            })
+//        } else {
+//            viewModel.selectedRow(at: indexPath)
+//        }
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
