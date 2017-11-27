@@ -151,7 +151,7 @@ final class TaskListViewController: UIViewController {
         // ANIMATION:
         // On down, the status indicator (and title) shrinks slightly on a spring (like it's being pressed down and loaded to spring)
         // and the first stroke of the check mark is drawn going down
-        feedbackManager.triggerCompletionTouchDown()
+        feedbackManager.triggerCompletionTouchDownFeedback()
     }
 
     func taskCompletionUp() {
@@ -159,7 +159,7 @@ final class TaskListViewController: UIViewController {
         // On the up movement, the status indicator (and title) springs up past its normal size and shakes (rotationally) with excitement just slightly (not the title)
         // and the final upwward stroke of the check mark is drawn
         // The indicator glows a certain color and pulses that color outwards
-        feedbackManager.triggerCompletionTouchUp()
+        feedbackManager.triggerCompletionTouchUpFeedback()
     }
 }
 
@@ -285,7 +285,7 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard scrollView.isDragging else { return }
-        feedbackManager.cancelCompletionTouchDown()
+        feedbackManager.cancelCompletionTouchDownFeedback()
     }
 }
 

@@ -9,10 +9,10 @@
 import UIKit
 
 protocol FeedbackManagerProtocol {
-    func triggerCompletionTouchDown()
-    func cancelCompletionTouchDown()
-    func triggerCompletionTouchUp()
-    func triggerListChange()
+    func triggerCompletionTouchDownFeedback()
+    func cancelCompletionTouchDownFeedback()
+    func triggerCompletionTouchUpFeedback()
+    func triggerListChangeFeedback()
 }
 
 class FeedbackManager: FeedbackManagerProtocol {
@@ -20,7 +20,7 @@ class FeedbackManager: FeedbackManagerProtocol {
     private var completionTouchDownItem: DispatchWorkItem?
     private var completionTouchDownTime: Date?
 
-    func triggerCompletionTouchDown() {
+    func triggerCompletionTouchDownFeedback() {
         completionTouchDownTime = Date()
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.prepare()
@@ -32,13 +32,13 @@ class FeedbackManager: FeedbackManagerProtocol {
         queue.asyncAfter(deadline: .now() + 0.05, execute: completionTouchDownItem!)
     }
 
-    func cancelCompletionTouchDown() {
+    func cancelCompletionTouchDownFeedback() {
         completionTouchDownItem?.cancel()
         completionTouchDownItem = nil
         completionTouchDownTime = nil
     }
 
-    func triggerCompletionTouchUp() {
+    func triggerCompletionTouchUpFeedback() {
         var impactStyle = UIImpactFeedbackStyle.medium
         if let time = completionTouchDownTime {
             let delta = Date().timeIntervalSince(time)
@@ -63,7 +63,7 @@ class FeedbackManager: FeedbackManagerProtocol {
         queue.asyncAfter(deadline: .now() + 0.1) { generator.impactOccurred() }
     }
 
-    func triggerListChange() {
+    func triggerListChangeFeedback() {
         UISelectionFeedbackGenerator().selectionChanged()
     }
 }

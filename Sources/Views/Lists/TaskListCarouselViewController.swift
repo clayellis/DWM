@@ -119,7 +119,7 @@ extension TaskListCarouselViewController: ListControlDataSource, ListControlDele
 
     func listControl(_ listControl: ListControl, didSelectListAt index: Int) {
         let indexPath = viewModel.indexPath(from: index)
-        feedbackManager.triggerListChange()
+        feedbackManager.triggerListChangeFeedback()
         carouselView.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
     }
 }
@@ -175,7 +175,7 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard scrollView.isDragging else { return }
-        feedbackManager.cancelCompletionTouchDown()
+        feedbackManager.cancelCompletionTouchDownFeedback()
         updateListControl(with: scrollView.contentOffset.x)
     }
 
@@ -200,7 +200,7 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
         let index = Int((contentOffet + pageSize / 2) / pageSize)
         if index != listControl.selectedIndex {
             listControl.selectedIndex = index
-            feedbackManager.triggerListChange()
+            feedbackManager.triggerListChangeFeedback()
         }
     }
 }
