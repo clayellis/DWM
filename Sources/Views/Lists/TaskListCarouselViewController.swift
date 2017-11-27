@@ -15,6 +15,7 @@ class TaskListCarouselViewController: UIViewController {
 
     let viewModel: TaskListCarouselViewModelProtocol
     let carouselView: TaskListCarouselViewProtocol & UIView
+    let listControl = ListControl()
 
     var taskListControllerCache = [TaskFrequency: TaskListNavigationController]()
 
@@ -36,6 +37,7 @@ class TaskListCarouselViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationBar()
+        configure(listControl: listControl)
         configure(collectionView: carouselView.collectionView)
     }
 
@@ -45,7 +47,9 @@ class TaskListCarouselViewController: UIViewController {
     }
 
     func configureNavigationBar() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Simulate", style: .plain, target: self, action: #selector(tappedSimulateDayChange(_:)))
+        navigationItem.titleView = listControl
+
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Sim", style: .plain, target: self, action: #selector(tappedSimulateDayChange(_:)))
     }
 
 
@@ -62,7 +66,7 @@ class TaskListCarouselViewController: UIViewController {
     }
 
     func taskListController(at indexPath: IndexPath) -> TaskListNavigationController {
-        let taskFrequency = viewModel.taskFrequency(at: indexPath)
+        let taskFrequency = viewModel.taskFrequency(at: indexPath.item)
         return taskListController(for: taskFrequency)
     }
 
@@ -95,6 +99,28 @@ extension TaskListCarouselViewController {
     }
 }
 
+// MARK: List Control
+
+extension TaskListCarouselViewController: ListControlDataSource, ListControlDelegate {
+    func configure(listControl: ListControl) {
+        listControl.dataSource = self
+        listControl.delegate = self
+    }
+
+    func numberOfLists() -> Int {
+        return viewModel.numberOfLists
+    }
+
+    func listControl(_ listControl: ListControl, titleForListAt index: Int) -> String {
+        return viewModel.titleForList(at: index)
+    }
+
+    func listControl(_ listControl: ListControl, didSelectListAt index: Int) {
+        let indexPath = viewModel.indexPath(from: index)
+        carouselView.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+    }
+}
+
 // MARK: Collection View
 
 extension TaskListCarouselViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
@@ -103,6 +129,8 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
         collectionView.register(TaskListCarouselCell.self, forCellWithReuseIdentifier: TaskListCarouselCell.reuseIdentifier)
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.forceDelaysContentTouches(false)
+        collectionView.decelerationRate = UIScrollViewDecelerationRateFast
 //        let horizontalInsets: CGFloat = 20
 //        collectionView.contentInset = UIEdgeInsets(top: 5,
 //                                                   left: horizontalInsets,
@@ -116,7 +144,7 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskListCarouselCell.reuseIdentifier, for: indexPath) as! TaskListCarouselCell
-        let taskFrequency = viewModel.taskFrequency(at: indexPath)
+        let taskFrequency = viewModel.taskFrequency(at: indexPath.item)
         let taskListController = self.taskListController(for: taskFrequency)
         cell.embdedView = taskListController.view
         return cell
@@ -139,10 +167,33 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         taskListController(at: indexPath).viewDidDisappear(false)
     }
-}
 
-extension UICollectionViewCell {
-    static var reuseIdentifier: String {
-        return String(describing: self)
+    // MARK: Scroll View
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView.isDragging else { return }
+        updateListControl(with: scrollView.contentOffset.x)
+    }
+
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        updateListControl(with: scrollView.contentOffset.x)
+    }
+
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        updateListControl(with: scrollView.contentOffset.x)
+    }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        updateListControl(with: scrollView.contentOffset.x)
+    }
+
+    func updateListControl(with contentOffet: CGFloat) {
+//        let horizontalInsets = carouselView.collectionViewLayout.sectionInset.horizontal
+        let fullWidth = carouselView.collectionView.bounds.width
+//        let pageSize = fullWidth - horizontalInsets
+        let pageSize = fullWidth
+        guard pageSize > 0 else { return }
+        let index = Int((contentOffet + pageSize / 2) / pageSize)
+        listControl.selectedIndex = index
     }
 }
