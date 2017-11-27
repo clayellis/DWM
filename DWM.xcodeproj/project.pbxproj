@@ -55,6 +55,7 @@
 		6F81B5B81FB749CD00875C74 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F81B5B71FB749CD00875C74 /* Utilities.swift */; };
 		6F81B5BA1FB74A6600875C74 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F81B5B91FB74A6600875C74 /* Utilities.swift */; };
 		6F81B5BC1FB7548900875C74 /* DayChangeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F81B5BB1FB7548900875C74 /* DayChangeObserver.swift */; };
+		6F82FB551FCC83A300A96CC0 /* FeedbackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F82FB541FCC83A300A96CC0 /* FeedbackManager.swift */; };
 		6FA1EFB01FCA22BB00D02DE8 /* UINavigationControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFAF1FCA22BB00D02DE8 /* UINavigationControllerExtensions.swift */; };
 		6FA1EFB21FCA880200D02DE8 /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFB11FCA880200D02DE8 /* UIColorExtensions.swift */; };
 		6FA1EFB41FCA8A7800D02DE8 /* UIButtonExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFB31FCA8A7800D02DE8 /* UIButtonExtensions.swift */; };
@@ -133,6 +134,7 @@
 		6F81B5B71FB749CD00875C74 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		6F81B5B91FB74A6600875C74 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		6F81B5BB1FB7548900875C74 /* DayChangeObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayChangeObserver.swift; sourceTree = "<group>"; };
+		6F82FB541FCC83A300A96CC0 /* FeedbackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackManager.swift; sourceTree = "<group>"; };
 		6FA1EFAF1FCA22BB00D02DE8 /* UINavigationControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationControllerExtensions.swift; sourceTree = "<group>"; };
 		6FA1EFB11FCA880200D02DE8 /* UIColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorExtensions.swift; sourceTree = "<group>"; };
 		6FA1EFB31FCA8A7800D02DE8 /* UIButtonExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIButtonExtensions.swift; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 				6F4197AF1FC1E1AE00DB35F5 /* TaskListViewModel.swift */,
 				6F4197B11FC1E26400DB35F5 /* TaskListView.swift */,
 				6F3B52691FC4906A00B3E0E5 /* TaskListCell.swift */,
+				6F82FB541FCC83A300A96CC0 /* FeedbackManager.swift */,
 			);
 			path = List;
 			sourceTree = "<group>";
@@ -544,6 +547,7 @@
 				6F4197AA1FC0BB1600DB35F5 /* TaskListViewController.swift in Sources */,
 				6F0C10721FC517DF0017D6A5 /* Delta.swift in Sources */,
 				6F41979B1FBFB0D200DB35F5 /* UIViewExtensions.swift in Sources */,
+				6F82FB551FCC83A300A96CC0 /* FeedbackManager.swift in Sources */,
 				6F59FDE91FB8CD410098D4FD /* CoreDataStore.swift in Sources */,
 				6FFF71741FB6A33D008B9870 /* AppDelegate.swift in Sources */,
 				6F81B5981FB747A900875C74 /* TaskFrequency.swift in Sources */,
