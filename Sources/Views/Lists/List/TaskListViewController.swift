@@ -19,12 +19,13 @@ import UIKit
 /// A `UIViewContoller` subclass for presenting a list of tasks
 final class TaskListViewController: UIViewController {
 
-    typealias Factory = TaskListFactory & ThemeFactory
+    typealias Factory = TaskListFactory & ThemeFactory & FeedbackManagerFactory
     let factory: Factory
 
     let viewModel: TaskListViewModelProtocol
     let taskListView: TaskListViewProtocol & UIView
     let theme: ThemeProtocol
+    let feedbackManager: FeedbackManagerProtocol
 
     private lazy var newTaskTextViewDelegate = NewTaskTextViewDelegate(controller: self)
     private lazy var editTaskTextViewDelegate = EditTaskTextViewDelegate(controller: self)
@@ -33,6 +34,7 @@ final class TaskListViewController: UIViewController {
         self.factory = factory
         self.viewModel = factory.makeTaskListViewModel(for: taskFrequency)
         self.taskListView = factory.makeTaskListView()
+        self.feedbackManager = factory.makeFeedbackManager()
         theme = factory.makeTheme()
         super.init(nibName: nil, bundle: nil)
     }
@@ -144,6 +146,21 @@ final class TaskListViewController: UIViewController {
         let point = taskListView.tableView.convert(subview.center, from: superview)
         return taskListView.tableView.indexPathForRow(at: point)
     }
+
+    func taskCompletionDown() {
+        // ANIMATION:
+        // On down, the status indicator (and title) shrinks slightly on a spring (like it's being pressed down and loaded to spring)
+        // and the first stroke of the check mark is drawn going down
+        feedbackManager.triggerCompletionTouchDown()
+    }
+
+    func taskCompletionUp() {
+        // ANIMATION:
+        // On the up movement, the status indicator (and title) springs up past its normal size and shakes (rotationally) with excitement just slightly (not the title)
+        // and the final upwward stroke of the check mark is drawn
+        // The indicator glows a certain color and pulses that color outwards
+        feedbackManager.triggerCompletionTouchUp()
+    }
 }
 
 // MARK: Selectors
@@ -170,9 +187,14 @@ extension TaskListViewController {
         view.endEditing(true)
     }
 
+    @objc func cellStatusIndicatorTouchDown(_ button: UIButton) {
+        taskCompletionDown()
+    }
+
     @objc func cellStatusIndicatorTapped(_ button: UIButton) {
         guard let indexPath = self.indexPath(from: button) else { return }
         viewModel.toggleTaskCompletionStatus(at: indexPath)
+        taskCompletionUp()
     }
 }
 
@@ -210,6 +232,7 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TaskListCell.reuseIdentifier, for: indexPath) as! TaskListCell
+        cell.statusIndicator.addTarget(self, action: #selector(cellStatusIndicatorTouchDown(_:)), for: .touchDown)
         cell.statusIndicator.addTarget(self, action: #selector(cellStatusIndicatorTapped(_:)), for: .touchUpInside)
         cell.textView.text = viewModel.titleForTask(at: indexPath)
         cell.textView.isEditable = viewModel.isEditingEnabled
@@ -223,10 +246,13 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
 
+    func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
+        taskCompletionDown()
+    }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if let cell = tableView.cellForRow(at: indexPath) as? TaskListCell {
-
             // TODO: Use completion blocks instead of asyncAfter
             cell.toggleStyling()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
@@ -235,13 +261,8 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         } else {
             viewModel.selectedRow(at: indexPath)
         }
-//        if let cell = tableView.cellForRow(at: indexPath) as? TaskListCell {
-//            cell.toggleStyling(completion: {
-//                self.viewModel.selectedRow(at: indexPath)
-//            })
-//        } else {
-//            viewModel.selectedRow(at: indexPath)
-//        }
+
+        taskCompletionUp()
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
@@ -260,6 +281,11 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         viewModel.deleteTask(at: indexPath)
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView.isDragging else { return }
+        feedbackManager.cancelCompletionTouchDown()
     }
 }
 
