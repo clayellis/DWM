@@ -29,6 +29,8 @@ class DependencyContainer {
     private lazy var taskManager: TaskManagerProtocol = TaskManager(timeEngine: timeEngine, recordManager: recordManager, taskDataStore: taskDataStore)
 
     private lazy var theme: ThemeProtocol = Themes.default
+
+    private lazy var feedbackManager = FeedbackManager()
 }
 
 protocol TaskListCarouselFactory {
@@ -129,5 +131,15 @@ protocol ThemeFactory {
 extension DependencyContainer: ThemeFactory {
     func makeTheme() -> ThemeProtocol {
         return theme
+    }
+}
+
+protocol FeedbackManagerFactory {
+    func makeFeedbackManager() -> FeedbackManagerProtocol
+}
+
+extension DependencyContainer: FeedbackManagerFactory {
+    func makeFeedbackManager() -> FeedbackManagerProtocol {
+        return feedbackManager
     }
 }
