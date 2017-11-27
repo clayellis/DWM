@@ -27,7 +27,8 @@ final class TaskListView: UIView, TaskListViewProtocol {
     }
 
     func configureSubviews() {
-        
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = .white
     }
 
     func configureLayout() {
