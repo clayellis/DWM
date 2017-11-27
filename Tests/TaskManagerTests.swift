@@ -14,6 +14,7 @@ import XCTest
 // TODO: Test updateTaskFrequency adjusts task's ordering (on the end)
 // TODO: Test updateTaskDisplayOrder
 // TODO: Test updateTaskDipslayOrder adjusts other tasks' ordering
+// TODO: Test isTaskComplete
 
 class TaskManagerTests: XCTestCase {
 
