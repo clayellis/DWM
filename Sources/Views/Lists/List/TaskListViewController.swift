@@ -91,9 +91,18 @@ final class TaskListViewController: UIViewController {
                 tableView.performBatchUpdates({
                     tableView.deleteRows(at: changes.deletedRows, with: .automatic)
                     tableView.insertRows(at: changes.insertedRows, with: .automatic)
+                    // TODO: Before moving rows to their new IndexPath, apply the appropriate styling (complete/incomplete)
+                    // TODO: After styling animation completes, move the rows.
+                    // If movedRows is the only non-empty item in changes, apply the styling outside of performBatchUpdates
+                    // and then move the rows (using performBatchUpdates), in applyStyling's completion handler
                     changes.movedRows.forEach { tableView.moveRow(at: $0.from, to: $0.to) }
-                    changes.deletedSections.forEach { tableView.deleteSections($0, with: .automatic) }
-                    changes.insertedSections.forEach { tableView.insertSections($0, with: .automatic) }
+//                    for move in changes.movedRows {
+//                        tableView.deleteRows(at: [move.from], with: UITableViewRowAnimation.fade)
+//                        tableView.insertRows(at: [move.to], with: UITableViewRowAnimation.fade)
+//                    }
+
+                    changes.deletedSections.forEach { tableView.deleteSections($0, with: .fade) }
+                    changes.insertedSections.forEach { tableView.insertSections($0, with: .fade) }
                 }, completion: { finished in
                     // Reload once the animations are complete in order to refresh the section headers and the cell settings
                     tableView.reloadData()
