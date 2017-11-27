@@ -62,6 +62,8 @@ protocol TaskListViewModelProtocol: class {
     var isEditingEnabled: Bool { get }
     ///
     func deleteTask(at indexPath: IndexPath)
+    /// Returns `true` if the task at the `indexPath` is complete, otherwise `false`
+    func isTaskComplete(at indexPath: IndexPath) -> Bool
 }
 
 /// Describes a list of tasks
@@ -217,6 +219,10 @@ final class TaskListViewModel: TaskListViewModelProtocol {
         return rows(in: section).flatMap(toTask)
     }
 
+    func task(at indexPath: IndexPath) -> Task {
+        return tasks(in: indexPath.section)[indexPath.row]
+    }
+
     func toTaskRow(_ task: Task) -> Row {
         return Row.task(task)
     }
@@ -315,17 +321,9 @@ final class TaskListViewModel: TaskListViewModelProtocol {
 
     func toggleTaskCompletionStatus(at indexPath: IndexPath) {
         guard !isEditing else { return }
-
-        switch data[indexPath.section] {
-        case .incomplete(let rows):
-            let tasks = rows.flatMap(toTask)
-            let task = tasks[indexPath.row]
-            taskManager.markTask(task, asCompleted: true)
-        case .complete(let rows):
-            let tasks = rows.flatMap(toTask)
-            let task = tasks[indexPath.row]
-            taskManager.markTask(task, asCompleted: false)
-        }
+        let task = self.task(at: indexPath)
+        let toggledValue = !taskManager.isTaskComplete(task)
+        taskManager.markTask(task, asCompleted: toggledValue)
         reloadData()
     }
 
@@ -389,7 +387,7 @@ final class TaskListViewModel: TaskListViewModelProtocol {
     var editingTask: Task? = nil
 
     func beginEditingTask(at indexPath: IndexPath) {
-        editingTask = tasks(in: indexPath.section)[indexPath.row]
+        editingTask = self.task(at: indexPath)
     }
 
     func updateEditingTask(title: String) {
@@ -406,7 +404,7 @@ final class TaskListViewModel: TaskListViewModelProtocol {
 
     func indexPathRepresentsEditingTaskRow(_ indexPath: IndexPath) -> Bool {
         guard let editingTask = editingTask else { return false }
-        let task = tasks(in: indexPath.section)[indexPath.row]
+        let task = self.task(at: indexPath)
         return task.id == editingTask.id
     }
 
@@ -428,8 +426,13 @@ final class TaskListViewModel: TaskListViewModelProtocol {
     }
 
     func deleteTask(at indexPath: IndexPath) {
-        let task = tasks(in: indexPath.section)[indexPath.row]
+        let task = self.task(at: indexPath)
         taskManager.deleteTask(task)
         reloadData()
+    }
+
+    func isTaskComplete(at indexPath: IndexPath) -> Bool {
+        let task = self.task(at: indexPath)
+        return taskManager.isTaskComplete(task)
     }
 }
