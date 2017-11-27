@@ -10,11 +10,12 @@ import UIKit
 
 /// A `UIViewController` subclass for presenting task lists
 class TaskListCarouselViewController: UIViewController {
-    typealias Factory = TaskListCarouselFactory & TaskListFactory & ThemeFactory
+    typealias Factory = TaskListCarouselFactory & TaskListFactory & ThemeFactory & FeedbackManagerFactory
     let factory: Factory
 
     let viewModel: TaskListCarouselViewModelProtocol
     let carouselView: TaskListCarouselViewProtocol & UIView
+    let feedbackManager: FeedbackManagerProtocol
     let listControl = ListControl()
 
     var taskListControllerCache = [TaskFrequency: TaskListNavigationController]()
@@ -23,6 +24,7 @@ class TaskListCarouselViewController: UIViewController {
         self.factory = factory
         self.viewModel = factory.makeTaskListCarouselViewModel()
         self.carouselView = factory.makeTaskListCarouselView()
+        self.feedbackManager = factory.makeFeedbackManager()
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -117,6 +119,7 @@ extension TaskListCarouselViewController: ListControlDataSource, ListControlDele
 
     func listControl(_ listControl: ListControl, didSelectListAt index: Int) {
         let indexPath = viewModel.indexPath(from: index)
+        feedbackManager.triggerListChange()
         carouselView.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
     }
 }
@@ -172,6 +175,7 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard scrollView.isDragging else { return }
+        feedbackManager.cancelCompletionTouchDown()
         updateListControl(with: scrollView.contentOffset.x)
     }
 
@@ -194,6 +198,9 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
         let pageSize = fullWidth
         guard pageSize > 0 else { return }
         let index = Int((contentOffet + pageSize / 2) / pageSize)
-        listControl.selectedIndex = index
+        if index != listControl.selectedIndex {
+            listControl.selectedIndex = index
+            feedbackManager.triggerListChange()
+        }
     }
 }
