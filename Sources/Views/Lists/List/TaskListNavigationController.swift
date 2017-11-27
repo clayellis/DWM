@@ -8,6 +8,8 @@
 
 import UIKit
 
+// TODO: Style the navigation bar white and maintain translucency
+
 /// A `UINavigationController` subclass that provides the default navigation bar behavior
 /// and styling for a list of tasks
 final class TaskListNavigationController: UINavigationController {
@@ -25,6 +27,12 @@ final class TaskListNavigationController: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureStyles()
+    }
+
+    private func configureStyles() {
         navigationBar.prefersLargeTitles = true
+        shadowImageView?.isHidden = true
+        navigationBar.barTintColor = .white
     }
 }
