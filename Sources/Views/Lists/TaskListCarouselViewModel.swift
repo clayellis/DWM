@@ -10,8 +10,9 @@ import Foundation
 
 protocol TaskListCarouselViewModelProtocol {
     var numberOfLists: Int { get }
-    func taskFrequency(at indexPath: IndexPath) -> TaskFrequency
-    func titleForList(at indexPath: IndexPath) -> String
+    func taskFrequency(at index: Int) -> TaskFrequency
+    func titleForList(at index: Int) -> String
+    func indexPath(from index: Int) -> IndexPath
 }
 
 class TaskListCarouselViewModel: TaskListCarouselViewModelProtocol {
@@ -22,15 +23,19 @@ class TaskListCarouselViewModel: TaskListCarouselViewModelProtocol {
         return lists.count
     }
 
-    func taskFrequency(at indexPath: IndexPath) -> TaskFrequency {
-        return lists[indexPath.item]
+    func taskFrequency(at index: Int) -> TaskFrequency {
+        return lists[index]
     }
 
-    func titleForList(at indexPath: IndexPath) -> String {
-        switch taskFrequency(at: indexPath) {
+    func titleForList(at index: Int) -> String {
+        switch taskFrequency(at: index) {
         case .daily: return "Daily"
         case .weekly: return "Weekly"
         case .monthly: return "Monthly"
         }
+    }
+
+    func indexPath(from index: Int) -> IndexPath {
+        return IndexPath(item: index, section: 0)
     }
 }
