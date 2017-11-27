@@ -39,3 +39,7 @@
 
 
 - Add some confetti when tasks are completed. Add some fireworks when task lists are completed. In increasing intensity (daily, weekly, monthly)
+
+- Support for area lists (above dwm) home list, work list, church list
+
+- Pre-made lists (cleaning)
