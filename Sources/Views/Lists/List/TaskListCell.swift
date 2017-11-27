@@ -8,7 +8,12 @@
 
 import UIKit
 
+// TODO: Create a subclass NewTaskListCell that hides the status indicator
+// TODO: Add a clear (x) button to NewTaskListCell to delete all text
+
 // TODO: Add a placeholder to the textView
+// TODO: Add custom delete button that replaces the status indicator while editing
+
 // TODO: Create a style manager for fonts, images, and colors
 
 class TaskListCell: UITableViewCell {
@@ -122,6 +127,7 @@ class TaskListCell: UITableViewCell {
 //        } else {
 //
 //        }
+
         animateChanges {
             // TODO: The highlight area should start slightly scaled and shrink back to normal
             if highlighted {
@@ -151,5 +157,17 @@ class TaskListCell: UITableViewCell {
 
     func crossDisolve(on view: UIView, _ animations: @escaping () -> ()) {
         self.crossDisolve(changes: animations(), on: view)
+    }
+}
+
+final class NewTaskListCell: TaskListCell {
+    override func configureSubviews() {
+        super.configureSubviews()
+        statusIndicator.isHidden = true
+    }
+
+    override func configureLayout() {
+        super.configureLayout()
+
     }
 }
