@@ -23,8 +23,6 @@ class ListControl: UIView {
 
     private let stackView = UIStackView()
     private var items = [ListControlItem]()
-    private let feedbackGenerator = UISelectionFeedbackGenerator()
-    private var readyForFeedback = false
 
     // MARK: Public Properties
 
@@ -36,8 +34,6 @@ class ListControl: UIView {
     var selectedIndex: Int? {
         didSet { updateSelection(from: oldValue, to: selectedIndex) }
     }
-
-    var generatesFeedbackOnSelectionChange = true
 
     // MARK: Init
 
@@ -71,8 +67,6 @@ class ListControl: UIView {
     }
 
     func reloadData() {
-        readyForFeedback = false
-        defer { readyForFeedback = true }
         guard let dataSource = dataSource else { return }
 
         for item in items {
@@ -113,11 +107,6 @@ class ListControl: UIView {
             UIView.transition(with: item, duration: duration, options: options, animations: {
                 item.isSelected = true
             }, completion: nil)
-
-            if generatesFeedbackOnSelectionChange && readyForFeedback {
-                feedbackGenerator.prepare()
-                feedbackGenerator.selectionChanged()
-            }
         }
     }
 
@@ -129,6 +118,8 @@ class ListControl: UIView {
 }
 
 private class ListControlItem: UIButton {
+    // TODO: Add a small label to the left of the title label to indicate the number of tasks left or a checkmark if the list is complete
+
     struct Sizes {
         static let height: CGFloat = 35
         static var cornerRadius: CGFloat {
