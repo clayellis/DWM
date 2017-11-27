@@ -219,8 +219,10 @@ final class TaskListViewModel: TaskListViewModelProtocol {
         return rows(in: section).flatMap(toTask)
     }
 
-    func task(at indexPath: IndexPath) -> Task {
-        return tasks(in: indexPath.section)[indexPath.row]
+    func task(at indexPath: IndexPath) -> Task? {
+        let tasks = self.tasks(in: indexPath.section)
+        guard indexPath.row < tasks.endIndex else { return nil }
+        return tasks[indexPath.row]
     }
 
     func toTaskRow(_ task: Task) -> Row {
@@ -321,10 +323,11 @@ final class TaskListViewModel: TaskListViewModelProtocol {
 
     func toggleTaskCompletionStatus(at indexPath: IndexPath) {
         guard !isEditing else { return }
-        let task = self.task(at: indexPath)
-        let toggledValue = !taskManager.isTaskComplete(task)
-        taskManager.markTask(task, asCompleted: toggledValue)
-        reloadData()
+        if let task = self.task(at: indexPath) {
+            let toggledValue = !taskManager.isTaskComplete(task)
+            taskManager.markTask(task, asCompleted: toggledValue)
+            reloadData()
+        }
     }
 
     func beginEditing() {
@@ -399,13 +402,17 @@ final class TaskListViewModel: TaskListViewModelProtocol {
         guard let editingTask = editingTask else { return }
         // TODO: Determine if deleting a task title should delete the task itself - for now, no
         // TODO: Once updateTitle can throw, propogate the error through a "handleError: (Error) -> ()" closure
+        // TODO: Disallow task titles to be completely empty
         taskManager.updateTitle(of: editingTask, to: editingTask.title)
     }
 
     func indexPathRepresentsEditingTaskRow(_ indexPath: IndexPath) -> Bool {
         guard let editingTask = editingTask else { return false }
-        let task = self.task(at: indexPath)
-        return task.id == editingTask.id
+        if let task = self.task(at: indexPath) {
+            return task.id == editingTask.id
+        } else {
+            return false
+        }
     }
 
     func selectedRow(at indexPath: IndexPath) {
@@ -426,13 +433,17 @@ final class TaskListViewModel: TaskListViewModelProtocol {
     }
 
     func deleteTask(at indexPath: IndexPath) {
-        let task = self.task(at: indexPath)
-        taskManager.deleteTask(task)
-        reloadData()
+        if let task = self.task(at: indexPath) {
+            taskManager.deleteTask(task)
+            reloadData()
+        }
     }
 
     func isTaskComplete(at indexPath: IndexPath) -> Bool {
-        let task = self.task(at: indexPath)
-        return taskManager.isTaskComplete(task)
+        if let task = self.task(at: indexPath) {
+            return taskManager.isTaskComplete(task)
+        } else {
+            return false
+        }
     }
 }
