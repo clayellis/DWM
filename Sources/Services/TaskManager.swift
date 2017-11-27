@@ -38,6 +38,9 @@ protocol TaskManagerProtocol {
     /// Marks the `task` as completed or incomplete
     func markTask(_ task: Task, asCompleted completed: Bool)
 
+    /// Returns `true` if the `task` is complete, otherwise returns `false`
+    func isTaskComplete(_ task: Task) -> Bool
+
     /// Returns `Task`s whose `frequency` matches the provided `TaskFrequency`
     func tasks(ocurring frequency: TaskFrequency) -> [Task]
 
@@ -68,10 +71,6 @@ final class TaskManager: TaskManagerProtocol {
     }
 
     // MARK: Helpers
-
-    func isTaskComplete(_ task: Task) -> Bool {
-        return recordManager.latestRecordInCurrentPeriod(for: task) != nil
-    }
 
     func byDisplayOrder(_ lhs: TaskData, _ rhs: TaskData) -> Bool {
         return lhs.displayOrder < rhs.displayOrder
@@ -212,6 +211,10 @@ final class TaskManager: TaskManagerProtocol {
         } else {
             recordManager.removeCompletionRecord(for: task)
         }
+    }
+
+    func isTaskComplete(_ task: Task) -> Bool {
+        return recordManager.latestRecordInCurrentPeriod(for: task) != nil
     }
 
     func tasks(ocurring frequency: TaskFrequency) -> [Task] {
