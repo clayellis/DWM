@@ -113,6 +113,11 @@ class MockTaskManager: TaskManagerProtocol {
                 monthly: (complete: [], incomplete: []))
     }
 
+    func isTaskComplete(_ task: Task) -> Bool {
+        // TODO: Implement
+        return false
+    }
+
     // MARK: Helpers
 
     func replace(_ task: Task, with replacement: Task) {
