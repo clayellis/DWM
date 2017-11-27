@@ -19,11 +19,12 @@ import UIKit
 /// A `UIViewContoller` subclass for presenting a list of tasks
 final class TaskListViewController: UIViewController {
 
-    typealias Factory = TaskListFactory
+    typealias Factory = TaskListFactory & ThemeFactory
     let factory: Factory
 
     let viewModel: TaskListViewModelProtocol
     let taskListView: TaskListViewProtocol & UIView
+    let theme: ThemeProtocol
 
     private lazy var newTaskTextViewDelegate = NewTaskTextViewDelegate(controller: self)
     private lazy var editTaskTextViewDelegate = EditTaskTextViewDelegate(controller: self)
@@ -32,6 +33,7 @@ final class TaskListViewController: UIViewController {
         self.factory = factory
         self.viewModel = factory.makeTaskListViewModel(for: taskFrequency)
         self.taskListView = factory.makeTaskListView()
+        theme = factory.makeTheme()
         super.init(nibName: nil, bundle: nil)
     }
 

@@ -15,12 +15,14 @@ protocol TaskListCarouselViewProtocol: class {
 
 class TaskListCarouselView: UIView, TaskListCarouselViewProtocol {
 
+    let theme: ThemeProtocol
     let collectionViewLayout = CenteredPreviewFlowLayout()
     private(set) lazy var collectionView: UICollectionView = {
         return UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
     }()
 
-    init() {
+    init(factory: ThemeFactory) {
+        theme = factory.makeTheme()
         super.init(frame: .zero)
         configure()
     }

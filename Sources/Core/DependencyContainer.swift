@@ -27,6 +27,8 @@ class DependencyContainer {
     private lazy var dayChangeObserver: DayChangeObserverProtocol = DayChangeObserver(storage: userDefaultsStore, timeEngine: timeEngine)
     private lazy var recordManager: RecordManagerProtocol = RecordManager(timeEngine: timeEngine, recordDataStore: recordDataStore)
     private lazy var taskManager: TaskManagerProtocol = TaskManager(timeEngine: timeEngine, recordManager: recordManager, taskDataStore: taskDataStore)
+
+    private lazy var theme: ThemeProtocol = Themes.default
 }
 
 protocol TaskListCarouselFactory {
@@ -37,7 +39,7 @@ protocol TaskListCarouselFactory {
 
 extension DependencyContainer: TaskListCarouselFactory {
     func makeTaskListCarouselView() -> UIView & TaskListCarouselViewProtocol {
-        return TaskListCarouselView()
+        return TaskListCarouselView(factory: self)
     }
 
     func makeTaskListCarouselViewModel() -> TaskListCarouselViewModelProtocol {
@@ -117,5 +119,15 @@ extension DependencyContainer: SimulatorFactory {
 
     func makeDayChangeObserver() -> DayChangeObserverProtocol {
         return dayChangeObserver
+    }
+}
+
+protocol ThemeFactory {
+    func makeTheme() -> ThemeProtocol
+}
+
+extension DependencyContainer: ThemeFactory {
+    func makeTheme() -> ThemeProtocol {
+        return theme
     }
 }

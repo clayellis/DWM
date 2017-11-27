@@ -55,6 +55,14 @@
 		6F81B5B81FB749CD00875C74 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F81B5B71FB749CD00875C74 /* Utilities.swift */; };
 		6F81B5BA1FB74A6600875C74 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F81B5B91FB74A6600875C74 /* Utilities.swift */; };
 		6F81B5BC1FB7548900875C74 /* DayChangeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F81B5BB1FB7548900875C74 /* DayChangeObserver.swift */; };
+		6FA1EFB01FCA22BB00D02DE8 /* UINavigationControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFAF1FCA22BB00D02DE8 /* UINavigationControllerExtensions.swift */; };
+		6FA1EFB21FCA880200D02DE8 /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFB11FCA880200D02DE8 /* UIColorExtensions.swift */; };
+		6FA1EFB41FCA8A7800D02DE8 /* UIButtonExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFB31FCA8A7800D02DE8 /* UIButtonExtensions.swift */; };
+		6FA1EFB61FCA8A9C00D02DE8 /* UIImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFB51FCA8A9C00D02DE8 /* UIImageExtensions.swift */; };
+		6FA1EFB81FCA920F00D02DE8 /* UIScrollViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFB71FCA920F00D02DE8 /* UIScrollViewExtensions.swift */; };
+		6FA1EFBA1FCB1B1F00D02DE8 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFB91FCB1B1F00D02DE8 /* Theme.swift */; };
+		6FA1EFBC1FCBCDE300D02DE8 /* ListControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFBB1FCBCDE300D02DE8 /* ListControl.swift */; };
+		6FA1EFBE1FCBD5B200D02DE8 /* UICollectionViewCellExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFBD1FCBD5B200D02DE8 /* UICollectionViewCellExtensions.swift */; };
 		6FCF1D751FC3C26A0082AF21 /* TaskListNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCF1D741FC3C26A0082AF21 /* TaskListNavigationController.swift */; };
 		6FE625AE1FBA99DD008B9F03 /* TaskManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE625AD1FBA99DD008B9F03 /* TaskManagerTests.swift */; };
 		6FE625B01FBAA5A7008B9F03 /* RecordManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE625AF1FBAA5A7008B9F03 /* RecordManagerTests.swift */; };
@@ -125,6 +133,14 @@
 		6F81B5B71FB749CD00875C74 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		6F81B5B91FB74A6600875C74 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		6F81B5BB1FB7548900875C74 /* DayChangeObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayChangeObserver.swift; sourceTree = "<group>"; };
+		6FA1EFAF1FCA22BB00D02DE8 /* UINavigationControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationControllerExtensions.swift; sourceTree = "<group>"; };
+		6FA1EFB11FCA880200D02DE8 /* UIColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorExtensions.swift; sourceTree = "<group>"; };
+		6FA1EFB31FCA8A7800D02DE8 /* UIButtonExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIButtonExtensions.swift; sourceTree = "<group>"; };
+		6FA1EFB51FCA8A9C00D02DE8 /* UIImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtensions.swift; sourceTree = "<group>"; };
+		6FA1EFB71FCA920F00D02DE8 /* UIScrollViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScrollViewExtensions.swift; sourceTree = "<group>"; };
+		6FA1EFB91FCB1B1F00D02DE8 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		6FA1EFBB1FCBCDE300D02DE8 /* ListControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListControl.swift; sourceTree = "<group>"; };
+		6FA1EFBD1FCBD5B200D02DE8 /* UICollectionViewCellExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICollectionViewCellExtensions.swift; sourceTree = "<group>"; };
 		6FCF1D741FC3C26A0082AF21 /* TaskListNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListNavigationController.swift; sourceTree = "<group>"; };
 		6FE625AD1FBA99DD008B9F03 /* TaskManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManagerTests.swift; sourceTree = "<group>"; };
 		6FE625AF1FBAA5A7008B9F03 /* RecordManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordManagerTests.swift; sourceTree = "<group>"; };
@@ -214,6 +230,7 @@
 				6FFF717D1FB6A33D008B9870 /* Assets.xcassets */,
 				6FFF717F1FB6A33D008B9870 /* LaunchScreen.storyboard */,
 				6F41979E1FC0A7DE00DB35F5 /* BaseNavigationController.swift */,
+				6FA1EFB91FCB1B1F00D02DE8 /* Theme.swift */,
 				6F4197991FBFB0C500DB35F5 /* Extensions */,
 				6F4197961FBFAF0800DB35F5 /* Lists */,
 			);
@@ -228,6 +245,7 @@
 				6F4197971FBFAF1C00DB35F5 /* TaskListCarouselViewController.swift */,
 				6F41979C1FBFB13E00DB35F5 /* TaskListCarouselView.swift */,
 				6F4197A21FC0AA5100DB35F5 /* TaskListCarouselCell.swift */,
+				6FA1EFBB1FCBCDE300D02DE8 /* ListControl.swift */,
 				6F4197A81FC0BB0E00DB35F5 /* List */,
 			);
 			path = Lists;
@@ -237,8 +255,14 @@
 			isa = PBXGroup;
 			children = (
 				6F41979A1FBFB0D200DB35F5 /* UIViewExtensions.swift */,
+				6FA1EFB71FCA920F00D02DE8 /* UIScrollViewExtensions.swift */,
+				6FA1EFB11FCA880200D02DE8 /* UIColorExtensions.swift */,
+				6FA1EFB31FCA8A7800D02DE8 /* UIButtonExtensions.swift */,
+				6FA1EFB51FCA8A9C00D02DE8 /* UIImageExtensions.swift */,
+				6FA1EFAF1FCA22BB00D02DE8 /* UINavigationControllerExtensions.swift */,
 				6F4197A41FC0AD9900DB35F5 /* UIEdgeInsetsExtensions.swift */,
 				6F2D42C41FC292AF00485A21 /* UITableViewCellExtensions.swift */,
+				6FA1EFBD1FCBD5B200D02DE8 /* UICollectionViewCellExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -490,21 +514,28 @@
 				6F59FDE61FB8CB210098D4FD /* DataStore.swift in Sources */,
 				6F81B5A01FB747E800875C74 /* TimeEngine.swift in Sources */,
 				6F2D42C31FC28DF900485A21 /* DependencyContainer.swift in Sources */,
+				6FA1EFB81FCA920F00D02DE8 /* UIScrollViewExtensions.swift in Sources */,
+				6FA1EFB61FCA8A9C00D02DE8 /* UIImageExtensions.swift in Sources */,
+				6FA1EFBA1FCB1B1F00D02DE8 /* Theme.swift in Sources */,
 				6F81B5A41FB7481E00875C74 /* TaskManager.swift in Sources */,
 				6F81B59E1FB747D700875C74 /* Reminder.swift in Sources */,
 				6F41979D1FBFB13E00DB35F5 /* TaskListCarouselView.swift in Sources */,
 				6F41979F1FC0A7DE00DB35F5 /* BaseNavigationController.swift in Sources */,
+				6FA1EFBE1FCBD5B200D02DE8 /* UICollectionViewCellExtensions.swift in Sources */,
 				6F7199691FB95D4400617BC0 /* TaskCompletionRecordData.swift in Sources */,
 				6F4197B21FC1E26400DB35F5 /* TaskListView.swift in Sources */,
 				6FCF1D751FC3C26A0082AF21 /* TaskListNavigationController.swift in Sources */,
 				6F2D42C51FC292AF00485A21 /* UITableViewCellExtensions.swift in Sources */,
+				6FA1EFB41FCA8A7800D02DE8 /* UIButtonExtensions.swift in Sources */,
 				6F7199731FB9676800617BC0 /* TaskData.swift in Sources */,
 				6F4197A51FC0AD9900DB35F5 /* UIEdgeInsetsExtensions.swift in Sources */,
 				6F7199661FB95D3200617BC0 /* TaskCompletionRecordData+CoreDataClass.swift in Sources */,
+				6FA1EFBC1FCBCDE300D02DE8 /* ListControl.swift in Sources */,
 				6F4197B01FC1E1AE00DB35F5 /* TaskListViewModel.swift in Sources */,
 				6F71994F1FB8DAC500617BC0 /* Retrievable.swift in Sources */,
 				6F7199621FB921E200617BC0 /* CoreDataStorable.swift in Sources */,
 				6F7199711FB9675D00617BC0 /* TaskData+CoreDataProperties.swift in Sources */,
+				6FA1EFB01FCA22BB00D02DE8 /* UINavigationControllerExtensions.swift in Sources */,
 				6F3B526A1FC4906A00B3E0E5 /* TaskListCell.swift in Sources */,
 				6F81B5BA1FB74A6600875C74 /* Utilities.swift in Sources */,
 				6F81B59A1FB747BA00875C74 /* Task.swift in Sources */,
@@ -521,6 +552,7 @@
 				6F7199671FB95D3200617BC0 /* TaskCompletionRecordData+CoreDataProperties.swift in Sources */,
 				6F81B5A61FB7482900875C74 /* ReminderManager.swift in Sources */,
 				6F4197A71FC0B08B00DB35F5 /* CenteredPreviewFlowLayout.swift in Sources */,
+				6FA1EFB21FCA880200D02DE8 /* UIColorExtensions.swift in Sources */,
 				6F71996D1FB9673000617BC0 /* DWM.xcdatamodeld in Sources */,
 				6F81B59C1FB747CA00875C74 /* TaskCompletionRecord.swift in Sources */,
 				6F4197A11FC0A80200DB35F5 /* TaskListCarouselViewModel.swift in Sources */,

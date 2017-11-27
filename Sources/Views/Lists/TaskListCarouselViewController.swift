@@ -10,7 +10,7 @@ import UIKit
 
 /// A `UIViewController` subclass for presenting task lists
 class TaskListCarouselViewController: UIViewController {
-    typealias Factory = TaskListCarouselFactory & TaskListFactory
+    typealias Factory = TaskListCarouselFactory & TaskListFactory & ThemeFactory
     let factory: Factory
 
     let viewModel: TaskListCarouselViewModelProtocol
