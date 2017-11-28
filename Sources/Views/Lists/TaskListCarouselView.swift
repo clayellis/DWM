@@ -37,7 +37,6 @@ class TaskListCarouselView: UIView, TaskListCarouselViewProtocol {
     }
 
     private func configureSubviews() {
-        backgroundColor = .white
         collectionViewLayout.scrollDirection = .horizontal
         collectionViewLayout.pageScale = 0.9
         collectionViewLayout.previewScale = 0.5
@@ -50,6 +49,11 @@ class TaskListCarouselView: UIView, TaskListCarouselViewProtocol {
 
     private func configureLayout() {
         addAutoLayoutSubview(collectionView)
-        collectionView.fillSuperviewSafeArea()
+        collectionView.fillSuperview()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        collectionViewLayout.prepareForCentering()
     }
 }
