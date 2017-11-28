@@ -134,7 +134,7 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TaskListCarouselCell.reuseIdentifier, for: indexPath) as! TaskListCarouselCell
         let taskFrequency = viewModel.taskFrequency(at: indexPath.item)
         let taskListController = self.taskListController(for: taskFrequency)
-        cell.embdedView = taskListController.view
+        cell.embeddedView = taskListController.view
         return cell
     }
 
