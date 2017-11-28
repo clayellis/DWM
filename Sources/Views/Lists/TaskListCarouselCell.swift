@@ -58,7 +58,7 @@ class TaskListCarouselCell: UICollectionViewCell {
             bufferView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             bufferView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             bufferView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            bufferView.heightAnchor.constraint(equalToConstant: Sizes.cornerRadius),
+            bufferView.heightAnchor.constraint(equalToConstant: 10),
 
             embeddedViewGuide.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             embeddedViewGuide.rightAnchor.constraint(equalTo: contentView.rightAnchor),
