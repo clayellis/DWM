@@ -67,7 +67,7 @@ extension UIView {
         return (left, right, top, bottom)
     }
 
-    public func fillSuperviewSafeArea(priority p: UILayoutPriority = .required) -> EdgeConstraints {
+    @discardableResult public func fillSuperviewSafeArea(priority p: UILayoutPriority = .required) -> EdgeConstraints {
         guard let superview = self.superview else { fatalErrorNoSuperview() }
         return fillLayoutGuide(superview.safeAreaLayoutGuide)
     }
