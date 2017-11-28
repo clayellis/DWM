@@ -11,7 +11,8 @@ import UIKit
 final class BaseNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        shadowImageView?.isHidden = true
-        navigationBar.barTintColor = .white
+        navigationBar.shadowImage = UIImage()
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.isTranslucent = true
     }
 }
