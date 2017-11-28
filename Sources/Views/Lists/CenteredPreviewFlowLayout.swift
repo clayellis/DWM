@@ -8,96 +8,80 @@
 
 import UIKit
 
+/// A `UICollectionViewFlowLayout` subclass which manually manages `sectionInset`s, `minimumLineSpacing`, and `itemSize`
+/// in order to center items horizontally leaving a portion of the left and right items visible.
+/// - Note: To customize behavior, see: `pageScale` and `previewScale`.
 class CenteredPreviewFlowLayout: UICollectionViewFlowLayout {
 
-    private var mostRecentOffset: CGPoint = .zero
+    // MARK: - Public
 
-    private func fallback(usingProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
-        mostRecentOffset = super.targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity)
-        return mostRecentOffset
+    /// The calculated width (in points) of each page
+    var pageWidth: CGFloat {
+        return collectionViewWidth * pageScale
+    }
+
+    /// The desired width of the pages expressed as a percentage.
+    /// Valid values are greater than `0` and less than or equal to `1.0`.
+    /// A `pageScale` of `1.0` will fill the full width of the collection view.
+    var pageScale: CGFloat = 0.75
+
+    /// The desired amount of the gutters which will be used to preview the previous and following page.
+    /// Valid values are greater than `0` and less than or equal to `1.0`.
+    /// A `previewScale` of `0.5` use half of the gutter to display the previous and following page,
+    /// while the remaing percentage of the gutter will be the space between pages.
+    var previewScale: CGFloat = 0.5
+
+    /// Call this method to automatically update `minimumLineSpacing`, `sectionInset.left`,
+    /// `sectionInset.right`, and `itemSize`.
+    func prepareForCentering(in view: UIView) {
+        let previewWidth = gutterWidth * previewScale
+        let spacing = gutterWidth - previewWidth
+        minimumLineSpacing = spacing
+        sectionInset.left = gutterWidth
+        sectionInset.right = gutterWidth
+        let itemHeight = collectionViewHeight - sectionInset.vertical
+        itemSize = CGSize(width: pageWidth, height: itemHeight)
+    }
+
+    var currentPage: Int {
+        guard let collectionView = collectionView else { return 0 }
+        return calculateCurrentPage(using: collectionView.contentOffset)
+    }
+
+    // MARK: - Private
+
+    private var collectionViewWidth: CGFloat {
+        guard let collectionView = collectionView else { return 0 }
+        return collectionView.frame.width
+    }
+
+    private var collectionViewHeight: CGFloat {
+        guard let collectionView = collectionView else { return 0 }
+        return collectionView.frame.height
+    }
+
+    private var gutterWidth: CGFloat {
+        return (collectionViewWidth - pageWidth) / 2
+    }
+
+    private func calculateCurrentPage(using contentOffset: CGPoint) -> Int {
+        guard collectionViewWidth > 0 else { return 0 }
+        return Int(floor((contentOffset.x + collectionViewWidth / 2) / collectionViewWidth))
     }
 
     override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
-        return super.targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity)
-//        if velocity.x == 0 {
-//            return mostRecentOffset
+        // FIXME: If you flick quickly, but over a very short distance, the collection view will jump
+        // I tried fixing it by inspecting the velocity and manually adjusting the pageNumber, that didn't work
+        let pageNumber = CGFloat(calculateCurrentPage(using: proposedContentOffset))
+//        print(velocity.x)
+//        if abs(velocity.x) > 0.5 {
+//            if velocity.x < 0 {
+//                pageNumber -= 1
+//            } else {
+//                pageNumber += 1
+//            }
 //        }
-//
-//        guard let collectionView = collectionView else {
-//            return fallback(usingProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity)
-//        }
-//
-//        let bounds = collectionView.bounds
-//        let halfWidth = bounds.width * 0.5
-//
-//        guard let visibleCellAttributes = layoutAttributesForElements(in: bounds) else {
-//            return fallback(usingProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity)
-//        }
-//
-//        var candidateAttributes: UICollectionViewLayoutAttributes?
-//        for attributes in visibleCellAttributes where attributes.representedElementCategory == UICollectionElementCategory.cell {
-//            if attributes.center.x == 0 { continue }
-//            if attributes.center.x > collectionView.contentOffset.x + halfWidth && velocity.x < 0 { continue }
-//            candidateAttributes = attributes
-//        }
-//
-//        if proposedContentOffset.x == -collectionView.contentInset.left {
-//            return proposedContentOffset
-//        }
-//
-//        guard let candidate = candidateAttributes else {
-//            return mostRecentOffset
-//        }
-//
-//        mostRecentOffset = CGPoint(x: floor(candidate.center.x - halfWidth), y: proposedContentOffset.y)
-//        return mostRecentOffset
-    }
-
-    func prepareForCentering(in view: UIView) {
-        guard let collectionView = collectionView else { return }
-        var insets = collectionView.contentInset
-        let inset = view.bounds.width - itemSize.width * 0.5
-        insets.left = inset
-        insets.right = inset
-        collectionView.contentInset = insets
-        collectionView.decelerationRate = UIScrollViewDecelerationRateFast
+        let offsetX = pageNumber * (pageWidth + gutterWidth / 2)
+        return CGPoint(x: offsetX, y: proposedContentOffset.y)
     }
 }
-
-
-//if let cv = self.collectionView {
-//
-//    let cvBounds = cv.bounds
-//    let halfWidth = cvBounds.size.width * 0.5;
-//
-//
-//    if let attributesForVisibleCells = self.layoutAttributesForElements(in: cvBounds) {
-//
-//        var candidateAttributes : UICollectionViewLayoutAttributes?
-//        for attributes in attributesForVisibleCells {
-//
-//            // == Skip comparison with non-cell items (headers and footers) == //
-//            if attributes.representedElementCategory != UICollectionElementCategory.cell {
-//                continue
-//            }
-//
-//            if (attributes.center.x == 0) || (attributes.center.x > (cv.contentOffset.x + halfWidth) && velocity.x < 0) {
-//                continue
-//            }
-//            candidateAttributes = attributes
-//        }
-//
-//        // Beautification step , I don't know why it works!
-//        if(proposedContentOffset.x == -(cv.contentInset.left)) {
-//            return proposedContentOffset
-//        }
-//
-//        guard let _ = candidateAttributes else {
-//            return mostRecentOffset
-//        }
-//        mostRecentOffset = CGPoint(x: floor(candidateAttributes!.center.x - halfWidth), y: proposedContentOffset.y)
-//        return mostRecentOffset
-//
-//    }
-//}
-
