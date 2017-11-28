@@ -77,18 +77,7 @@ class TaskListCarouselViewController: UIViewController {
     func simulateDayChange() {
         if let simulator = (factory as? SimulatorFactory) {
             let timeEngine = simulator.makeTimeEngine()
-            let day: TimeInterval = 86_400
-            if let currentMode = timeEngine.simulationMode {
-                switch currentMode {
-                case .fixed:
-                    timeEngine.simulationMode = .offset(day)
-                case .offset(let currentOffset):
-                    timeEngine.simulationMode = .offset(currentOffset + day)
-                }
-            } else {
-                timeEngine.simulationMode = .offset(day)
-            }
-            NotificationCenter.default.post(name: .NSCalendarDayChanged, object: nil)
+            timeEngine.simulateDayChange()
         }
     }
 }
