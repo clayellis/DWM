@@ -10,6 +10,10 @@ import UIKit
 
 class TaskListCarouselCell: UICollectionViewCell {
 
+    struct Sizes {
+        static let cornerRadius: CGFloat = 32
+    }
+
     private let bufferView = UIView()
     private let embeddedViewGuide = UILayoutGuide()
 
@@ -36,7 +40,7 @@ class TaskListCarouselCell: UICollectionViewCell {
 
     func configureSubviews() {
         contentView.backgroundColor = .lightGray
-        contentView.layer.cornerRadius = 32
+        contentView.layer.cornerRadius = Sizes.cornerRadius
         contentView.clipsToBounds = true
 
         layer.shadowOffset = CGSize(width: 0, height: 12)
@@ -54,7 +58,7 @@ class TaskListCarouselCell: UICollectionViewCell {
             bufferView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             bufferView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             bufferView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            bufferView.heightAnchor.constraint(equalToConstant: 30),
+            bufferView.heightAnchor.constraint(equalToConstant: Sizes.cornerRadius),
 
             embeddedViewGuide.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             embeddedViewGuide.rightAnchor.constraint(equalTo: contentView.rightAnchor),
