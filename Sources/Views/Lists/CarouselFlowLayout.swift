@@ -33,13 +33,14 @@ class CarouselFlowLayout: UICollectionViewFlowLayout {
 
     /// Call this method to automatically update `minimumLineSpacing`, `sectionInset.left`,
     /// `sectionInset.right`, and `itemSize`.
-    func prepareForCentering(in view: UIView) {
+    func prepareForCentering() {
+        guard let collectionView = collectionView else { return }
         let previewWidth = gutterWidth * previewScale
         let spacing = gutterWidth - previewWidth
         minimumLineSpacing = spacing
         sectionInset.left = gutterWidth
         sectionInset.right = gutterWidth
-        let itemHeight = collectionViewHeight - sectionInset.vertical
+        let itemHeight = collectionViewHeight - sectionInset.vertical - collectionView.adjustedContentInset.vertical
         itemSize = CGSize(width: pageWidth, height: itemHeight)
     }
 
