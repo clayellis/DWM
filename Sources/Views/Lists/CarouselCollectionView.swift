@@ -49,7 +49,7 @@ class CarouselCollectionView: UICollectionView {
     // MARK: Observation
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        guard keyPath == "contentOffset" else { return }
+        guard keyPath == "contentOffset", isDragging else { return }
         currentPage = carouselLayout.currentPage
     }
 }
