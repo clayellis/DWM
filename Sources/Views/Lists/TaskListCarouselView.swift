@@ -10,15 +10,15 @@ import UIKit
 
 protocol TaskListCarouselViewProtocol: class {
     var collectionViewLayout: CenteredPreviewFlowLayout { get }
-    var collectionView: UICollectionView { get }
+    var collectionView: CenteredPreviewCollectionView { get }
 }
 
 class TaskListCarouselView: UIView, TaskListCarouselViewProtocol {
 
     let theme: ThemeProtocol
     let collectionViewLayout = CenteredPreviewFlowLayout()
-    private(set) lazy var collectionView: UICollectionView = {
-        return UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
+    private(set) lazy var collectionView: CenteredPreviewCollectionView = {
+        return CenteredPreviewCollectionView(frame: .zero, centeredPreviewLayout: collectionViewLayout)
     }()
 
     init(factory: ThemeFactory) {
@@ -39,8 +39,9 @@ class TaskListCarouselView: UIView, TaskListCarouselViewProtocol {
     private func configureSubviews() {
         backgroundColor = .white
         collectionViewLayout.scrollDirection = .horizontal
+        collectionViewLayout.pageScale = 0.9
+        collectionViewLayout.previewScale = 0.5
         collectionView.backgroundColor = .white
-        collectionView.isPagingEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
         collectionView.alwaysBounceHorizontal = true
