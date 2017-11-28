@@ -43,11 +43,6 @@ class TaskListCarouselViewController: UIViewController {
         configure(collectionView: carouselView.collectionView)
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        carouselView.collectionViewLayout.prepareForCentering(in: view)
-    }
-
     func configureNavigationBar() {
         navigationItem.titleView = listControl
 
