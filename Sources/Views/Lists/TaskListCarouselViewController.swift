@@ -45,7 +45,7 @@ class TaskListCarouselViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-//        listsView.collectionViewLayout.prepareForCentering(in: view)
+        carouselView.collectionViewLayout.prepareForCentering(in: view)
     }
 
     func configureNavigationBar() {
@@ -126,19 +126,15 @@ extension TaskListCarouselViewController: ListControlDataSource, ListControlDele
 
 // MARK: Collection View
 
-extension TaskListCarouselViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+extension TaskListCarouselViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, CenteredPreviewCollectionViewDelegate {
 
-    func configure(collectionView: UICollectionView) {
+    func configure(collectionView: CenteredPreviewCollectionView) {
         collectionView.register(TaskListCarouselCell.self, forCellWithReuseIdentifier: TaskListCarouselCell.reuseIdentifier)
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.pagingDelegate = self
         collectionView.forceDelaysContentTouches(false)
         collectionView.decelerationRate = UIScrollViewDecelerationRateFast
-//        let horizontalInsets: CGFloat = 20
-//        collectionView.contentInset = UIEdgeInsets(top: 5,
-//                                                   left: horizontalInsets,
-//                                                   bottom: view.safeAreaInsets.bottom,
-//                                                   right: horizontalInsets)
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -153,16 +149,6 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width //- collectionView.contentInset.horizontal
-        let height = collectionView.bounds.height //- collectionView.contentInset.vertical
-        return CGSize(width: width, height: height)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
-    }
-
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         taskListController(at: indexPath).viewWillAppear(false)
     }
@@ -171,36 +157,14 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
         taskListController(at: indexPath).viewDidDisappear(false)
     }
 
+    func collectionView(_ collectionView: CenteredPreviewCollectionView, didChangePagesTo page: Int) {
+        listControl.selectedIndex = page
+        feedbackManager.triggerListChangeFeedback()
+    }
+
     // MARK: Scroll View
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard scrollView.isDragging else { return }
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         feedbackManager.cancelCompletionTouchDownFeedback()
-        updateListControl(with: scrollView.contentOffset.x)
-    }
-
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        updateListControl(with: scrollView.contentOffset.x)
-    }
-
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        updateListControl(with: scrollView.contentOffset.x)
-    }
-
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        updateListControl(with: scrollView.contentOffset.x)
-    }
-
-    func updateListControl(with contentOffet: CGFloat) {
-//        let horizontalInsets = carouselView.collectionViewLayout.sectionInset.horizontal
-        let fullWidth = carouselView.collectionView.bounds.width
-//        let pageSize = fullWidth - horizontalInsets
-        let pageSize = fullWidth
-        guard pageSize > 0 else { return }
-        let index = Int((contentOffet + pageSize / 2) / pageSize)
-        if index != listControl.selectedIndex {
-            listControl.selectedIndex = index
-            feedbackManager.triggerListChangeFeedback()
-        }
     }
 }
