@@ -46,56 +46,60 @@ extension UIView {
 // MARK: - Layout Macros
 
 extension UIView {
+    public typealias EdgeConstraints = (left: NSLayoutConstraint, right: NSLayoutConstraint, top: NSLayoutConstraint, bottom: NSLayoutConstraint)
+    public typealias CenterConstraints = (centerX: NSLayoutConstraint, centerY: NSLayoutConstraint)
+
+    private func fatalErrorNoSuperview() -> Never {
+        fatalError("\(self) has not been added as a subview")
+    }
+
     public func activate(_ constraints: NSLayoutConstraint...) {
         NSLayoutConstraint.activate(constraints)
     }
 
-    public func fillSuperview(priority p: UILayoutPriority = .required) {
-        guard let superview = self.superview else { return }
-        activate(
-            leftAnchor.constraint(equalTo: superview.leftAnchor, priority: p),
-            rightAnchor.constraint(equalTo: superview.rightAnchor, priority: p),
-            topAnchor.constraint(equalTo: superview.topAnchor, priority: p),
-            bottomAnchor.constraint(equalTo: superview.bottomAnchor, priority: p)
-        )
-    }
-
-    public func fillSuperviewSafeArea(priority p: UILayoutPriority = .required) {
-        guard let superview = self.superview else { return }
-        activate(
-            leftAnchor.constraint(equalTo: superview.safeLeft, priority: p),
-            rightAnchor.constraint(equalTo: superview.safeRight, priority: p),
-            topAnchor.constraint(equalTo: superview.safeTop, priority: p),
-            bottomAnchor.constraint(equalTo: superview.safeBottom, priority: p)
-        )
-    }
-
-    @discardableResult public func fillSuperviewLayoutMargins(priority p: UILayoutPriority = .required) -> (left: NSLayoutConstraint, right: NSLayoutConstraint, top: NSLayoutConstraint, bottom: NSLayoutConstraint) {
-        guard let superview = self.superview else {
-            fatalError("\(self) has not been added as a subview")
-        }
-        let left = leftAnchor.constraint(equalTo: superview.leftMargin, priority: p)
-        let right = rightAnchor.constraint(equalTo: superview.rightMargin, priority: p)
-        let top = topAnchor.constraint(equalTo: superview.topMargin, priority: p)
-        let bottom = bottomAnchor.constraint(equalTo: superview.bottomMargin, priority: p)
+    @discardableResult public func fillSuperview(priority p: UILayoutPriority = .required) -> EdgeConstraints {
+        guard let superview = self.superview else { fatalErrorNoSuperview() }
+        let left = leftAnchor.constraint(equalTo: superview.leftAnchor, priority: p)
+        let right = rightAnchor.constraint(equalTo: superview.rightAnchor, priority: p)
+        let top = topAnchor.constraint(equalTo: superview.topAnchor, priority: p)
+        let bottom = bottomAnchor.constraint(equalTo: superview.bottomAnchor, priority: p)
         activate(left, right, top, bottom)
         return (left, right, top, bottom)
     }
 
-    public func centerInSupervew(priority p: UILayoutPriority = .required) {
-        guard let superview = self.superview else { return }
-        activate(
-            centerXAnchor.constraint(equalTo: superview.centerXAnchor, priority: p),
-            centerYAnchor.constraint(equalTo: superview.centerYAnchor, priority: p)
-        )
+    public func fillSuperviewSafeArea(priority p: UILayoutPriority = .required) -> EdgeConstraints {
+        guard let superview = self.superview else { fatalErrorNoSuperview() }
+        return fillLayoutGuide(superview.safeAreaLayoutGuide)
     }
 
-    public func centerInSupervewLayoutMargins(priority p: UILayoutPriority = .required) {
-        guard let superview = self.superview else { return }
-        activate(
-            centerXAnchor.constraint(equalTo: superview.centerXMargin, priority: p),
-            centerYAnchor.constraint(equalTo: superview.centerYMargin, priority: p)
-        )
+    @discardableResult public func fillSuperviewLayoutMargins(priority p: UILayoutPriority = .required) -> EdgeConstraints {
+        guard let superview = self.superview else { fatalErrorNoSuperview() }
+        return fillLayoutGuide(superview.layoutMarginsGuide)
+    }
+
+    @discardableResult public func fillLayoutGuide(_ guide: UILayoutGuide, priority p: UILayoutPriority = .required) -> EdgeConstraints {
+        let left = leftAnchor.constraint(equalTo: guide.leftAnchor, priority: p)
+        let right = rightAnchor.constraint(equalTo: guide.rightAnchor, priority: p)
+        let top = topAnchor.constraint(equalTo: guide.topAnchor, priority: p)
+        let bottom = bottomAnchor.constraint(equalTo: guide.bottomAnchor, priority: p)
+        activate(left, right, top, bottom)
+        return (left, right, top, bottom)
+    }
+
+    @discardableResult public func centerInSupervew(priority p: UILayoutPriority = .required) -> CenterConstraints {
+        guard let superview = self.superview else { fatalErrorNoSuperview() }
+        let centerX = centerXAnchor.constraint(equalTo: superview.centerXAnchor, priority: p)
+        let centerY = centerYAnchor.constraint(equalTo: superview.centerYAnchor, priority: p)
+        activate(centerX, centerY)
+        return (centerX, centerY)
+    }
+
+    @discardableResult public func centerInSupervewLayoutMargins(priority p: UILayoutPriority = .required) -> CenterConstraints {
+        guard let superview = self.superview else { fatalErrorNoSuperview() }
+        let centerX = centerXAnchor.constraint(equalTo: superview.centerXMargin, priority: p)
+        let centerY = centerYAnchor.constraint(equalTo: superview.centerYMargin, priority: p)
+        activate(centerX, centerY)
+        return (centerX, centerY)
     }
 }
 
