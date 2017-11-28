@@ -11,15 +11,15 @@ import UIKit
 class TaskListCarouselCell: UICollectionViewCell {
 
     private let bufferView = UIView()
-    private let embededViewContainer = UIView()
+    private let embeddedViewGuide = UILayoutGuide()
 
-    var embdedView: UIView? = nil {
+    var embeddedView: UIView? = nil {
         willSet {
             if let view = newValue {
-                embededViewContainer.addAutoLayoutSubview(view)
-                view.fillSuperview()
+                contentView.addAutoLayoutSubview(view)
+                view.fillLayoutGuide(embeddedViewGuide)
             } else {
-                embdedView?.removeFromSuperview()
+                embeddedView?.removeFromSuperview()
             }
         }
     }
@@ -45,27 +45,26 @@ class TaskListCarouselCell: UICollectionViewCell {
         layer.shadowColor = UIColor.black.cgColor
 
         bufferView.backgroundColor = .white
-        embededViewContainer.backgroundColor = .white
     }
 
     func configureLayout() {
         contentView.addAutoLayoutSubview(bufferView)
-        contentView.addAutoLayoutSubview(embededViewContainer)
+        contentView.addLayoutGuide(embeddedViewGuide)
         NSLayoutConstraint.activate([
             bufferView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             bufferView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             bufferView.topAnchor.constraint(equalTo: contentView.topAnchor),
             bufferView.heightAnchor.constraint(equalToConstant: 30),
 
-            embededViewContainer.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            embededViewContainer.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            embededViewContainer.topAnchor.constraint(equalTo: bufferView.bottomAnchor),
-            embededViewContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            embeddedViewGuide.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            embeddedViewGuide.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            embeddedViewGuide.topAnchor.constraint(equalTo: bufferView.bottomAnchor),
+            embeddedViewGuide.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
             ])
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        embdedView = nil
+        embeddedView = nil
     }
 }
