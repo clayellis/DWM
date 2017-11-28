@@ -9,7 +9,8 @@
 import XCTest
 @testable import DWM
 
-// TODO: Test offset simulation mode 
+// TODO: Test offset simulation mode
+// TODO: Test simulate day change
 
 class TimeEngineTests: XCTestCase {
 
