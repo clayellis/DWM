@@ -1,5 +1,5 @@
 //
-//  CenteredPreviewCollectionView.swift
+//  CarouselCollectionView.swift
 //  DWM
 //
 //  Created by Clay Ellis on 11/28/17.
@@ -8,23 +8,23 @@
 
 import UIKit
 
-/// Delegate for `CenteredPreviewCollectionView`
-protocol CenteredPreviewCollectionViewDelegate: class {
+/// Delegate for `CarouselCollectionView`
+protocol CarouselCollectionViewDelegate: class {
     /// Called whenever the `collectionView` changes pages
     /// - parameter collectionView: The `collectionView`
     /// - parameter page: The new page index
-    func collectionView(_ collectionView: CenteredPreviewCollectionView, didChangePagesTo page: Int)
+    func collectionView(_ collectionView: CarouselCollectionView, didChangePagesTo page: Int)
 }
 
 /// A `UICollectionView` subclass which provides a `currentPage` and a `pagingDelegate` to receive page change events
-class CenteredPreviewCollectionView: UICollectionView {
+class CarouselCollectionView: UICollectionView {
 
     // MARK: Public
 
-    weak var pagingDelegate: CenteredPreviewCollectionViewDelegate?
+    weak var pagingDelegate: CarouselCollectionViewDelegate?
 
-    var centeredPreviewLayout: CenteredPreviewFlowLayout {
-        return collectionViewLayout as! CenteredPreviewFlowLayout
+    var carouselLayout: CarouselFlowLayout {
+        return collectionViewLayout as! CarouselFlowLayout
     }
 
     private(set) var currentPage: Int = 0 {
@@ -37,7 +37,7 @@ class CenteredPreviewCollectionView: UICollectionView {
 
     // MARK: Init
 
-    init(frame: CGRect, centeredPreviewLayout layout: CenteredPreviewFlowLayout) {
+    init(frame: CGRect, carouselLayout layout: CarouselFlowLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
         addObserver(self, forKeyPath: "contentOffset", options: .new, context: nil)
     }
@@ -50,6 +50,6 @@ class CenteredPreviewCollectionView: UICollectionView {
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         guard keyPath == "contentOffset" else { return }
-        currentPage = centeredPreviewLayout.currentPage
+        currentPage = carouselLayout.currentPage
     }
 }

@@ -115,9 +115,9 @@ extension TaskListCarouselViewController: ListControlDataSource, ListControlDele
 
 // MARK: Collection View
 
-extension TaskListCarouselViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, CenteredPreviewCollectionViewDelegate {
+extension TaskListCarouselViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, CarouselCollectionViewDelegate {
 
-    func configure(collectionView: CenteredPreviewCollectionView) {
+    func configure(collectionView: CarouselCollectionView) {
         collectionView.register(TaskListCarouselCell.self, forCellWithReuseIdentifier: TaskListCarouselCell.reuseIdentifier)
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -146,7 +146,7 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
         taskListController(at: indexPath).viewDidDisappear(false)
     }
 
-    func collectionView(_ collectionView: CenteredPreviewCollectionView, didChangePagesTo page: Int) {
+    func collectionView(_ collectionView: CarouselCollectionView, didChangePagesTo page: Int) {
         listControl.selectedIndex = page
         feedbackManager.triggerListChangeFeedback()
     }

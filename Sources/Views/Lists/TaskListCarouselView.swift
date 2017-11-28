@@ -9,16 +9,16 @@
 import UIKit
 
 protocol TaskListCarouselViewProtocol: class {
-    var collectionViewLayout: CenteredPreviewFlowLayout { get }
-    var collectionView: CenteredPreviewCollectionView { get }
+    var collectionViewLayout: CarouselFlowLayout { get }
+    var collectionView: CarouselCollectionView { get }
 }
 
 class TaskListCarouselView: UIView, TaskListCarouselViewProtocol {
 
     let theme: ThemeProtocol
-    let collectionViewLayout = CenteredPreviewFlowLayout()
-    private(set) lazy var collectionView: CenteredPreviewCollectionView = {
-        return CenteredPreviewCollectionView(frame: .zero, centeredPreviewLayout: collectionViewLayout)
+    let collectionViewLayout = CarouselFlowLayout()
+    private(set) lazy var collectionView: CarouselCollectionView = {
+        return CarouselCollectionView(frame: .zero, carouselLayout: collectionViewLayout)
     }()
 
     init(factory: ThemeFactory) {

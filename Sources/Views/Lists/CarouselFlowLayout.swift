@@ -1,5 +1,5 @@
 //
-//  CenteredPreviewFlowLayout.swift
+//  CarouselFlowLayout.swift
 //  DWM
 //
 //  Created by Clay Ellis on 11/18/17.
@@ -11,7 +11,7 @@ import UIKit
 /// A `UICollectionViewFlowLayout` subclass which manually manages `sectionInset`s, `minimumLineSpacing`, and `itemSize`
 /// in order to center items horizontally leaving a portion of the left and right items visible.
 /// - Note: To customize behavior, see: `pageScale` and `previewScale`.
-class CenteredPreviewFlowLayout: UICollectionViewFlowLayout {
+class CarouselFlowLayout: UICollectionViewFlowLayout {
 
     // MARK: - Public
 
