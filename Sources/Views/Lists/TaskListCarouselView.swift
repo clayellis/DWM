@@ -41,7 +41,7 @@ class TaskListCarouselView: UIView, TaskListCarouselViewProtocol {
         collectionViewLayout.sectionInset.top = 10
         collectionViewLayout.pageScale = 0.9
         collectionViewLayout.previewScale = 0.5
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = UIColor(hexString: "F4F4F4")
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
         collectionView.alwaysBounceHorizontal = true
