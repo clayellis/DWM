@@ -172,16 +172,41 @@ class ListControlItem: UIButton {
     }
 
     func setIndicator(style: IndicatorStyle?) {
+        // FIXME: There is a slight flat edge on the right side of the text indicator circle image
         let controlStates: [UIControlState] = [.normal, [.normal, .highlighted], .selected, [.selected, .highlighted]]
         if let style = style {
             switch style {
             case .text(let text):
                 let label = UILabel()
-                label.font = UIFont.systemFont(ofSize: 10, weight: .regular)
+                label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
                 label.text = text
+                label.textAlignment = .center
+                var proposedSize = label.intrinsicContentSize
+                label.layer.masksToBounds = true
+                label.layer.cornerRadius = proposedSize.height / 2
+
+                if proposedSize.height > proposedSize.width {
+                    label.bounds.size = CGSize(width: proposedSize.height, height: proposedSize.height)
+                } else {
+                    let insets = UIEdgeInsets(top: 0, left: 2.5, bottom: 0, right: 2.5)
+                    proposedSize.width += insets.horizontal
+                    label.bounds = CGRect(origin: .zero, size: proposedSize)
+                }
+
                 for controlState in controlStates {
-                    label.textColor = titleColor(for: controlState)
-                    setImage(UIImage(label: label), for: controlState)
+                    if controlState == .normal {
+                        let inverseState: UIControlState = .selected
+                        label.textColor = titleColor(for: inverseState)
+                        label.backgroundColor = backgroundColor(for: inverseState)
+                    } else if controlState == [.normal, .highlighted] {
+                        let inverseState: UIControlState = [.selected, .highlighted]
+                        label.textColor = titleColor(for: inverseState)
+                        label.backgroundColor = backgroundColor(for: inverseState)
+                    } else {
+                        label.textColor = titleColor(for: controlState)
+                        label.backgroundColor = .clear
+                    }
+                    setImage(UIImage(label: label, sizeByContent: false), for: controlState)
                 }
             case .image(let imageContext):
                 setImage(UIImage(named: imageContext.normalImageName), for: .normal)
