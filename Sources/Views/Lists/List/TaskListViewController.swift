@@ -196,6 +196,12 @@ extension TaskListViewController {
         viewModel.toggleTaskCompletionStatus(at: indexPath)
         taskCompletionUp()
     }
+
+    @objc func cellDeleteTapped(_ button: UIButton) {
+        guard let indexPath = self.indexPath(from: button) else { return }
+        // TODO: Present some sort of confirmation (in row, action sheet...)
+        viewModel.deleteTask(at: indexPath)
+    }
 }
 
 // MARK: Table View
@@ -234,6 +240,7 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: TaskListCell.reuseIdentifier, for: indexPath) as! TaskListCell
         cell.statusIndicator.addTarget(self, action: #selector(cellStatusIndicatorTouchDown(_:)), for: .touchDown)
         cell.statusIndicator.addTarget(self, action: #selector(cellStatusIndicatorTapped(_:)), for: .touchUpInside)
+        cell.deleteButton.addTarget(self, action: #selector(cellDeleteTapped(_:)), for: .touchUpInside)
         cell.textView.text = viewModel.titleForTask(at: indexPath)
         cell.textView.isEditable = viewModel.isEditingEnabled
         cell.textView.isUserInteractionEnabled = viewModel.isEditingEnabled
