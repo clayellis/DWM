@@ -348,10 +348,6 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         return !viewModel.indexPathRepresentsNewTaskRow(indexPath)
     }
 
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        viewModel.deleteTask(at: indexPath)
-    }
-
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         feedbackManager.cancelCompletionTouchDownFeedback()
     }
