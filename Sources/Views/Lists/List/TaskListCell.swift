@@ -202,6 +202,7 @@ extension TaskListCell {
         let transformValue: CGFloat = -25
         let duration: TimeInterval = animated ? 0.25 : 0
         if editing {
+            deleteButton.transform.tx = transformValue
             UIView.animateInParallel(
                 statusIndicator.animateInParallel(
                     .fadeOut(duration: duration),
@@ -213,6 +214,7 @@ extension TaskListCell {
                 )
             )
         } else {
+            statusIndicator.transform.tx = transformValue
             UIView.animateInParallel(
                 deleteButton.animateInParallel(
                     .fadeOut(duration: duration),
