@@ -47,7 +47,7 @@ class TaskListCell: UITableViewCell {
     func configureSubviews() {
         selectionStyle = .none
 
-        highlightArea.backgroundColor = .clear
+        highlightArea.backgroundColor = UIColor(hexString: "F4F4F4")
         highlightArea.layer.cornerRadius = 10
 
         statusIndicator.layer.borderWidth = 2
@@ -130,27 +130,6 @@ class TaskListCell: UITableViewCell {
         }
     }
 
-    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-        super.setHighlighted(highlighted, animated: animated)
-
-        crossDisolve(changes: self.statusIndicator.isHighlighted = highlighted, on: statusIndicator)
-
-//        if highlighted {
-//            self.highlightArea.transform = self.highlightArea.transform.scaledBy(x: <#T##CGFloat#>, y: <#T##CGFloat#>)
-//        } else {
-//
-//        }
-
-        animateChanges {
-            // TODO: The highlight area should start slightly scaled and shrink back to normal
-            if highlighted {
-                self.highlightArea.backgroundColor = UIColor.black.withAlphaComponent(0.03)
-            } else {
-                self.highlightArea.backgroundColor = .clear
-            }
-        }
-    }
-
     func animateChanges(duration: TimeInterval = 0.15, _ animations: @escaping () -> ()) {
         // TODO: Consider using new animation API
         UIView.animate(withDuration: duration,
@@ -172,6 +151,50 @@ class TaskListCell: UITableViewCell {
         self.crossDisolve(changes: animations(), on: view)
     }
 }
+
+// MARK: Highlight
+
+extension TaskListCell {
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        if highlighted {
+            let scalar: CGFloat = 0.985
+            let duration: TimeInterval = 0.2
+            UIView.animateInParallel(
+                highlightArea.animateInParallel(
+                    .fadeIn(duration: duration),
+                    .scale(by: scalar, duration: duration)
+                ),
+                statusIndicator.animateInParallel(
+                    .scale(by: scalar, duration: duration),
+                    .move(byX: 2, y: 0, duration: duration)
+                ),
+                textView.animateInParallel(
+                    .scale(by: scalar, duration: duration)
+                )
+            )
+        } else {
+            let duration: TimeInterval = 0.4
+            UIView.animateInParallel(
+                highlightArea.animateInParallel(
+                    .fadeOut(duration: duration),
+                    .resetScale(duration: duration)
+                ),
+                statusIndicator.animateInParallel(
+                    .resetScale(duration: duration),
+                    .resetPosition(duration: duration)
+                ),
+                textView.animateInParallel(
+                    .resetScale(duration: duration)
+                )
+            )
+        }
+
+//        crossDisolve(changes: self.statusIndicator.isHighlighted = highlighted, on: statusIndicator)
+    }
+}
+
+// MARK: Edit
 
 extension TaskListCell {
     override func setEditing(_ editing: Bool, animated: Bool) {
