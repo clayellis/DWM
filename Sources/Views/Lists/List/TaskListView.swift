@@ -29,6 +29,7 @@ final class TaskListView: UIView, TaskListViewProtocol {
     func configureSubviews() {
         tableView.separatorStyle = .none
         tableView.backgroundColor = .white
+        // TODO: Consider hiding the vertical scroll indicator
     }
 
     func configureLayout() {
