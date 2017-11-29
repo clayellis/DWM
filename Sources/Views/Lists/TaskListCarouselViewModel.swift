@@ -50,6 +50,7 @@ class TaskListCarouselViewModel: TaskListCarouselViewModelProtocol {
         if incomplete.count > 0 {
             return .text("\(incomplete.count)")
         } else {
+            // TODO: Create check mark image for completed lists
             let context = ListControlItem.IndicatorImageContext(
                 normalImageName: "Delete",
                 normalHighlightedImageName: "Delete",
