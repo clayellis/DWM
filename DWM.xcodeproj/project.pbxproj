@@ -65,6 +65,7 @@
 		6FA1EFBA1FCB1B1F00D02DE8 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFB91FCB1B1F00D02DE8 /* Theme.swift */; };
 		6FA1EFBC1FCBCDE300D02DE8 /* ListControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFBB1FCBCDE300D02DE8 /* ListControl.swift */; };
 		6FA1EFBE1FCBD5B200D02DE8 /* UICollectionViewCellExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1EFBD1FCBD5B200D02DE8 /* UICollectionViewCellExtensions.swift */; };
+		6FBE24B11FCE8472004955B7 /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FBE24B01FCE8472004955B7 /* Animation.swift */; };
 		6FCF1D751FC3C26A0082AF21 /* TaskListNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCF1D741FC3C26A0082AF21 /* TaskListNavigationController.swift */; };
 		6FE625AE1FBA99DD008B9F03 /* TaskManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE625AD1FBA99DD008B9F03 /* TaskManagerTests.swift */; };
 		6FE625B01FBAA5A7008B9F03 /* RecordManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE625AF1FBAA5A7008B9F03 /* RecordManagerTests.swift */; };
@@ -145,6 +146,7 @@
 		6FA1EFB91FCB1B1F00D02DE8 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		6FA1EFBB1FCBCDE300D02DE8 /* ListControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListControl.swift; sourceTree = "<group>"; };
 		6FA1EFBD1FCBD5B200D02DE8 /* UICollectionViewCellExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICollectionViewCellExtensions.swift; sourceTree = "<group>"; };
+		6FBE24B01FCE8472004955B7 /* Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
 		6FCF1D741FC3C26A0082AF21 /* TaskListNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskListNavigationController.swift; sourceTree = "<group>"; };
 		6FE625AD1FBA99DD008B9F03 /* TaskManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManagerTests.swift; sourceTree = "<group>"; };
 		6FE625AF1FBAA5A7008B9F03 /* RecordManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordManagerTests.swift; sourceTree = "<group>"; };
@@ -235,6 +237,7 @@
 				6FFF717F1FB6A33D008B9870 /* LaunchScreen.storyboard */,
 				6F41979E1FC0A7DE00DB35F5 /* BaseNavigationController.swift */,
 				6FA1EFB91FCB1B1F00D02DE8 /* Theme.swift */,
+				6FBE24B01FCE8472004955B7 /* Animation.swift */,
 				6F4197991FBFB0C500DB35F5 /* Extensions */,
 				6F4197961FBFAF0800DB35F5 /* Lists */,
 			);
@@ -550,6 +553,7 @@
 				6F7199701FB9675D00617BC0 /* TaskData+CoreDataClass.swift in Sources */,
 				6F4197AA1FC0BB1600DB35F5 /* TaskListViewController.swift in Sources */,
 				6F0C10721FC517DF0017D6A5 /* Delta.swift in Sources */,
+				6FBE24B11FCE8472004955B7 /* Animation.swift in Sources */,
 				6F41979B1FBFB0D200DB35F5 /* UIViewExtensions.swift in Sources */,
 				6F82FB551FCC83A300A96CC0 /* FeedbackManager.swift in Sources */,
 				6F59FDE91FB8CD410098D4FD /* CoreDataStore.swift in Sources */,
