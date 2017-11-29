@@ -20,6 +20,7 @@ class TaskListCell: UITableViewCell {
 
     let textView = UITextView()
     let statusIndicator = UIButton()
+    let deleteButton = UIButton()
     let highlightArea = UIView()
 
     // FIXME: Remove state, there should be a better way to accomplish this
@@ -57,6 +58,12 @@ class TaskListCell: UITableViewCell {
         statusIndicator.setBackgroundColor(UIColor.black.withAlphaComponent(0.2), forUIControlState: .selected)
         statusIndicator.setBackgroundColor(UIColor.black.withAlphaComponent(0.1), forUIControlState: [.selected, .highlighted])
 
+        // TODO: Increase the size of the delete image
+        // TODO: Increase the hit target area for delete button and status indicator (so that their frames are at least 44x44)
+        deleteButton.setImage(#imageLiteral(resourceName: "Delete"), for: .normal)
+        deleteButton.adjustsImageWhenHighlighted = false
+        deleteButton.alpha = 0
+
         textView.backgroundColor = .clear
         textView.font = UIFont.systemFont(ofSize: 17)
         textView.isScrollEnabled = false
@@ -68,6 +75,7 @@ class TaskListCell: UITableViewCell {
         contentView.layoutMargins = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
         contentView.addAutoLayoutSubview(highlightArea)
         contentView.addAutoLayoutSubview(statusIndicator)
+        contentView.addAutoLayoutSubview(deleteButton)
         contentView.addAutoLayoutSubview(textView)
         textView.setContentCompressionResistancePriority(.required, for: .vertical)
         NSLayoutConstraint.activate([
@@ -80,6 +88,11 @@ class TaskListCell: UITableViewCell {
             statusIndicator.centerYAnchor.constraint(equalTo: contentView.centerYMargin),
             statusIndicator.widthAnchor.constraint(equalToConstant: Sizes.statusIndicatorDiameter),
             statusIndicator.heightAnchor.constraint(equalTo: statusIndicator.widthAnchor),
+
+            deleteButton.leftAnchor.constraint(equalTo: statusIndicator.leftAnchor),
+            deleteButton.rightAnchor.constraint(equalTo: statusIndicator.rightAnchor),
+            deleteButton.topAnchor.constraint(equalTo: statusIndicator.topAnchor),
+            deleteButton.bottomAnchor.constraint(equalTo: statusIndicator.bottomAnchor),
 
             textView.leftAnchor.constraint(equalTo: statusIndicator.rightAnchor, constant: 10),
             textView.rightAnchor.constraint(equalTo: contentView.rightMargin),
@@ -138,9 +151,9 @@ class TaskListCell: UITableViewCell {
         }
     }
 
-    func animateChanges(_ animations: @escaping () -> ()) {
+    func animateChanges(duration: TimeInterval = 0.15, _ animations: @escaping () -> ()) {
         // TODO: Consider using new animation API
-        UIView.animate(withDuration: 0.15,
+        UIView.animate(withDuration: duration,
                        delay: 0,
                        options: [.beginFromCurrentState, .allowUserInteraction, .curveEaseInOut],
                        animations: animations,
@@ -157,6 +170,37 @@ class TaskListCell: UITableViewCell {
 
     func crossDisolve(on view: UIView, _ animations: @escaping () -> ()) {
         self.crossDisolve(changes: animations(), on: view)
+    }
+}
+
+extension TaskListCell {
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        let transformValue: CGFloat = -25
+        let duration: TimeInterval = animated ? 0.25 : 0
+        if editing {
+            UIView.animateInParallel(
+                statusIndicator.animateInParallel(
+                    .fadeOut(duration: duration),
+                    .move(byX: transformValue, y: 0, duration: duration)
+                ),
+                deleteButton.animateInParallel(
+                    .fadeIn(duration: duration),
+                    .resetPosition(duration: duration)
+                )
+            )
+        } else {
+            UIView.animateInParallel(
+                deleteButton.animateInParallel(
+                    .fadeOut(duration: duration),
+                    .move(byX: transformValue, y: 0, duration: duration)
+                ),
+                statusIndicator.animateInParallel(
+                    .fadeIn(duration: duration),
+                    .resetPosition(duration: duration)
+                )
+            )
+        }
     }
 }
 
