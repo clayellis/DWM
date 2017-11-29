@@ -161,6 +161,35 @@ final class TaskListViewController: UIViewController {
         // The indicator glows a certain color and pulses that color outwards
         feedbackManager.triggerCompletionTouchUpFeedback()
     }
+
+//    var thresholdLocation: CGPoint?
+//
+//    func updateTrackingPast(threshold: CGFloat, in scrollView: UIScrollView) -> CGFloat? {
+//        if let thresholdLocation = thresholdLocation {
+////            scrollView.contentOffset.y = threshold
+//            let currentLocation = scrollView.panGestureRecognizer.location(in: view)
+//            let delta = thresholdLocation.y - currentLocation.y
+//
+//            if delta > 0 {
+//                return delta
+//            } else {
+//                self.thresholdLocation = nil
+//                return nil
+//            }
+//
+//        } else if scrollView.contentOffset.y >= threshold {
+////            scrollView.contentOffset.y = threshold
+//            thresholdLocation = scrollView.panGestureRecognizer.location(in: view)
+//            return nil
+//        } else {
+//            thresholdLocation = nil
+//            return nil
+//        }
+//    }
+//
+//    func endTrackingPastThreshold() {
+//        thresholdLocation = nil
+//    }
 }
 
 // MARK: Selectors
@@ -202,6 +231,38 @@ extension TaskListViewController {
         // TODO: Present some sort of confirmation (in row, action sheet...)
         viewModel.deleteTask(at: indexPath)
     }
+
+//    @objc func tableViewPanGestureRecognizerDidChange(_ gestureRecognizer: UIPanGestureRecognizer) {
+//        // TODO: Figure out why this upperThreshold works, why is it -9 and not 0?
+//        // Is that the default distance between the first cell and the top of the table in a grouped table?
+////        let upperThreshold: CGFloat = -9
+//
+//        let scrollView = taskListView.tableView
+//        let contentHeight = scrollView.contentSize.height
+//        let scrollViewHeight = scrollView.frame.height
+//
+//        let lowerThreshold: CGFloat
+//
+//        if contentHeight < scrollViewHeight {
+//            lowerThreshold = -(scrollView.contentInset.top + scrollView.adjustedContentInset.top)
+//        } else {
+//            lowerThreshold = contentHeight - scrollViewHeight
+//        }
+//
+//        print(lowerThreshold)
+//
+//        switch gestureRecognizer.state {
+//        case .changed:
+//            if let distancePast = updateTrackingPast(threshold: lowerThreshold, in: taskListView.tableView), distancePast > 0 {
+//                print(distancePast)
+//            }
+//
+//        case .ended, .cancelled, .failed:
+//            endTrackingPastThreshold()
+//
+//        default: break
+//        }
+//    }
 }
 
 // MARK: Table View
@@ -214,6 +275,7 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         tableView.keyboardDismissMode = .onDrag
         tableView.allowsSelectionDuringEditing = true
         tableView.forceDelaysContentTouches(false)
+//        tableView.panGestureRecognizer.addTarget(self, action: #selector(tableViewPanGestureRecognizerDidChange(_:)))
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
