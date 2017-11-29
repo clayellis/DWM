@@ -49,7 +49,6 @@ class TaskListCarouselViewController: UIViewController {
 //        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Sim", style: .plain, target: self, action: #selector(tappedSimulateDayChange(_:)))
     }
 
-
     func taskListController(for taskFrequency: TaskFrequency) -> TaskListNavigationController {
         if let cached = taskListControllerCache[taskFrequency] {
             return cached
