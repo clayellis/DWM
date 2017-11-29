@@ -323,7 +323,11 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         if let cell = tableView.cellForRow(at: indexPath) as? TaskListCell {
             // TODO: Use completion blocks instead of asyncAfter
-            cell.toggleStyling()
+
+            // FIXME: We should really be applying styles explicity from the dataDidChange closure (see the notes in that closure above)
+            if !viewModel.isEditingEnabled {
+                cell.toggleStyling()
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                 self.viewModel.selectedRow(at: indexPath)
             }
@@ -363,11 +367,21 @@ private class TextViewDelegate: NSObject, UITextViewDelegate {
         super.init()
     }
 
-    func textViewDidBeginEditing(_ textView: UITextView) {}
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if let indexPath = controller?.indexPath(from: textView),
+            let cell = controller?.taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell {
+            cell.highlightArea.alpha = 1
+        }
+    }
 
     func textViewDidChange(_ textView: UITextView) {}
 
-    func textViewDidEndEditing(_ textView: UITextView) {}
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if let indexPath = controller?.indexPath(from: textView),
+            let cell = controller?.taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell {
+            cell.highlightArea.alpha = 0
+        }
+    }
 
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
@@ -383,6 +397,7 @@ private class TextViewDelegate: NSObject, UITextViewDelegate {
 
 private final class NewTaskTextViewDelegate: TextViewDelegate {
     override func textViewDidBeginEditing(_ textView: UITextView) {
+        super.textViewDidBeginEditing(textView)
         controller?.viewModel.beginCreatingNewTask()
     }
 
@@ -391,6 +406,7 @@ private final class NewTaskTextViewDelegate: TextViewDelegate {
     }
 
     override func textViewDidEndEditing(_ textView: UITextView) {
+        super.textViewDidEndEditing(textView)
         controller?.viewModel.commitNewTask()
         textView.text = ""
     }
@@ -398,6 +414,7 @@ private final class NewTaskTextViewDelegate: TextViewDelegate {
 
 private final class EditTaskTextViewDelegate: TextViewDelegate {
     override func textViewDidBeginEditing(_ textView: UITextView) {
+        super.textViewDidBeginEditing(textView)
         guard let indexPath = controller?.indexPath(from: textView) else { return }
         controller?.viewModel.beginEditingTask(at: indexPath)
     }
@@ -407,6 +424,7 @@ private final class EditTaskTextViewDelegate: TextViewDelegate {
     }
 
     override func textViewDidEndEditing(_ textView: UITextView) {
+        super.textViewDidEndEditing(textView)
         controller?.viewModel.commitEditingTask()
     }
 }
