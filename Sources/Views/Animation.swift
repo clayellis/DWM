@@ -42,6 +42,10 @@ extension Animation {
         return Animation(duration: duration, closure: { $0.bounds.size = size })
     }
 
+    static func scale(byX x: CGFloat, y: CGFloat, duration: TimeInterval = 0.3) -> Animation {
+        return Animation(duration: duration, closure: { $0.transform = $0.transform.scaledBy(x: x, y: y) })
+    }
+
     static func move(byX x: CGFloat, y: CGFloat, duration: TimeInterval = 0.3) -> Animation {
         return Animation(duration: duration, closure: { $0.transform = $0.transform.translatedBy(x: x, y: y) })
     }
