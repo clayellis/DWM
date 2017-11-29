@@ -5,6 +5,8 @@
 //  Created by Clay Ellis on 11/28/17.
 //  Copyright © 2017 Test. All rights reserved.
 //
+//  Inspired by: https://github.com/JohnSundell/Animate
+//
 
 import UIKit
 
