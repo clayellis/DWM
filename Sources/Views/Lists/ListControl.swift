@@ -11,6 +11,7 @@ import UIKit
 protocol ListControlDataSource: class {
     func numberOfLists() -> Int
     func listControl(_ listControl: ListControl, titleForListAt index: Int) -> String
+    func listControl(_ listControl: ListControl, indicatorStyleForListAt index: Int) -> ListControlItem.IndicatorStyle?
 }
 
 protocol ListControlDelegate: class {
@@ -79,8 +80,10 @@ class ListControl: UIView {
         for index in 0 ..< dataSource.numberOfLists() {
             let item = ListControlItem()
             let itemTitle = dataSource.listControl(self, titleForListAt: index)
+            let indicatorStyle = dataSource.listControl(self, indicatorStyleForListAt: index)
             item.tag = index
             item.setTitle(itemTitle, for: .normal)
+            item.setIndicator(style: indicatorStyle)
             item.addTarget(self, action: #selector(itemTapped(_:)), for: .touchUpInside)
             items.append(item)
             stackView.addArrangedSubview(item)
@@ -117,7 +120,20 @@ class ListControl: UIView {
     }
 }
 
-private class ListControlItem: UIButton {
+class ListControlItem: UIButton {
+
+    struct IndicatorImageContext {
+        let normalImageName: String
+        let normalHighlightedImageName: String
+        let selectedImageName: String
+        let selectedHighlightedImageName: String
+    }
+
+    enum IndicatorStyle {
+        case image(IndicatorImageContext)
+        case text(String)
+    }
+
     // TODO: Add a small label to the left of the title label to indicate the number of tasks left or a checkmark if the list is complete
 
     struct Sizes {
@@ -153,5 +169,32 @@ private class ListControlItem: UIButton {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func setIndicator(style: IndicatorStyle?) {
+        let controlStates: [UIControlState] = [.normal, [.normal, .highlighted], .selected, [.selected, .highlighted]]
+        if let style = style {
+            switch style {
+            case .text(let text):
+                let label = UILabel()
+                label.font = UIFont.systemFont(ofSize: 10, weight: .regular)
+                label.text = text
+                for controlState in controlStates {
+                    label.textColor = titleColor(for: controlState)
+                    setImage(UIImage(label: label), for: controlState)
+                }
+            case .image(let imageContext):
+                setImage(UIImage(named: imageContext.normalImageName), for: .normal)
+                setImage(UIImage(named: imageContext.normalHighlightedImageName), for: [.normal, .highlighted])
+                setImage(UIImage(named: imageContext.selectedImageName), for: .selected)
+                setImage(UIImage(named: imageContext.selectedHighlightedImageName), for: [.selected, .highlighted])
+            }
+            setImageTitleSpacing(5)
+        } else {
+            for controlState in controlStates {
+                setImage(nil, for: controlState)
+            }
+            setImageTitleSpacing(0)
+        }
     }
 }
