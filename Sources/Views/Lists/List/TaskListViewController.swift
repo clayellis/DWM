@@ -267,11 +267,11 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
         guard viewModel.isEditingEnabled else { return .none }
-        if viewModel.indexPathRepresentsNewTaskRow(indexPath) {
-            return .none
-        } else {
-            return .delete
-        }
+        return .none
+    }
+
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -283,8 +283,7 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         viewModel.deleteTask(at: indexPath)
     }
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard scrollView.isDragging else { return }
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         feedbackManager.cancelCompletionTouchDownFeedback()
     }
 }
