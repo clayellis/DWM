@@ -72,6 +72,7 @@ final class TaskListViewController: UIViewController {
     func configureNavigationBar() {
         title = viewModel.title
 
+        // TODO: Make an edit/done icon
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             title: viewModel.editButtonTitle,
             style: .plain,
