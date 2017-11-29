@@ -34,5 +34,6 @@ final class TaskListNavigationController: UINavigationController {
         navigationBar.prefersLargeTitles = true
         shadowImageView?.isHidden = true
         navigationBar.barTintColor = .white
+        navigationBar.backgroundColor = .white
     }
 }
