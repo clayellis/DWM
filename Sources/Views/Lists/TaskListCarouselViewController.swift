@@ -100,6 +100,10 @@ extension TaskListCarouselViewController: ListControlDataSource, ListControlDele
         return viewModel.titleForList(at: index)
     }
 
+    func listControl(_ listControl: ListControl, indicatorStyleForListAt index: Int) -> ListControlItem.IndicatorStyle? {
+        return viewModel.indicatorForList(at: index)
+    }
+
     func listControl(_ listControl: ListControl, didSelectListAt index: Int) {
         let indexPath = viewModel.indexPath(from: index)
         feedbackManager.triggerListChangeFeedback()
