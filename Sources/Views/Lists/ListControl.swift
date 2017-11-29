@@ -134,10 +134,10 @@ class ListControlItem: UIButton {
         case text(String)
     }
 
-    // TODO: Add a small label to the left of the title label to indicate the number of tasks left or a checkmark if the list is complete
-
     struct Sizes {
+        // TODO: Find a way to make these height constants dynamic based on preferredFontSize
         static let height: CGFloat = 35
+        static let indicatorHeight: CGFloat = 18
         static var cornerRadius: CGFloat {
             return height / 2
         }
@@ -149,7 +149,7 @@ class ListControlItem: UIButton {
         setTitleColor(.black, for: .normal)
         setBackgroundColor(.clear, forUIControlState: .normal)
         // Normal Highlighted
-        setTitleColor(UIColor.black.withAlphaComponent(0.5), for: [.normal, .highlighted])
+        setTitleColor(UIColor.white, for: [.normal, .highlighted])
         setBackgroundColor(UIColor.black.withAlphaComponent(0.1), forUIControlState: [.normal, .highlighted])
         // Selected
         setTitleColor(.white, for: .selected)
@@ -173,6 +173,7 @@ class ListControlItem: UIButton {
 
     func setIndicator(style: IndicatorStyle?) {
         // FIXME: There is a slight flat edge on the right side of the text indicator circle image
+        // The flat edge appears on images (CheckWhiteCircle) too which leads me to believe that it's caused by the image/titleEdgeInsets
         let controlStates: [UIControlState] = [.normal, [.normal, .highlighted], .selected, [.selected, .highlighted]]
         if let style = style {
             switch style {
@@ -181,16 +182,17 @@ class ListControlItem: UIButton {
                 label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
                 label.text = text
                 label.textAlignment = .center
-                var proposedSize = label.intrinsicContentSize
+                let proposedSize = label.intrinsicContentSize
                 label.layer.masksToBounds = true
                 label.layer.cornerRadius = proposedSize.height / 2
 
+                label.bounds.size.height = Sizes.indicatorHeight
+
                 if proposedSize.height > proposedSize.width {
-                    label.bounds.size = CGSize(width: proposedSize.height, height: proposedSize.height)
+                    label.bounds.size.width = label.bounds.size.height
                 } else {
                     let insets = UIEdgeInsets(top: 0, left: 2.5, bottom: 0, right: 2.5)
-                    proposedSize.width += insets.horizontal
-                    label.bounds = CGRect(origin: .zero, size: proposedSize)
+                    label.bounds.size.width = proposedSize.width + insets.horizontal
                 }
 
                 for controlState in controlStates {
@@ -213,8 +215,11 @@ class ListControlItem: UIButton {
                 setImage(UIImage(named: imageContext.normalHighlightedImageName), for: [.normal, .highlighted])
                 setImage(UIImage(named: imageContext.selectedImageName), for: .selected)
                 setImage(UIImage(named: imageContext.selectedHighlightedImageName), for: [.selected, .highlighted])
+                imageView?.contentMode = .scaleAspectFit
+                imageView?.bounds.size = CGSize(width: Sizes.indicatorHeight, height: Sizes.indicatorHeight)
+                adjustsImageWhenHighlighted = false
             }
-            setImageTitleSpacing(5)
+            setImageTitleSpacing(2)
         } else {
             for controlState in controlStates {
                 setImage(nil, for: controlState)
