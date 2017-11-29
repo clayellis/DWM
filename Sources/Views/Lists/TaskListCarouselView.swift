@@ -38,6 +38,7 @@ class TaskListCarouselView: UIView, TaskListCarouselViewProtocol {
 
     private func configureSubviews() {
         collectionViewLayout.scrollDirection = .horizontal
+        collectionViewLayout.sectionInset.top = 10
         collectionViewLayout.pageScale = 0.9
         collectionViewLayout.previewScale = 0.5
         collectionView.backgroundColor = .white
