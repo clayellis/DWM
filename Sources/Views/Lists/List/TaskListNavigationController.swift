@@ -8,8 +8,6 @@
 
 import UIKit
 
-// TODO: Style the navigation bar white and maintain translucency
-
 /// A `UINavigationController` subclass that provides the default navigation bar behavior
 /// and styling for a list of tasks
 final class TaskListNavigationController: UINavigationController {
@@ -32,6 +30,12 @@ final class TaskListNavigationController: UINavigationController {
 
     private func configureStyles() {
         navigationBar.prefersLargeTitles = true
+        if let titleLabel = navigationBar.subviewWithClassType(UILabel.self) {
+//            titleLabel.adjustsFontSizeToFitWidth = true
+//            titleLabel.allowsDefaultTighteningForTruncation = true
+            titleLabel.numberOfLines = 2
+            titleLabel.lineBreakMode = .byWordWrapping
+        }
         shadowImageView?.isHidden = true
         navigationBar.barTintColor = .white
         navigationBar.backgroundColor = .white
