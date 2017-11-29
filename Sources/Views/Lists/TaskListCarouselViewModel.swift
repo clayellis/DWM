@@ -52,10 +52,10 @@ class TaskListCarouselViewModel: TaskListCarouselViewModelProtocol {
         } else {
             // TODO: Create check mark image for completed lists
             let context = ListControlItem.IndicatorImageContext(
-                normalImageName: "Delete",
-                normalHighlightedImageName: "Delete",
-                selectedImageName: "Delete",
-                selectedHighlightedImageName: "Delete")
+                normalImageName: "CheckWhiteCircle",
+                normalHighlightedImageName: "CheckWhiteCircle",
+                selectedImageName: "CheckWhite",
+                selectedHighlightedImageName: "CheckWhite")
             return .image(context)
         }
     }
