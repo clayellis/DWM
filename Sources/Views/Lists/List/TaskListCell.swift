@@ -199,11 +199,10 @@ extension TaskListCell {
 extension TaskListCell {
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
-        let transformValue: CGFloat = -25
-        let duration: TimeInterval = animated ? 0.25 : 0
+        let transformValue: CGFloat = -10
+        let duration: TimeInterval = animated ? 0.15 : 0
         if editing {
-            deleteButton.transform.tx = transformValue
-            UIView.animateInParallel(
+            UIView.animate(
                 statusIndicator.animateInParallel(
                     .fadeOut(duration: duration),
                     .move(byX: transformValue, y: 0, duration: duration)
@@ -215,7 +214,7 @@ extension TaskListCell {
             )
         } else {
             statusIndicator.transform.tx = transformValue
-            UIView.animateInParallel(
+            UIView.animate(
                 deleteButton.animateInParallel(
                     .fadeOut(duration: duration),
                     .move(byX: transformValue, y: 0, duration: duration)
