@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// The frequency at which a`Task` may occur
+/// The frequency at which a `Task` may occur
 enum TaskFrequency: String {
     case daily
     case weekly
