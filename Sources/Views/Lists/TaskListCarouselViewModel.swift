@@ -12,12 +12,21 @@ protocol TaskListCarouselViewModelProtocol {
     var numberOfLists: Int { get }
     func taskFrequency(at index: Int) -> TaskFrequency
     func titleForList(at index: Int) -> String
+    func indicatorForList(at index: Int) -> ListControlItem.IndicatorStyle
     func indexPath(from index: Int) -> IndexPath
 }
 
+// TODO: Reload the list control when the taskManager updates tasks (through a delegate, or observer, that needs to be written)
+// (So that the indicator reloads)
+
 class TaskListCarouselViewModel: TaskListCarouselViewModelProtocol {
 
-    var lists: [TaskFrequency] = [.daily, .weekly, .monthly]
+    let taskManager: TaskManagerProtocol
+    let lists: [TaskFrequency] = [.daily, .weekly, .monthly]
+
+    init(taskManager: TaskManagerProtocol) {
+        self.taskManager = taskManager
+    }
 
     var numberOfLists: Int {
         return lists.count
@@ -32,6 +41,21 @@ class TaskListCarouselViewModel: TaskListCarouselViewModelProtocol {
         case .daily: return "Daily"
         case .weekly: return "Weekly"
         case .monthly: return "Monthly"
+        }
+    }
+
+    func indicatorForList(at index: Int) -> ListControlItem.IndicatorStyle {
+        let frequency = taskFrequency(at: index)
+        let (_, incomplete) = taskManager.partitionedTasks(occuring: frequency)
+        if incomplete.count > 0 {
+            return .text("\(incomplete.count)")
+        } else {
+            let context = ListControlItem.IndicatorImageContext(
+                normalImageName: "Delete",
+                normalHighlightedImageName: "Delete",
+                selectedImageName: "Delete",
+                selectedHighlightedImageName: "Delete")
+            return .image(context)
         }
     }
 
