@@ -213,6 +213,9 @@ extension TaskListCell {
                 )
             )
         } else {
+            // FIXME: setEditing is being called when the cell is selected/highlighted
+            // (for instance, after a user taps a task to complete it)
+            // and the status indicator is moving when it shouldn't.
             statusIndicator.transform.tx = transformValue
             UIView.animate(
                 deleteButton.animateInParallel(
