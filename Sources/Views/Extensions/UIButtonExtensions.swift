@@ -26,9 +26,13 @@ extension UIButton {
     /// with the `imageView` on the left.
     func setImageTitleSpacing(_ space: CGFloat) {
         let inset = space / 2
-        imageEdgeInsets.left = -inset
-        imageEdgeInsets.right = inset
-        titleEdgeInsets.left = inset
-        titleEdgeInsets.right = -inset
+        imageEdgeInsets.left = -space
+        imageEdgeInsets.right = space
+        titleEdgeInsets.left = space
+        titleEdgeInsets.right = -space
+//        imageEdgeInsets.left = -inset
+//        imageEdgeInsets.right = inset
+//        titleEdgeInsets.left = inset
+//        titleEdgeInsets.right = -inset
     }
 }
