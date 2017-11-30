@@ -42,24 +42,19 @@ extension Animation {
         return Animation(duration: duration, closure: { $0.bounds.size = size })
     }
 
-    static func scale(byX x: CGFloat, y: CGFloat, duration: TimeInterval = 0.3) -> Animation {
-        return Animation(duration: duration, closure: { $0.transform = CGAffineTransform.identity.scaledBy(x: x, y: y) })
-    }
-
     static func scale(by scalar: CGFloat, duration: TimeInterval = 0.3) -> Animation {
-        return scale(byX: scalar, y: scalar, duration: duration)
+        return Animation(duration: duration, closure: { $0.transform = $0.transform.scaledBy(x: scalar, y: scalar) })
     }
 
     static func resetScale(duration: TimeInterval = 0.3) -> Animation {
-        return scale(by: 1)
+        return Animation(duration: duration, closure: { $0.transform = .identity })
     }
 
     static func move(byX x: CGFloat, y: CGFloat, duration: TimeInterval = 0.3) -> Animation {
-        return Animation(duration: duration, closure: { $0.transform = $0.transform.translatedBy(x: x, y: y) })
-    }
-
-    static func resetPosition(duration: TimeInterval = 0.3) -> Animation {
-        return Animation(duration: duration, closure: { $0.transform = CGAffineTransform.identity.translatedBy(x: 0, y: 0) })
+        return Animation(duration: duration, closure: {
+            $0.center.x += x
+            $0.center.y += y
+        })
     }
 
     static func setBackgroundColor(to color: UIColor, duration: TimeInterval = 0.3) -> Animation {
