@@ -31,6 +31,7 @@
 		6F59FDE41FB8CB060098D4FD /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F59FDE31FB8CB060098D4FD /* CoreDataStack.swift */; };
 		6F59FDE61FB8CB210098D4FD /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F59FDE51FB8CB210098D4FD /* DataStore.swift */; };
 		6F59FDE91FB8CD410098D4FD /* CoreDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F59FDE81FB8CD410098D4FD /* CoreDataStore.swift */; };
+		6F5A1F431FD07CCF00F6D01C /* FadeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5A1F421FD07CCF00F6D01C /* FadeView.swift */; };
 		6F71994F1FB8DAC500617BC0 /* Retrievable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F71994E1FB8DAC500617BC0 /* Retrievable.swift */; };
 		6F7199561FB8E27900617BC0 /* CoreDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7199551FB8E27900617BC0 /* CoreDataStoreTests.swift */; };
 		6F7199591FB8E35B00617BC0 /* TestModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6F7199571FB8E35B00617BC0 /* TestModel.xcdatamodeld */; };
@@ -110,6 +111,7 @@
 		6F59FDE31FB8CB060098D4FD /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		6F59FDE51FB8CB210098D4FD /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		6F59FDE81FB8CD410098D4FD /* CoreDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStore.swift; sourceTree = "<group>"; };
+		6F5A1F421FD07CCF00F6D01C /* FadeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FadeView.swift; sourceTree = "<group>"; };
 		6F71994E1FB8DAC500617BC0 /* Retrievable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Retrievable.swift; sourceTree = "<group>"; };
 		6F7199551FB8E27900617BC0 /* CoreDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStoreTests.swift; sourceTree = "<group>"; };
 		6F7199581FB8E35B00617BC0 /* TestModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestModel.xcdatamodel; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 				6F4197AF1FC1E1AE00DB35F5 /* TaskListViewModel.swift */,
 				6F4197B11FC1E26400DB35F5 /* TaskListView.swift */,
 				6F3B52691FC4906A00B3E0E5 /* TaskListCell.swift */,
+				6F5A1F421FD07CCF00F6D01C /* FadeView.swift */,
 				6F82FB541FCC83A300A96CC0 /* FeedbackManager.swift */,
 			);
 			path = List;
@@ -534,6 +537,7 @@
 				6F7199691FB95D4400617BC0 /* TaskCompletionRecordData.swift in Sources */,
 				6F4197B21FC1E26400DB35F5 /* TaskListView.swift in Sources */,
 				6FCF1D751FC3C26A0082AF21 /* TaskListNavigationController.swift in Sources */,
+				6F5A1F431FD07CCF00F6D01C /* FadeView.swift in Sources */,
 				6F2D42C51FC292AF00485A21 /* UITableViewCellExtensions.swift in Sources */,
 				6FA1EFB41FCA8A7800D02DE8 /* UIButtonExtensions.swift in Sources */,
 				6F7199731FB9676800617BC0 /* TaskData.swift in Sources */,
