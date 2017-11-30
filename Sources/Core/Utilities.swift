@@ -14,3 +14,10 @@ extension DateFormatter {
         self.dateFormat = format
     }
 }
+
+func measure(_ closure: () -> Void) {
+    let start = Date()
+    closure()
+    let delta = Date().timeIntervalSince(start)
+    print("Time Elapsed: \(delta)")
+}
