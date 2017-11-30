@@ -68,6 +68,14 @@ class ListControl: UIView {
     }
 
     func reloadData() {
+        /*
+         Measurements:
+
+         Time Elapsed: 0.0374810099601746
+         Time Elapsed: 0.038686990737915
+
+         */
+
         guard let dataSource = dataSource else { return }
 
         for item in items {
@@ -195,6 +203,28 @@ class ListControlItem: UIButton {
                     label.bounds.size.width = proposedSize.width + insets.horizontal
                 }
 
+                // FIXME: This seems to be a very intense set of operations that could be made more efficient
+                // - by storing the backgroundColor for states in a local variable or in a function
+                //      - so that it doesn't have to be determined by inspecting the image data
+                // - by potentially adding the label as a subview and adjusting colors manually
+                //      - so that an image doesn't have to be created from the label and set
+
+                /* Measurements:
+
+                 Time Elapsed: 0.00205498933792114
+                 Time Elapsed: 0.000539958477020264
+
+                 Time Elapsed: 0.00198900699615479
+                 Time Elapsed: 0.000523030757904053
+
+                 Time Elapsed: 0.00181597471237183
+                 Time Elapsed: 0.000452995300292969
+
+                */
+
+                // After doing some measurements, this might not actually be *that* slow
+                // Though it could be sped up by doing some of the things listed above
+
                 for controlState in controlStates {
                     if controlState == .normal {
                         let inverseState: UIControlState = .selected
@@ -210,6 +240,7 @@ class ListControlItem: UIButton {
                     }
                     setImage(UIImage(label: label, sizeByContent: false), for: controlState)
                 }
+
             case .image(let imageContext):
                 setImage(UIImage(named: imageContext.normalImageName), for: .normal)
                 setImage(UIImage(named: imageContext.normalHighlightedImageName), for: [.normal, .highlighted])
