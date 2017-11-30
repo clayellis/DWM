@@ -23,6 +23,14 @@ struct Delta {
                 || !deletedRows.isEmpty
                 || !movedRows.isEmpty
         }
+
+        var onlyHasMovedRowsChanges: Bool {
+            return insertedSections.isEmpty
+                && deletedSections.isEmpty
+                && insertedRows.isEmpty
+                && deletedRows.isEmpty
+                && !movedRows.isEmpty
+        }
     }
 
     static func changes<T>(between lhs: [[T]], and rhs: [[T]]) -> Changes where T: Hashable  {
