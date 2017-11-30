@@ -106,15 +106,25 @@ class TaskListCell: UITableViewCell {
         applyStyling(asComplete: toggledValue)
     }
 
+    // TODO: Add an animated flag to applyStyling
+    // I've seen ghosting when scrolling quickly through a long list of cells where the content of a reused cell
+    // was visible for a second because the textview was being cross dissolved. By using an animated flag we can set the animation duration to 0.
+
     func applyStyling(asComplete complete: Bool) {
         defer { styledAsCompleted = complete }
 
         crossDisolve(on: statusIndicator) {
             if complete {
                 self.statusIndicator.isSelected = true
-                self.textView.textColor = UIColor.black.withAlphaComponent(0.2)
             } else {
                 self.statusIndicator.isSelected = false
+            }
+        }
+
+        crossDisolve(on: textView) {
+            if complete {
+                self.textView.textColor = UIColor.black.withAlphaComponent(0.2)
+            } else {
                 self.textView.textColor = .black
             }
         }
@@ -152,9 +162,26 @@ class TaskListCell: UITableViewCell {
     }
 }
 
-// MARK: Highlight
+// TODO: Maybe instead of overriding setHighlighted and setEditing, there should be dedicated methods that I call specifically when
+//      the cells should be put in editing mode or highlighted mode. That way the system can't apply the animations in times when it shouldn't.
+//      Like in the case where the statusIndicator jumps because the editing method is called (with `false`) when the cell is reloaded
+//      Though, this could be because the animations I'm using to move the views use transforms and the transforms get reset? That's probably it.
+//      So I need to fix the animations first (I should have to set the animations up if everything is working correctly)
+//      Consider offsetting center and adjust contentScale. Or perhaps do it all by frames.
+
+// MARK: Highlighted
 
 extension TaskListCell {
+
+    // ANIMATION:
+    // On down, the status indicator (and title) shrinks slightly on a spring (like it's being pressed down and loaded to spring)
+    // and the first stroke of the check mark is drawn going down
+
+    // ANIMATION:
+    // On the up movement, the status indicator (and title) springs up past its normal size and shakes (rotationally) with excitement just slightly (not the title)
+    // and the final upwward stroke of the check mark is drawn
+    // The indicator glows a certain color and pulses that color outwards
+
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
         super.setHighlighted(highlighted, animated: animated)
         if highlighted {
@@ -169,6 +196,7 @@ extension TaskListCell {
                     .scale(by: scalar, duration: duration),
                     .move(byX: 2, y: 0, duration: duration)
                 ),
+                // TODO: Move and scale the delete button same as status indicator
                 textView.animateInParallel(
                     .scale(by: scalar, duration: duration)
                 )
@@ -182,8 +210,9 @@ extension TaskListCell {
                 ),
                 statusIndicator.animateInParallel(
                     .resetScale(duration: duration),
-                    .resetPosition(duration: duration)
+                    .move(byX: -2, y: 0, duration: duration)
                 ),
+                // TODO: Move and scale the delete button same as status indicator
                 textView.animateInParallel(
                     .resetScale(duration: duration)
                 )
@@ -194,7 +223,28 @@ extension TaskListCell {
     }
 }
 
-// MARK: Edit
+// MARK: Selected
+
+extension TaskListCell {
+
+    // TODO: Consider making the selection highlightArea darker than highlight
+
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        if selected {
+            highlightArea.animateInParallel(
+                .fadeIn(duration: 0)
+            )
+        } else {
+            let duration: TimeInterval = animated ? 0.4 : 0
+            highlightArea.animateInParallel(
+                .fadeOut(duration: duration)
+            )
+        }
+    }
+}
+
+// MARK: Editing
 
 extension TaskListCell {
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -209,14 +259,21 @@ extension TaskListCell {
                 ),
                 deleteButton.animateInParallel(
                     .fadeIn(duration: duration),
-                    .resetPosition(duration: duration)
+                    .move(byX: -transformValue, y: 0, duration: duration)
                 )
             )
+//            UIView.animate(
+//                textView.animate(
+//                    .move(byX: transformValue, y: 0, duration: duration),
+//                    .resetPosition(duration: duration)
+//                )
+//            )
         } else {
             // FIXME: setEditing is being called when the cell is selected/highlighted
             // (for instance, after a user taps a task to complete it)
             // and the status indicator is moving when it shouldn't.
-            statusIndicator.transform.tx = transformValue
+
+//            statusIndicator.transform.tx = transformValue
             UIView.animate(
                 deleteButton.animateInParallel(
                     .fadeOut(duration: duration),
@@ -224,12 +281,22 @@ extension TaskListCell {
                 ),
                 statusIndicator.animateInParallel(
                     .fadeIn(duration: duration),
-                    .resetPosition(duration: duration)
+                    .move(byX: -transformValue, y: 0, duration: duration)
                 )
             )
+//            UIView.animate(
+//                textView.animate(
+//                    .move(byX: transformValue, y: 0, duration: duration),
+//                    .resetPosition(duration: duration)
+//                )
+//            )
         }
     }
 }
+
+// TODO: What should happen when a user starts entering a new task and then decides they don't want it? Should we display a cancel (delete) button?
+// We could just treat it like a normal cell once the user starts editing, but before they do start editing, display a plus
+// If we do it that way though, we need to display a new "plus" row below the current new editing row once the user starts typing something in
 
 final class NewTaskListCell: TaskListCell {
     override func configureSubviews() {
