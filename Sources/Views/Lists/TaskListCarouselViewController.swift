@@ -148,10 +148,4 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
         listControl.selectedIndex = page
         feedbackManager.triggerListChangeFeedback()
     }
-
-    // MARK: Scroll View
-
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        feedbackManager.cancelCompletionTouchDownFeedback()
-    }
 }
