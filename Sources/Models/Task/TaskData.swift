@@ -23,6 +23,12 @@ extension TaskData: CoreDataConfigurable {
 extension TaskData {
     public override func prepareForDeletion() {
         // TODO: Delete associated records
+        // I'm fairly certain this is the right way to do this without having to inject the TaskCompletionRecordDataStore
+        // Though, the TaskManager should be the one to delete the records, so we might not need to do this here, rather trust that the TaskManager will take care of it
+//        let name = String(describing: TaskCompletionRecordData.self)
+//        let fetchRequest = NSFetchRequest<TaskCompletionRecordData>(entityName: name)
+//        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+//        try managedObjectContext?.execute(deleteRequest)
         super.prepareForDeletion()
     }
 }
