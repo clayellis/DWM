@@ -453,8 +453,8 @@ extension TaskListViewModel {
             delegate?.shouldBeginEditingTextView(at: indexPath)
             delegate?.shouldUpdatedRowSelectionState(to: true, animated: true, at: indexPath)
         } else {
-            toggleTaskCompletionStatus(at: indexPath)
             delegate?.shouldUpdatedRowSelectionState(to: false, animated: true, at: indexPath)
+            toggleTaskCompletionStatus(at: indexPath)
         }
     }
 
