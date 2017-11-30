@@ -32,9 +32,9 @@ final class TaskListViewController: UIViewController {
 
     init(factory: Factory, for taskFrequency: TaskFrequency) {
         self.factory = factory
-        self.viewModel = factory.makeTaskListViewModel(for: taskFrequency)
-        self.taskListView = factory.makeTaskListView()
-        self.feedbackManager = factory.makeFeedbackManager()
+        viewModel = factory.makeTaskListViewModel(for: taskFrequency)
+        taskListView = factory.makeTaskListView()
+        feedbackManager = factory.makeFeedbackManager()
         theme = factory.makeTheme()
         super.init(nibName: nil, bundle: nil)
     }
@@ -53,10 +53,10 @@ final class TaskListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.delegate = self
         configureNavigationBar()
         configureGestureRecognizers()
         configure(tableView: taskListView.tableView)
-        observeViewModel()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -86,52 +86,6 @@ final class TaskListViewController: UIViewController {
         view.addGestureRecognizer(tapToDismissGestureRecognizer)
     }
 
-    func observeViewModel() {
-        viewModel.titleShouldReload = { [weak self] in
-            self?.title = self?.viewModel.title
-        }
-
-        viewModel.dataDidChange = { [weak self] changes in
-            if let tableView = self?.taskListView.tableView {
-                tableView.performBatchUpdates({
-                    tableView.deleteRows(at: changes.deletedRows, with: .automatic)
-                    tableView.insertRows(at: changes.insertedRows, with: .automatic)
-                    // TODO: Before moving rows to their new IndexPath, apply the appropriate styling (complete/incomplete)
-                    // TODO: After styling animation completes, move the rows.
-                    // If movedRows is the only non-empty item in changes, apply the styling outside of performBatchUpdates
-                    // and then move the rows (using performBatchUpdates), in applyStyling's completion handler
-                    changes.movedRows.forEach { tableView.moveRow(at: $0.from, to: $0.to) }
-//                    for move in changes.movedRows {
-//                        tableView.deleteRows(at: [move.from], with: UITableViewRowAnimation.fade)
-//                        tableView.insertRows(at: [move.to], with: UITableViewRowAnimation.fade)
-//                    }
-
-                    changes.deletedSections.forEach { tableView.deleteSections($0, with: .fade) }
-                    changes.insertedSections.forEach { tableView.insertSections($0, with: .fade) }
-                }, completion: { finished in
-                    // Reload once the animations are complete in order to refresh the section headers and the cell settings
-                    tableView.reloadData()
-                })
-            }
-        }
-
-        viewModel.editingStateDidChange = { [weak self] editing in
-            if !editing {
-                self?.view.endEditing(true)
-            }
-            if let rightButton = self?.navigationItem.rightBarButtonItem {
-                rightButton.title = self?.viewModel.editButtonTitle
-            }
-            self?.taskListView.tableView.setEditing(editing, animated: true)
-        }
-
-        viewModel.didBeginEditing = { [weak self] indexPath in
-            if let cell = self?.taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell {
-                cell.textView.becomeFirstResponder()
-            }
-        }
-    }
-
     func observeNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(_:)), name: .UIKeyboardWillChangeFrame, object: nil)
     }
@@ -148,122 +102,104 @@ final class TaskListViewController: UIViewController {
         return taskListView.tableView.indexPathForRow(at: point)
     }
 
-    func taskCompletionDown() {
-        // ANIMATION:
-        // On down, the status indicator (and title) shrinks slightly on a spring (like it's being pressed down and loaded to spring)
-        // and the first stroke of the check mark is drawn going down
-        feedbackManager.triggerCompletionTouchDownFeedback()
+    // TODO: Move to view model
+    func didPlaceFingerInTaskRow() {
+
     }
 
-    func taskCompletionUp() {
-        // ANIMATION:
-        // On the up movement, the status indicator (and title) springs up past its normal size and shakes (rotationally) with excitement just slightly (not the title)
-        // and the final upwward stroke of the check mark is drawn
-        // The indicator glows a certain color and pulses that color outwards
-        feedbackManager.triggerCompletionTouchUpFeedback()
-    }
+    // TODO: Move to view model
+    func didLiftFingerInTaskRow() {
 
-//    var thresholdLocation: CGPoint?
-//
-//    func updateTrackingPast(threshold: CGFloat, in scrollView: UIScrollView) -> CGFloat? {
-//        if let thresholdLocation = thresholdLocation {
-////            scrollView.contentOffset.y = threshold
-//            let currentLocation = scrollView.panGestureRecognizer.location(in: view)
-//            let delta = thresholdLocation.y - currentLocation.y
-//
-//            if delta > 0 {
-//                return delta
-//            } else {
-//                self.thresholdLocation = nil
-//                return nil
-//            }
-//
-//        } else if scrollView.contentOffset.y >= threshold {
-////            scrollView.contentOffset.y = threshold
-//            thresholdLocation = scrollView.panGestureRecognizer.location(in: view)
-//            return nil
-//        } else {
-//            thresholdLocation = nil
-//            return nil
-//        }
-//    }
-//
-//    func endTrackingPastThreshold() {
-//        thresholdLocation = nil
-//    }
+    }
 }
 
-// MARK: Selectors
+// MARK: View Model Delegate
 
-extension TaskListViewController {
+extension TaskListViewController: TaskListViewModelDelegate {
+    func shouldSetTitle(to newTitle: String) {
+        title = newTitle
+    }
 
-    @objc func keyboardWillChange(_ notification: NSNotification) {
-        guard let keyboardBeginFrame = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as AnyObject).cgRectValue,
-            let keyboardEndFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
-            else { return }
-        let showing = keyboardBeginFrame.origin.y > keyboardEndFrame.origin.y
-        if showing {
-            taskListView.tableView.contentInset.bottom = keyboardEndFrame.height
+    func shouldSetEditButtonTitle(to newTitle: String) {
+        navigationItem.rightBarButtonItem?.title = newTitle
+    }
+
+    func shouldChangeEditingState(to editing: Bool) {
+        if !editing {
+            view.endEditing(true)
+        }
+        taskListView.tableView.setEditing(editing, animated: true)
+    }
+
+    func shouldUpdatedRowSelectionState(to selected: Bool, animated: Bool, at indexPath: IndexPath) {
+        if selected {
+            taskListView.tableView.selectRow(at: indexPath, animated: animated, scrollPosition: .none)
         } else {
-            taskListView.tableView.contentInset.bottom = 0
+            taskListView.tableView.deselectRow(at: indexPath, animated: animated)
         }
     }
 
-    @objc func rightButtonTapped(_ button: UIBarButtonItem) {
-        viewModel.toggleEditing()
+    func shouldReloadData(with changes: Delta.Changes) {
+        let tableView = taskListView.tableView
+
+        // Inner function
+        func applyChanges() {
+            tableView.performBatchUpdates({
+                tableView.deleteRows(at: changes.deletedRows, with: .automatic)
+                tableView.insertRows(at: changes.insertedRows, with: .automatic)
+                changes.movedRows.forEach { tableView.moveRow(at: $0.from, to: $0.to) }
+                changes.deletedSections.forEach { tableView.deleteSections($0, with: .fade) }
+                changes.insertedSections.forEach { tableView.insertSections($0, with: .fade) }
+            }, completion: { finished in
+                // Reload once the animations are complete in order to refresh the section headers and the cell settings
+                tableView.reloadData()
+            })
+        }
+
+        if changes.onlyHasMovedRowsChanges {
+            for move in changes.movedRows {
+                guard let cell = tableView.cellForRow(at: move.from) as? TaskListCell else { continue }
+                let styleAsComplete = viewModel.indexPathRepresentsCompletedTask(move.to)
+                cell.applyStyling(asComplete: styleAsComplete)
+            }
+
+            // FIXME: Because of this delay (which I would like to keep), tapping another task before the changes are applied will crash
+
+            // Delay the changes for just a moment to provide context that the task was finished, then moved
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                applyChanges()
+            }
+        } else {
+            applyChanges()
+        }
     }
 
-    @objc func tappedToDismissKeyboard(_ gestureRecognizer: UITapGestureRecognizer) {
-        view.endEditing(true)
+    func shouldEnableInteractionWithTextView(_ shouldEnable: Bool, at indexPath: IndexPath) {
+        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
+        cell.textView.isUserInteractionEnabled = shouldEnable
     }
 
-    @objc func cellStatusIndicatorTouchDown(_ button: UIButton) {
-        taskCompletionDown()
+    func shouldClearText(at indexPath: IndexPath) {
+        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
+        cell.textView.text = ""
     }
 
-    @objc func cellStatusIndicatorTapped(_ button: UIButton) {
-        guard let indexPath = self.indexPath(from: button) else { return }
-        viewModel.toggleTaskCompletionStatus(at: indexPath)
-        taskCompletionUp()
+    func shouldBeginEditingTextView(at indexPath: IndexPath) {
+        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
+        cell.textView.becomeFirstResponder()
     }
 
-    @objc func cellDeleteTapped(_ button: UIButton) {
-        guard let indexPath = self.indexPath(from: button) else { return }
-        // TODO: Present some sort of confirmation (in row, action sheet...)
-        viewModel.deleteTask(at: indexPath)
+    func shouldDismissKeyboard() {
+        view.currentFirstResponder?.resignFirstResponder()
     }
 
-//    @objc func tableViewPanGestureRecognizerDidChange(_ gestureRecognizer: UIPanGestureRecognizer) {
-//        // TODO: Figure out why this upperThreshold works, why is it -9 and not 0?
-//        // Is that the default distance between the first cell and the top of the table in a grouped table?
-////        let upperThreshold: CGFloat = -9
-//
-//        let scrollView = taskListView.tableView
-//        let contentHeight = scrollView.contentSize.height
-//        let scrollViewHeight = scrollView.frame.height
-//
-//        let lowerThreshold: CGFloat
-//
-//        if contentHeight < scrollViewHeight {
-//            lowerThreshold = -(scrollView.contentInset.top + scrollView.adjustedContentInset.top)
-//        } else {
-//            lowerThreshold = contentHeight - scrollViewHeight
-//        }
-//
-//        print(lowerThreshold)
-//
-//        switch gestureRecognizer.state {
-//        case .changed:
-//            if let distancePast = updateTrackingPast(threshold: lowerThreshold, in: taskListView.tableView), distancePast > 0 {
-//                print(distancePast)
-//            }
-//
-//        case .ended, .cancelled, .failed:
-//            endTrackingPastThreshold()
-//
-//        default: break
-//        }
-//    }
+    func shouldTriggerTaskCompletionFeedback() {
+        feedbackManager.triggerTaskCompletedFeedback()
+    }
+
+    func shouldSetTaskListBottomInset(to newInset: CGFloat) {
+        taskListView.tableView.contentInset.bottom = newInset
+    }
 }
 
 // MARK: Table View
@@ -276,7 +212,6 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         tableView.keyboardDismissMode = .onDrag
         tableView.allowsSelectionDuringEditing = true
         tableView.forceDelaysContentTouches(false)
-//        tableView.panGestureRecognizer.addTarget(self, action: #selector(tableViewPanGestureRecognizerDidChange(_:)))
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -301,46 +236,41 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TaskListCell.reuseIdentifier, for: indexPath) as! TaskListCell
+
+        // Add targets
         cell.statusIndicator.addTarget(self, action: #selector(cellStatusIndicatorTouchDown(_:)), for: .touchDown)
         cell.statusIndicator.addTarget(self, action: #selector(cellStatusIndicatorTapped(_:)), for: .touchUpInside)
         cell.deleteButton.addTarget(self, action: #selector(cellDeleteTapped(_:)), for: .touchUpInside)
+
+        // Set values
         cell.textView.text = viewModel.titleForTask(at: indexPath)
-        cell.textView.isEditable = viewModel.isEditingEnabled
-        cell.textView.isUserInteractionEnabled = viewModel.isEditingEnabled
+        cell.textView.isEditable = viewModel.canEditTextView(at: indexPath)
+        // TODO: Find a way to not have to do this here (rather in the delegate method)
+        cell.textView.isUserInteractionEnabled = false
+
+        // Set delegates
         if viewModel.indexPathRepresentsNewTaskRow(indexPath) {
             cell.textView.delegate = newTaskTextViewDelegate
         } else {
             cell.textView.delegate = editTaskTextViewDelegate
         }
-        cell.applyStyling(asComplete: viewModel.isTaskComplete(at: indexPath))
+
+        // Apply styling
+        cell.applyStyling(asComplete: viewModel.indexPathRepresentsCompletedTask(indexPath))
+
         return cell
     }
 
     func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
-        taskCompletionDown()
+        didPlaceFingerInTaskRow()
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        if let cell = tableView.cellForRow(at: indexPath) as? TaskListCell {
-            // TODO: Use completion blocks instead of asyncAfter
-
-            // FIXME: We should really be applying styles explicity from the dataDidChange closure (see the notes in that closure above)
-            if !viewModel.isEditingEnabled {
-                cell.toggleStyling()
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                self.viewModel.selectedRow(at: indexPath)
-            }
-        } else {
-            viewModel.selectedRow(at: indexPath)
-        }
-
-        taskCompletionUp()
+        viewModel.didSelectRow(at: indexPath)
+        didLiftFingerInTaskRow()
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-        guard viewModel.isEditingEnabled else { return .none }
         return .none
     }
 
@@ -349,12 +279,43 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        guard viewModel.isEditingEnabled else { return false }
-        return !viewModel.indexPathRepresentsNewTaskRow(indexPath)
+        return viewModel.canEditRow(at: indexPath)
+    }
+}
+
+// MARK: Selectors
+
+extension TaskListViewController {
+
+    @objc func keyboardWillChange(_ notification: NSNotification) {
+        guard let keyboardBeginFrame = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as AnyObject).cgRectValue,
+            let keyboardEndFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
+            else { return }
+        viewModel.keyboardFrameWillChange(from: keyboardBeginFrame, to: keyboardEndFrame)
     }
 
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        feedbackManager.cancelCompletionTouchDownFeedback()
+    @objc func rightButtonTapped(_ button: UIBarButtonItem) {
+        viewModel.didTapEditButton()
+    }
+
+    @objc func tappedToDismissKeyboard(_ gestureRecognizer: UITapGestureRecognizer) {
+        viewModel.userTappedToDismissKeyboard()
+    }
+
+    @objc func cellStatusIndicatorTouchDown(_ button: UIButton) {
+        didPlaceFingerInTaskRow()
+    }
+
+    @objc func cellStatusIndicatorTapped(_ button: UIButton) {
+        guard let indexPath = self.indexPath(from: button) else { return }
+        viewModel.tappedStatusIndicator(at: indexPath)
+        didLiftFingerInTaskRow()
+    }
+
+    @objc func cellDeleteTapped(_ button: UIButton) {
+        guard let indexPath = self.indexPath(from: button) else { return }
+        // TODO: Present some sort of confirmation (in row, action sheet...)
+        viewModel.tappedDelete(at: indexPath)
     }
 }
 
@@ -368,19 +329,34 @@ private class TextViewDelegate: NSObject, UITextViewDelegate {
         super.init()
     }
 
+    // TODO: Consider disabling user interaction on the text view (so that the only way to start editing is to select the row)
+    // And once editing begins, enable interaction, once editing ends, disable interaction
+
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if let indexPath = controller?.indexPath(from: textView),
-            let cell = controller?.taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell {
-            cell.highlightArea.alpha = 1
+        if let indexPath = controller?.indexPath(from: textView) {
+            controller?.viewModel.didBeginEditingText(at: indexPath)
         }
     }
 
-    func textViewDidChange(_ textView: UITextView) {}
+    func textViewDidChange(_ textView: UITextView) {
+        // If the number of lines change (if the currentHeight != the contentHeight)
+        // then the textView should grow/shrink.
+        let currentHeight = textView.frame.size.height
+        let contentHeight = textView.intrinsicContentSize.height
+        if currentHeight != contentHeight {
+            // Grow/shrink the textView by toggling updates on the tableView.
+            // Toggle animationsEnabled in order to avoid some jumpiness when
+            // toggling updates on the tableView.
+            UIView.setAnimationsEnabled(false)
+            controller?.taskListView.tableView.beginUpdates()
+            controller?.taskListView.tableView.endUpdates()
+            UIView.setAnimationsEnabled(true)
+        }
+    }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        if let indexPath = controller?.indexPath(from: textView),
-            let cell = controller?.taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell {
-            cell.highlightArea.alpha = 0
+        if let indexPath = controller?.indexPath(from: textView) {
+            controller?.viewModel.didEndEditingText(at: indexPath)
         }
     }
 
@@ -403,13 +379,13 @@ private final class NewTaskTextViewDelegate: TextViewDelegate {
     }
 
     override func textViewDidChange(_ textView: UITextView) {
+        super.textViewDidChange(textView)
         controller?.viewModel.updateNewTask(title: textView.text)
     }
 
     override func textViewDidEndEditing(_ textView: UITextView) {
         super.textViewDidEndEditing(textView)
         controller?.viewModel.commitNewTask()
-        textView.text = ""
     }
 }
 
@@ -421,6 +397,7 @@ private final class EditTaskTextViewDelegate: TextViewDelegate {
     }
 
     override func textViewDidChange(_ textView: UITextView) {
+        super.textViewDidChange(textView)
         controller?.viewModel.updateEditingTask(title: textView.text)
     }
 
