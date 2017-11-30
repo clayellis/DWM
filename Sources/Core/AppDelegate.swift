@@ -15,8 +15,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         let container = DependencyContainer()
-        let dataPopulator = container.makeDataPopulator()
-        dataPopulator.populateData()
+//        let dataPopulator = container.makeDataPopulator()
+//        dataPopulator.populateData()
 
         // TODO: Delegate window and view state to AppCoordinator
         window = UIWindow(frame: UIScreen.main.bounds)
