@@ -15,4 +15,9 @@ final class BaseNavigationController: UINavigationController {
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.isTranslucent = true
     }
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        // TODO: When iPad support is eventually added, return .all for iPad
+        return .portrait
+    }
 }
