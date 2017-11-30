@@ -22,14 +22,16 @@ extension UIButton {
         return image?.color(at: .zero)
     }
 
+    // FIXME: I'm fairly certain that this implementation is almost right, but still a little off. It's hard to tell.
+
     /// Adds `space` between the button's `imageView` and `titleLabel`
     /// with the `imageView` on the left.
     func setImageTitleSpacing(_ space: CGFloat) {
-        let inset = space / 2
         imageEdgeInsets.left = -space
         imageEdgeInsets.right = space
         titleEdgeInsets.left = space
         titleEdgeInsets.right = -space
+//        let inset = space / 2
 //        imageEdgeInsets.left = -inset
 //        imageEdgeInsets.right = inset
 //        titleEdgeInsets.left = inset
