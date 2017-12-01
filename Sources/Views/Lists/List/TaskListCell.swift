@@ -18,7 +18,7 @@ import UIKit
 
 class TaskListCell: UITableViewCell {
 
-    let textView = UITextView()
+    let textView = TextView()
     let statusIndicator = UIButton()
     let deleteButton = UIButton()
     let highlightArea = UIView()
