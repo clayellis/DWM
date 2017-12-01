@@ -45,6 +45,7 @@ class TaskListCarouselViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.delegate = self
         configureNavigationBar()
         configure(listControl: listControl)
         configure(collectionView: carouselView.collectionView)
@@ -109,6 +110,14 @@ extension TaskListCarouselViewController {
     }
 }
 
+// MARK: View Model Delegate
+
+extension TaskListCarouselViewController: TaskListCarouselViewModelDelegate {
+    func reloadListControl() {
+        listControl.reloadData()
+    }
+}
+
 // MARK: List Control
 
 extension TaskListCarouselViewController: ListControlDataSource, ListControlDelegate {
@@ -133,6 +142,10 @@ extension TaskListCarouselViewController: ListControlDataSource, ListControlDele
         let indexPath = viewModel.indexPath(from: index)
         feedbackManager.triggerListChangeFeedback()
         carouselView.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+    }
+
+    func listControlCurrentSelectedIndex(_ listControl: ListControl) -> Int? {
+        return carouselView.collectionView.currentPage
     }
 }
 
