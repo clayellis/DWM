@@ -15,6 +15,7 @@ import XCTest
 // TODO: Test updateTaskDisplayOrder
 // TODO: Test updateTaskDipslayOrder adjusts other tasks' ordering
 // TODO: Test isTaskComplete
+// TODO: Test observation, add, remove, no leaks
 
 class TaskManagerTests: XCTestCase {
 
