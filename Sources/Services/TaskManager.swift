@@ -9,9 +9,15 @@
 import Foundation
 
 /// Defines a manager for `Task`s
-protocol TaskManagerProtocol {
+protocol TaskManagerProtocol: class {
     /// A tuple containing an array of completed `Task`s and an array of incomplete `Task`s
     typealias PartitionedTaskList = (complete: [Task], incomplete: [Task])
+
+    /// Adds an `observer`
+    func addObserver(_ observer: TaskManagerObserver)
+
+    /// Removes an `observer`
+    func removeObserver(_ observer: TaskManagerObserver)
 
     /// All `Task`s
     var tasks: [Task] { get }
@@ -57,10 +63,16 @@ protocol TaskManagerProtocol {
     func generatePartitionedTaskLists() -> (daily: PartitionedTaskList, weekly: PartitionedTaskList, monthly: PartitionedTaskList)
 }
 
+protocol TaskManagerObserver: NSObjectProtocol {
+    func tasksDidChange()
+}
+
 final class TaskManager: TaskManagerProtocol {
     let timeEngine: TimeEngineProtocol
     let recordManager: RecordManagerProtocol
     let taskDataStore: CoreDataStore<TaskData>
+
+    var observers: [Weak<TaskManagerObserver>] = []
 
     init(timeEngine: TimeEngineProtocol,
          recordManager: RecordManagerProtocol,
@@ -71,6 +83,15 @@ final class TaskManager: TaskManagerProtocol {
     }
 
     // MARK: Helpers
+
+    func cleanUpObservers() {
+        observers = observers.filter { $0.value != nil }
+    }
+
+    func notifyObserversOfChanges() {
+        cleanUpObservers()
+        observers.forEach { $0.value?.tasksDidChange() }
+    }
 
     func byDisplayOrder(_ lhs: TaskData, _ rhs: TaskData) -> Bool {
         return lhs.displayOrder < rhs.displayOrder
@@ -103,6 +124,16 @@ final class TaskManager: TaskManagerProtocol {
 
     // MARK: Protocol
 
+    func addObserver(_ observer: TaskManagerObserver) {
+        cleanUpObservers()
+        observers.append(Weak(value: observer))
+    }
+
+    func removeObserver(_ observer: TaskManagerObserver) {
+        cleanUpObservers()
+        observers = observers.filter { !$0.value!.isEqual(observer) }
+    }
+
     var tasks: [Task] {
         do {
             return try taskDataStore.retrieveAll()
@@ -132,6 +163,7 @@ final class TaskManager: TaskManagerProtocol {
             let preparedTask = task.prepareForStorage(in: taskDataStore.context)
             preparedTask.displayOrder = newDisplayOrder
             try taskDataStore.store(preparedTask)
+            notifyObserversOfChanges()
         } catch {
             // TODO: Log the error
         }
@@ -143,6 +175,7 @@ final class TaskManager: TaskManagerProtocol {
 
             try taskDataStore.deleteEntity(withIdentifier: task.id)
             recordManager.removeAllCompletionRecords(for: task)
+            notifyObserversOfChanges()
         } catch {
             // TODO: Log the error
         }
@@ -152,6 +185,7 @@ final class TaskManager: TaskManagerProtocol {
         do {
             try taskDataStore.deleteAll()
             recordManager.removeAllCompletionRecords()
+            notifyObserversOfChanges()
         } catch {
             // TODO: Log the error
         }
@@ -163,6 +197,7 @@ final class TaskManager: TaskManagerProtocol {
             try taskDataStore.updateEntity(withIdentifier: task.id) { task in
                 task.frequency = newFrequency.rawValue
             }
+            notifyObserversOfChanges()
         } catch {
             // TODO: Log the error
         }
@@ -178,6 +213,7 @@ final class TaskManager: TaskManagerProtocol {
             try taskDataStore.updateEntity(withIdentifier: task.id) { task in
                 task.title = newTitle
             }
+            notifyObserversOfChanges()
         } catch {
             // TODO: Log the error
             // FIXME: In this case, it would be a good idea to propogate the error up so the view can react
@@ -195,6 +231,7 @@ final class TaskManager: TaskManagerProtocol {
             try taskDataStore.updateEntity(withIdentifier: task.id) { task in
                 task.displayOrder = newDisplayOrder
             }
+            notifyObserversOfChanges()
         } catch {
             // TODO: Log the error
             // FIXME: In this case, it would be a good idea to propogate the error up so the view can react
@@ -211,6 +248,7 @@ final class TaskManager: TaskManagerProtocol {
         } else {
             recordManager.removeCompletionRecord(for: task)
         }
+        notifyObserversOfChanges()
     }
 
     func isTaskComplete(_ task: Task) -> Bool {
