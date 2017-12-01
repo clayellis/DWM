@@ -32,8 +32,9 @@ protocol TimeEngineProtocol: class {
     /// Returns if the `date` is in the same day as `now`
     func isDateToday(_ date: Date) -> Bool
 
-    /// Simulates a day change
-    func simulateDayChange()
+    /// Simulates a day change in a direction.
+    /// - parameter forward: Whether the day change should be forward in time.
+    func simulateDayChange(forward: Bool)
 }
 
 enum TimeEngineError: Swift.Error {
@@ -95,8 +96,8 @@ final class TimeEngine: TimeEngineProtocol {
         return calendar.isDate(date, inSameDayAs: now)
     }
 
-    func simulateDayChange() {
-        let day: TimeInterval = 86_400
+    func simulateDayChange(forward: Bool) {
+        let day: TimeInterval = 86_400 * (forward ? 1 : -1)
         if let currentMode = simulationMode {
             switch currentMode {
             case .fixed:
