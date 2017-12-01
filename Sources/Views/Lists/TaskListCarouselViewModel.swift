@@ -18,6 +18,7 @@ protocol TaskListCarouselViewModelProtocol: class {
 }
 
 protocol TaskListCarouselViewModelDelegate: class {
+    /// Called when the list control should reload data
     func reloadListControl()
 }
 
@@ -26,16 +27,29 @@ class TaskListCarouselViewModel: NSObject, TaskListCarouselViewModelProtocol {
     weak var delegate: TaskListCarouselViewModelDelegate?
 
     let taskManager: TaskManagerProtocol
+    let dayChangeObserver: DayChangeObserverProtocol
     let lists: [TaskFrequency] = [.daily, .weekly, .monthly]
 
-    init(taskManager: TaskManagerProtocol) {
+    var dayChangeObservationToken: ObservationToken?
+
+    init(taskManager: TaskManagerProtocol,
+         dayChangeObserver: DayChangeObserverProtocol) {
         self.taskManager = taskManager
+        self.dayChangeObserver = dayChangeObserver
         super.init()
+
         self.taskManager.addObserver(self)
+
+        dayChangeObservationToken = self.dayChangeObserver.startObserving { [weak self] in
+            self?.delegate?.reloadListControl()
+        }
     }
 
     deinit {
         taskManager.removeObserver(self)
+        if let token = dayChangeObservationToken {
+            dayChangeObserver.stopObserving(token)
+        }
     }
 
     var numberOfLists: Int {
