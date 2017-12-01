@@ -186,6 +186,8 @@ final class TaskListViewModel: TaskListViewModelProtocol {
     let dayChangeObserver: DayChangeObserverProtocol
     let taskManager: TaskManagerProtocol
 
+    var dayChangeObservationToken: ObservationToken?
+
     // MARK: - Properties
 
     // MARK: State
@@ -287,7 +289,7 @@ final class TaskListViewModel: TaskListViewModelProtocol {
         state = .normal
         data = []
 
-        self.dayChangeObserver.startObserving(identifier: taskFrequency.rawValue) { [weak self] in
+        dayChangeObservationToken = self.dayChangeObserver.startObserving { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.reloadData()
             strongSelf.delegate?.setTitle(to: strongSelf.title)
@@ -297,7 +299,9 @@ final class TaskListViewModel: TaskListViewModelProtocol {
     }
 
     deinit {
-        dayChangeObserver.stopObserving(identifier: taskFrequency.rawValue)
+        if let token = dayChangeObservationToken {
+            dayChangeObserver.stopObserving(token)
+        }
     }
 }
 
