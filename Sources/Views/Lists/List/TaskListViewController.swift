@@ -116,22 +116,22 @@ final class TaskListViewController: UIViewController {
 // MARK: View Model Delegate
 
 extension TaskListViewController: TaskListViewModelDelegate {
-    func shouldSetTitle(to newTitle: String) {
+    func setTitle(to newTitle: String) {
         title = newTitle
     }
 
-    func shouldSetEditButtonTitle(to newTitle: String) {
+    func setEditButtonTitle(to newTitle: String) {
         navigationItem.rightBarButtonItem?.title = newTitle
     }
 
-    func shouldChangeEditingState(to editing: Bool) {
+    func changeEditingState(to editing: Bool) {
         if !editing {
             view.endEditing(true)
         }
         taskListView.tableView.setEditing(editing, animated: true)
     }
 
-    func shouldUpdateRowSelectionState(to selected: Bool, animated: Bool, at indexPath: IndexPath) {
+    func updateRowSelectionState(to selected: Bool, animated: Bool, at indexPath: IndexPath) {
         if selected {
             taskListView.tableView.selectRow(at: indexPath, animated: animated, scrollPosition: .none)
         } else {
@@ -139,12 +139,12 @@ extension TaskListViewController: TaskListViewModelDelegate {
         }
     }
 
-    func shouldUpdateRowAppearance(toCompleted completed: Bool, at indexPath: IndexPath, animated: Bool) {
+    func updateRowAppearance(toCompleted completed: Bool, at indexPath: IndexPath, animated: Bool) {
         guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
         cell.applyStyling(asComplete: completed)
     }
 
-    func shouldReloadData(with changes: Delta.Changes) {
+    func reloadData(with changes: Delta.Changes) {
         let tableView = taskListView.tableView
         tableView.performBatchUpdates({
             tableView.deleteRows(at: changes.deletedRows, with: .automatic)
@@ -158,30 +158,30 @@ extension TaskListViewController: TaskListViewModelDelegate {
         })
     }
 
-    func shouldEnableInteractionWithTextView(_ shouldEnable: Bool, at indexPath: IndexPath) {
+    func enableInteractionWithTextView(_ shouldEnable: Bool, at indexPath: IndexPath) {
         guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
         cell.textView.isUserInteractionEnabled = shouldEnable
     }
 
-    func shouldClearText(at indexPath: IndexPath) {
+    func clearText(at indexPath: IndexPath) {
         guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
         cell.textView.text = ""
     }
 
-    func shouldBeginEditingTextView(at indexPath: IndexPath) {
+    func beginEditingTextView(at indexPath: IndexPath) {
         guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
         cell.textView.becomeFirstResponder()
     }
 
-    func shouldDismissKeyboard() {
+    func dismissKeyboard() {
         view.currentFirstResponder?.resignFirstResponder()
     }
 
-    func shouldTriggerTaskCompletionFeedback() {
+    func triggerTaskCompletionFeedback() {
         feedbackManager.triggerTaskCompletedFeedback()
     }
 
-    func shouldSetTaskListBottomInset(to newInset: CGFloat) {
+    func setTaskListBottomInset(to newInset: CGFloat) {
         taskListView.tableView.contentInset.bottom = newInset
     }
 }

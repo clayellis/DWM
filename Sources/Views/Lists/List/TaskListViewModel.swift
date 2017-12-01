@@ -127,51 +127,51 @@ protocol TaskListViewModelDelegate: class {
 
     /// Called when the title should be set.
     /// - parameter newTitle: The new title.
-    func shouldSetTitle(to newTitle: String)
+    func setTitle(to newTitle: String)
 
     /// Called when the row at the index path should update its selection state.
     /// - parameter selected: Whether the row should be selected.
     /// - parameter indexPath: The `IndexPath` of the row.
-    func shouldUpdateRowSelectionState(to selected: Bool, animated: Bool, at indexPath: IndexPath)
+    func updateRowSelectionState(to selected: Bool, animated: Bool, at indexPath: IndexPath)
 
     /// Called when the appearance of a task list cell at an index path should be set.
     /// - parameter completed: Whether the appearance should be the completed appearance.
     /// - parameter indexPath: The `IndexPath` of the row.
     /// - parameter animated: Whether the update should be animated.
-    func shouldUpdateRowAppearance(toCompleted completed: Bool, at indexPath: IndexPath, animated: Bool)
+    func updateRowAppearance(toCompleted completed: Bool, at indexPath: IndexPath, animated: Bool)
 
     /// Called when the data should be reload.
     /// - parameter changes: The changes which occurred.
-    func shouldReloadData(with changes: Delta.Changes)
+    func reloadData(with changes: Delta.Changes)
 
     /// Called when the text view at the index path should change interaction enabled state.
     /// - parameter shouldEnable: Whether the text view's interaction should be enabled.
     /// - parameter indexPath: The `IndexPath` of the row containing the text view
-    func shouldEnableInteractionWithTextView(_ shouldEnable: Bool, at indexPath: IndexPath)
+    func enableInteractionWithTextView(_ shouldEnable: Bool, at indexPath: IndexPath)
 
     /// Called when the text view at the index path should clear its text.
     /// - parameter indexPath: The `IndexPath` of the row containing the text view.
-    func shouldClearText(at indexPath: IndexPath)
+    func clearText(at indexPath: IndexPath)
 
     /// Called when the edit button title should be set.
     /// - parameter newTitle: The new title.
-    func shouldSetEditButtonTitle(to newTitle: String)
+    func setEditButtonTitle(to newTitle: String)
 
     /// Called when the view should change editing state.
     /// - parameter editing: Whether the view should be in editing state.
-    func shouldChangeEditingState(to editing: Bool)
+    func changeEditingState(to editing: Bool)
 
     /// Called when the text view at the index path should begin editing
-    func shouldBeginEditingTextView(at indexPath: IndexPath)
+    func beginEditingTextView(at indexPath: IndexPath)
 
     /// Called when the keyboard should be dismissed
-    func shouldDismissKeyboard()
+    func dismissKeyboard()
 
     /// Called when the view should trigger feedback that a task was completed
-    func shouldTriggerTaskCompletionFeedback()
+    func triggerTaskCompletionFeedback()
 
     /// Called when the task list's bottom content inset should be set.
-    func shouldSetTaskListBottomInset(to newInset: CGFloat)
+    func setTaskListBottomInset(to newInset: CGFloat)
 }
 
 /// Describes a list of tasks
@@ -199,8 +199,8 @@ final class TaskListViewModel: TaskListViewModelProtocol {
         didSet {
             let editing = state == .editing
 //            DispatchQueue.main.sync {
-                self.delegate?.shouldSetEditButtonTitle(to: self.editButtonTitle)
-                self.delegate?.shouldChangeEditingState(to: editing)
+                self.delegate?.setEditButtonTitle(to: self.editButtonTitle)
+                self.delegate?.changeEditingState(to: editing)
 //            }
             reloadData()
         }
@@ -263,7 +263,7 @@ final class TaskListViewModel: TaskListViewModelProtocol {
             let changes = Delta.changes(between: oldRows, and: newRows)
             if changes.hasChanges {
 //                DispatchQueue.main.sync {
-                    delegate?.shouldReloadData(with: changes)
+                    delegate?.reloadData(with: changes)
 //                }
             }
         }
@@ -290,7 +290,7 @@ final class TaskListViewModel: TaskListViewModelProtocol {
         self.dayChangeObserver.startObserving(identifier: taskFrequency.rawValue) { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.reloadData()
-            strongSelf.delegate?.shouldSetTitle(to: strongSelf.title)
+            strongSelf.delegate?.setTitle(to: strongSelf.title)
         }
 
         reloadData()
@@ -414,10 +414,10 @@ extension TaskListViewModel {
         guard !isEditing else { return }
         guard let task = self.task(at: indexPath) else { return }
         let toggledValue = !taskManager.isTaskComplete(task)
-        delegate?.shouldUpdateRowAppearance(toCompleted: toggledValue, at: indexPath, animated: true)
+        delegate?.updateRowAppearance(toCompleted: toggledValue, at: indexPath, animated: true)
         taskManager.markTask(task, asCompleted: toggledValue)
         if toggledValue {
-            delegate?.shouldTriggerTaskCompletionFeedback()
+            delegate?.triggerTaskCompletionFeedback()
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.reloadData()
@@ -460,15 +460,15 @@ extension TaskListViewModel {
             } else {
                 if let currentEditingTask = editingTask,
                     let currentEditingTaskIndexPath = self.indexPath(of: currentEditingTask) {
-                    delegate?.shouldUpdateRowSelectionState(to: false, animated: false, at: currentEditingTaskIndexPath)
+                    delegate?.updateRowSelectionState(to: false, animated: false, at: currentEditingTaskIndexPath)
                 }
 
                 beginEditingTask(at: indexPath)
             }
-            delegate?.shouldBeginEditingTextView(at: indexPath)
-            delegate?.shouldUpdateRowSelectionState(to: true, animated: true, at: indexPath)
+            delegate?.beginEditingTextView(at: indexPath)
+            delegate?.updateRowSelectionState(to: true, animated: true, at: indexPath)
         } else {
-            delegate?.shouldUpdateRowSelectionState(to: false, animated: true, at: indexPath)
+            delegate?.updateRowSelectionState(to: false, animated: true, at: indexPath)
             toggleTaskCompletionStatus(at: indexPath)
         }
     }
@@ -486,15 +486,15 @@ extension TaskListViewModel {
     }
 
     func didBeginEditingText(at indexPath: IndexPath) {
-        delegate?.shouldEnableInteractionWithTextView(true, at: indexPath)
+        delegate?.enableInteractionWithTextView(true, at: indexPath)
     }
 
     func didEndEditingText(at indexPath: IndexPath) {
-        delegate?.shouldEnableInteractionWithTextView(false, at: indexPath)
+        delegate?.enableInteractionWithTextView(false, at: indexPath)
     }
 
     func didTapToDismissKeyboard() {
-        delegate?.shouldDismissKeyboard()
+        delegate?.dismissKeyboard()
     }
 
     func beginEditingTask(at indexPath: IndexPath) {
@@ -513,7 +513,7 @@ extension TaskListViewModel {
         // TODO: Disallow task titles to be completely empty
         taskManager.updateTitle(of: editingTask, to: editingTask.title)
         if let indexPath = self.indexPath(of: editingTask) {
-            delegate?.shouldUpdateRowSelectionState(to: false, animated: true, at: indexPath)
+            delegate?.updateRowSelectionState(to: false, animated: true, at: indexPath)
         }
         self.editingTask = nil
         reloadData()
@@ -536,11 +536,11 @@ extension TaskListViewModel {
         }
 
         if let indexPath = indexPath(of: .newEditingTask(newTask.title)) {
-            delegate?.shouldUpdateRowSelectionState(to: false, animated: true, at: indexPath)
-            delegate?.shouldClearText(at: indexPath)
+            delegate?.updateRowSelectionState(to: false, animated: true, at: indexPath)
+            delegate?.clearText(at: indexPath)
         } else if let indexPath = indexPath(of: .newTask) {
-            delegate?.shouldUpdateRowSelectionState(to: false, animated: true, at: indexPath)
-            delegate?.shouldClearText(at: indexPath)
+            delegate?.updateRowSelectionState(to: false, animated: true, at: indexPath)
+            delegate?.clearText(at: indexPath)
         }
 
         self.newTask = nil
@@ -550,9 +550,9 @@ extension TaskListViewModel {
     func keyboardFrameWillChange(from fromFrame: CGRect, to toFrame: CGRect) {
         let showing = fromFrame.origin.y > toFrame.origin.y
         if showing {
-            delegate?.shouldSetTaskListBottomInset(to: toFrame.height)
+            delegate?.setTaskListBottomInset(to: toFrame.height)
         } else {
-            delegate?.shouldSetTaskListBottomInset(to: 0)
+            delegate?.setTaskListBottomInset(to: 0)
         }
     }
 }
