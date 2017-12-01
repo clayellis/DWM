@@ -57,6 +57,14 @@ class MockTaskManager: TaskManagerProtocol {
         self.tasks = tasks
     }
 
+    func addObserver(_ observer: TaskManagerObserver) {
+        // TODO: Implement
+    }
+
+    func removeObserver(_ observer: TaskManagerObserver) {
+        // TODO: Implement
+    }
+
     var tasks: [Task]
 
     func createTask(_ task: Task) {
