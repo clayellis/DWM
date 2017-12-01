@@ -8,7 +8,8 @@
 
 import Foundation
 
-protocol TaskListCarouselViewModelProtocol {
+protocol TaskListCarouselViewModelProtocol: class {
+    weak var delegate: TaskListCarouselViewModelDelegate? { get set }
     var numberOfLists: Int { get }
     func taskFrequency(at index: Int) -> TaskFrequency
     func titleForList(at index: Int) -> String
@@ -16,16 +17,25 @@ protocol TaskListCarouselViewModelProtocol {
     func indexPath(from index: Int) -> IndexPath
 }
 
-// TODO: Reload the list control when the taskManager updates tasks (through a delegate, or observer, that needs to be written)
-// (So that the indicator reloads)
+protocol TaskListCarouselViewModelDelegate: class {
+    func reloadListControl()
+}
 
-class TaskListCarouselViewModel: TaskListCarouselViewModelProtocol {
+class TaskListCarouselViewModel: NSObject, TaskListCarouselViewModelProtocol {
+
+    weak var delegate: TaskListCarouselViewModelDelegate?
 
     let taskManager: TaskManagerProtocol
     let lists: [TaskFrequency] = [.daily, .weekly, .monthly]
 
     init(taskManager: TaskManagerProtocol) {
         self.taskManager = taskManager
+        super.init()
+        self.taskManager.addObserver(self)
+    }
+
+    deinit {
+        taskManager.removeObserver(self)
     }
 
     var numberOfLists: Int {
@@ -62,5 +72,11 @@ class TaskListCarouselViewModel: TaskListCarouselViewModelProtocol {
 
     func indexPath(from index: Int) -> IndexPath {
         return IndexPath(item: index, section: 0)
+    }
+}
+
+extension TaskListCarouselViewModel: TaskManagerObserver {
+    func tasksDidChange() {
+        delegate?.reloadListControl()
     }
 }
