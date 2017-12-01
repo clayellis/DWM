@@ -8,10 +8,6 @@
 
 import UIKit
 
-// Just stick to white for now (add complexity later if it looks good)
-// TODO: Add a slight fade gradient at the top (under the navigation bar) (if nav bar is white, otherwise, just use a hard edge)
-// TODO: Add a slight fade gradient at the bottom of the table view (to fade cells as they move off) (if we do end up making the done section gray, use a gray fade, otherwise white)
-
 protocol TaskListViewProtocol {
     var tableView: UITableView { get }
 }
