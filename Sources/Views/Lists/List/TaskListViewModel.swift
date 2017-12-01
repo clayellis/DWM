@@ -130,7 +130,13 @@ protocol TaskListViewModelDelegate: class {
     /// Called when the row at the index path should update its selection state.
     /// - parameter selected: Whether the row should be selected.
     /// - parameter indexPath: The `IndexPath` of the row.
-    func shouldUpdatedRowSelectionState(to selected: Bool, animated: Bool, at indexPath: IndexPath)
+    func shouldUpdateRowSelectionState(to selected: Bool, animated: Bool, at indexPath: IndexPath)
+
+    /// Called when the appearance of a task list cell at an index path should be set.
+    /// - parameter completed: Whether the appearance should be the completed appearance.
+    /// - parameter indexPath: The `IndexPath` of the row.
+    /// - parameter animated: Whether the update should be animated.
+    func shouldUpdateRowAppearance(toCompleted completed: Bool, at indexPath: IndexPath, animated: Bool)
 
     /// Called when the data should be reload.
     /// - parameter changes: The changes which occurred.
@@ -406,11 +412,14 @@ extension TaskListViewModel {
         guard !isEditing else { return }
         guard let task = self.task(at: indexPath) else { return }
         let toggledValue = !taskManager.isTaskComplete(task)
+        delegate?.shouldUpdateRowAppearance(toCompleted: toggledValue, at: indexPath, animated: true)
         taskManager.markTask(task, asCompleted: toggledValue)
         if toggledValue {
             delegate?.shouldTriggerTaskCompletionFeedback()
         }
-        reloadData()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.reloadData()
+        }
     }
 
     func beginEditing() {
@@ -449,15 +458,15 @@ extension TaskListViewModel {
             } else {
                 if let currentEditingTask = editingTask,
                     let currentEditingTaskIndexPath = self.indexPath(of: currentEditingTask) {
-                    delegate?.shouldUpdatedRowSelectionState(to: false, animated: false, at: currentEditingTaskIndexPath)
+                    delegate?.shouldUpdateRowSelectionState(to: false, animated: false, at: currentEditingTaskIndexPath)
                 }
 
                 beginEditingTask(at: indexPath)
             }
             delegate?.shouldBeginEditingTextView(at: indexPath)
-            delegate?.shouldUpdatedRowSelectionState(to: true, animated: true, at: indexPath)
+            delegate?.shouldUpdateRowSelectionState(to: true, animated: true, at: indexPath)
         } else {
-            delegate?.shouldUpdatedRowSelectionState(to: false, animated: true, at: indexPath)
+            delegate?.shouldUpdateRowSelectionState(to: false, animated: true, at: indexPath)
             toggleTaskCompletionStatus(at: indexPath)
         }
     }
@@ -502,7 +511,7 @@ extension TaskListViewModel {
         // TODO: Disallow task titles to be completely empty
         taskManager.updateTitle(of: editingTask, to: editingTask.title)
         if let indexPath = self.indexPath(of: editingTask) {
-            delegate?.shouldUpdatedRowSelectionState(to: false, animated: true, at: indexPath)
+            delegate?.shouldUpdateRowSelectionState(to: false, animated: true, at: indexPath)
         }
         self.editingTask = nil
         reloadData()
@@ -525,10 +534,10 @@ extension TaskListViewModel {
         }
 
         if let indexPath = indexPath(of: .newEditingTask(newTask.title)) {
-            delegate?.shouldUpdatedRowSelectionState(to: false, animated: true, at: indexPath)
+            delegate?.shouldUpdateRowSelectionState(to: false, animated: true, at: indexPath)
             delegate?.shouldClearText(at: indexPath)
         } else if let indexPath = indexPath(of: .newTask) {
-            delegate?.shouldUpdatedRowSelectionState(to: false, animated: true, at: indexPath)
+            delegate?.shouldUpdateRowSelectionState(to: false, animated: true, at: indexPath)
             delegate?.shouldClearText(at: indexPath)
         }
 
