@@ -12,6 +12,7 @@ protocol ListControlDataSource: class {
     func numberOfLists() -> Int
     func listControl(_ listControl: ListControl, titleForListAt index: Int) -> String
     func listControl(_ listControl: ListControl, indicatorStyleForListAt index: Int) -> ListControlItem.IndicatorStyle?
+    func listControlCurrentSelectedIndex(_ listControl: ListControl) -> Int?
 }
 
 protocol ListControlDelegate: class {
@@ -78,6 +79,8 @@ class ListControl: UIView {
 
         guard let dataSource = dataSource else { return }
 
+        selectedIndex = nil
+
         for item in items {
             item.removeFromSuperview()
             stackView.removeArrangedSubview(item)
@@ -97,9 +100,7 @@ class ListControl: UIView {
             stackView.addArrangedSubview(item)
         }
 
-        if !items.isEmpty {
-            selectedIndex = 0
-        }
+        selectedIndex = dataSource.listControlCurrentSelectedIndex(self)
     }
 
     private func updateSelection(from oldIndex: Int?, to newIndex: Int?) {
