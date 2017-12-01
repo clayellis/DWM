@@ -45,7 +45,7 @@ extension DependencyContainer: TaskListCarouselFactory {
     }
 
     func makeTaskListCarouselViewModel() -> TaskListCarouselViewModelProtocol {
-        return TaskListCarouselViewModel(taskManager: taskManager)
+        return TaskListCarouselViewModel(taskManager: taskManager, dayChangeObserver: dayChangeObserver)
     }
 
     func makeTaskListCarouselController() -> TaskListCarouselViewController {
