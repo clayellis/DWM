@@ -244,6 +244,7 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
 
         // Set values
         cell.textView.text = viewModel.titleForTask(at: indexPath)
+        cell.textView.placeholder = viewModel.placeholderForTask(at: indexPath)
         cell.textView.isEditable = viewModel.canEditTextView(at: indexPath)
         // TODO: Find a way to not have to do this here (rather in the delegate method)
         cell.textView.isUserInteractionEnabled = false
