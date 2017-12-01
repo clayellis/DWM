@@ -90,6 +90,10 @@ protocol TaskListViewModelProtocol: class {
     /// - returns: `nil` if a task doesn't exist at the `indexPath`.
     func titleForTask(at indexPath: IndexPath) -> String?
 
+    /// Returns the placeholder text for a task at an index path.
+    /// - returns: The placeholder text the task at `indexPath`.
+    func placeholderForTask(at indexPath: IndexPath) -> String
+
     /// Returns whether the text view at the index path can be edited.
     /// - parameter indexPath: The `IndexPath` of the row containing the text view.
     /// - returns: Whether the text view at the `indexPath` can be edited.
@@ -624,6 +628,14 @@ extension TaskListViewModel {
             }
         case .newTask: return nil
         case .newEditingTask(let editing): return editing
+        }
+    }
+
+    func placeholderForTask(at indexPath: IndexPath) -> String {
+        if let task = self.task(at: indexPath) {
+            return task.title
+        } else {
+            return "Random placeholder"
         }
     }
 
