@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6F0C10721FC517DF0017D6A5 /* Delta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0C10711FC517DF0017D6A5 /* Delta.swift */; };
 		6F0C10741FC51F980017D6A5 /* DeltaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0C10731FC51F980017D6A5 /* DeltaTests.swift */; };
+		6F0E461F1FD149BF0033399E /* Weak.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0E461E1FD149BF0033399E /* Weak.swift */; };
 		6F2D42BB1FC2134E00485A21 /* TaskListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2D42B91FC2133300485A21 /* TaskListTests.swift */; };
 		6F2D42C11FC2871800485A21 /* DependencyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2D42C01FC2871800485A21 /* DependencyManager.swift */; };
 		6F2D42C31FC28DF900485A21 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2D42C21FC28DF900485A21 /* DependencyContainer.swift */; };
@@ -89,6 +90,7 @@
 /* Begin PBXFileReference section */
 		6F0C10711FC517DF0017D6A5 /* Delta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delta.swift; sourceTree = "<group>"; };
 		6F0C10731FC51F980017D6A5 /* DeltaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeltaTests.swift; sourceTree = "<group>"; };
+		6F0E461E1FD149BF0033399E /* Weak.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weak.swift; sourceTree = "<group>"; };
 		6F2D42B91FC2133300485A21 /* TaskListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListTests.swift; sourceTree = "<group>"; };
 		6F2D42C01FC2871800485A21 /* DependencyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyManager.swift; sourceTree = "<group>"; };
 		6F2D42C21FC28DF900485A21 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
@@ -399,6 +401,7 @@
 				6F2D42C21FC28DF900485A21 /* DependencyContainer.swift */,
 				6F2D42C61FC2935200485A21 /* DataPopulator.swift */,
 				6F81B5B91FB74A6600875C74 /* Utilities.swift */,
+				6F0E461E1FD149BF0033399E /* Weak.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -535,6 +538,7 @@
 				6F81B5A41FB7481E00875C74 /* TaskManager.swift in Sources */,
 				6F81B59E1FB747D700875C74 /* Reminder.swift in Sources */,
 				6F41979D1FBFB13E00DB35F5 /* TaskListCarouselView.swift in Sources */,
+				6F0E461F1FD149BF0033399E /* Weak.swift in Sources */,
 				6F41979F1FC0A7DE00DB35F5 /* BaseNavigationController.swift in Sources */,
 				6FA1EFBE1FCBD5B200D02DE8 /* UICollectionViewCellExtensions.swift in Sources */,
 				6F7199691FB95D4400617BC0 /* TaskCompletionRecordData.swift in Sources */,
