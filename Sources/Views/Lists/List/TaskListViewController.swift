@@ -139,39 +139,23 @@ extension TaskListViewController: TaskListViewModelDelegate {
         }
     }
 
+    func shouldUpdateRowAppearance(toCompleted completed: Bool, at indexPath: IndexPath, animated: Bool) {
+        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
+        cell.applyStyling(asComplete: completed)
+    }
+
     func shouldReloadData(with changes: Delta.Changes) {
         let tableView = taskListView.tableView
-
-        // Inner function
-        func applyChanges() {
-            tableView.performBatchUpdates({
-                tableView.deleteRows(at: changes.deletedRows, with: .automatic)
-                tableView.insertRows(at: changes.insertedRows, with: .automatic)
-                changes.movedRows.forEach { tableView.moveRow(at: $0.from, to: $0.to) }
-                changes.deletedSections.forEach { tableView.deleteSections($0, with: .fade) }
-                changes.insertedSections.forEach { tableView.insertSections($0, with: .fade) }
-            }, completion: { finished in
-                // Reload once the animations are complete in order to refresh the section headers and the cell settings
-                tableView.reloadData()
-            })
-        }
-
-        if changes.onlyHasMovedRowsChanges {
-            for move in changes.movedRows {
-                guard let cell = tableView.cellForRow(at: move.from) as? TaskListCell else { continue }
-                let styleAsComplete = viewModel.indexPathRepresentsCompletedTask(move.to)
-                cell.applyStyling(asComplete: styleAsComplete)
-            }
-
-            // FIXME: Because of this delay (which I would like to keep), tapping another task before the changes are applied will crash
-
-            // Delay the changes for just a moment to provide context that the task was finished, then moved
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                applyChanges()
-            }
-        } else {
-            applyChanges()
-        }
+        tableView.performBatchUpdates({
+            tableView.deleteRows(at: changes.deletedRows, with: .automatic)
+            tableView.insertRows(at: changes.insertedRows, with: .automatic)
+            changes.movedRows.forEach { tableView.moveRow(at: $0.from, to: $0.to) }
+            changes.deletedSections.forEach { tableView.deleteSections($0, with: .fade) }
+            changes.insertedSections.forEach { tableView.insertSections($0, with: .fade) }
+        }, completion: { finished in
+            // Reload once the animations are complete in order to refresh the section headers and the cell settings
+            tableView.reloadData()
+        })
     }
 
     func shouldEnableInteractionWithTextView(_ shouldEnable: Bool, at indexPath: IndexPath) {
