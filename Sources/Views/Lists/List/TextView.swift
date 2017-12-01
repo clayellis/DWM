@@ -60,7 +60,7 @@ class TextView: UITextView {
     var placeholderInsets: UIEdgeInsets! {
         didSet {
             placeholderContainer.layoutMargins = placeholderInsets
-            updatePlaceholder()
+            setNeedsLayout()
         }
     }
 
