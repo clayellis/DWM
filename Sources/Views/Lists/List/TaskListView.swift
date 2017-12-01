@@ -19,7 +19,6 @@ protocol TaskListViewProtocol {
 final class TaskListView: UIView, TaskListViewProtocol {
 
     let tableView = UITableView(frame: .zero, style: .grouped)
-    let topFade = FadeView(direction: .down)
     let bottomFade = FadeView(direction: .up)
 
     init() {
@@ -36,25 +35,18 @@ final class TaskListView: UIView, TaskListViewProtocol {
         tableView.separatorStyle = .none
         tableView.backgroundColor = .white
         tableView.showsVerticalScrollIndicator = false
-        topFade.color = .white
         bottomFade.color = .white
     }
 
     func configureLayout() {
         addAutoLayoutSubview(tableView)
-        addAutoLayoutSubview(topFade)
         addAutoLayoutSubview(bottomFade)
         tableView.fillSuperview()
         NSLayoutConstraint.activate([
-            topFade.leftAnchor.constraint(equalTo: leftAnchor),
-            topFade.rightAnchor.constraint(equalTo: rightAnchor),
-            topFade.topAnchor.constraint(equalTo: safeTop),
-            topFade.heightAnchor.constraint(equalToConstant: 15),
-
             bottomFade.leftAnchor.constraint(equalTo: leftAnchor),
             bottomFade.rightAnchor.constraint(equalTo: rightAnchor),
             bottomFade.bottomAnchor.constraint(equalTo: bottomAnchor),
-            bottomFade.heightAnchor.constraint(equalToConstant: 15)
+            bottomFade.heightAnchor.constraint(equalToConstant: 5)
             ])
     }
 }
