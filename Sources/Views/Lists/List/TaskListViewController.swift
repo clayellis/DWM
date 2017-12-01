@@ -284,7 +284,7 @@ extension TaskListViewController {
     }
 
     @objc func tappedToDismissKeyboard(_ gestureRecognizer: UITapGestureRecognizer) {
-        viewModel.userTappedToDismissKeyboard()
+        viewModel.didTapToDismissKeyboard()
     }
 
     @objc func cellStatusIndicatorTouchDown(_ button: UIButton) {
@@ -293,14 +293,14 @@ extension TaskListViewController {
 
     @objc func cellStatusIndicatorTapped(_ button: UIButton) {
         guard let indexPath = self.indexPath(from: button) else { return }
-        viewModel.tappedStatusIndicator(at: indexPath)
+        viewModel.didTapStatusIndicator(at: indexPath)
         didLiftFingerInTaskRow()
     }
 
     @objc func cellDeleteTapped(_ button: UIButton) {
         guard let indexPath = self.indexPath(from: button) else { return }
         // TODO: Present some sort of confirmation (in row, action sheet...)
-        viewModel.tappedDelete(at: indexPath)
+        viewModel.didTapDelete(at: indexPath)
     }
 }
 

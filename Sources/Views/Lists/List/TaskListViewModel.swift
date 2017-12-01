@@ -26,11 +26,11 @@ protocol TaskListViewModelProtocol: class {
 
     /// Tells the view model that the user tapped the status indicator at the index path.
     /// - parameter indexPath: The `IndexPath` of the row containing the tapped status indicator.
-    func tappedStatusIndicator(at indexPath: IndexPath)
+    func didTapStatusIndicator(at indexPath: IndexPath)
 
     /// Tells the view model that the user tapped delete at the index path.
     /// - parameter indexPath: The `IndexPath` of the row containing the tapped delete button.
-    func tappedDelete(at indexPath: IndexPath)
+    func didTapDelete(at indexPath: IndexPath)
 
     /// Tells the view model that a text view at an index path did begin editing.
     /// - parameter indexPath: The `IndexPath` of the row containing the text view.
@@ -41,7 +41,7 @@ protocol TaskListViewModelProtocol: class {
     func didEndEditingText(at indexPath: IndexPath)
 
     /// Tells the view model that the user tapped to dismiss the keyboard
-    func userTappedToDismissKeyboard()
+    func didTapToDismissKeyboard()
 
     /// Tells the view model to begin editing the task at the index path.
     /// - parameter indexPath: The `IndexPath` of the row to edit.
@@ -122,6 +122,8 @@ protocol TaskListViewModelProtocol: class {
 
 /// A delegate that responds to events sent by a `TaskListViewModel`.
 protocol TaskListViewModelDelegate: class {
+
+    // TODO: Update wording to remove "should"
 
     /// Called when the title should be set.
     /// - parameter newTitle: The new title.
@@ -475,11 +477,11 @@ extension TaskListViewModel {
         toggleEditing()
     }
 
-    func tappedStatusIndicator(at indexPath: IndexPath) {
+    func didTapStatusIndicator(at indexPath: IndexPath) {
         toggleTaskCompletionStatus(at: indexPath)
     }
 
-    func tappedDelete(at indexPath: IndexPath) {
+    func didTapDelete(at indexPath: IndexPath) {
         deleteTask(at: indexPath)
     }
 
@@ -491,7 +493,7 @@ extension TaskListViewModel {
         delegate?.shouldEnableInteractionWithTextView(false, at: indexPath)
     }
 
-    func userTappedToDismissKeyboard() {
+    func didTapToDismissKeyboard() {
         delegate?.shouldDismissKeyboard()
     }
 
@@ -644,6 +646,7 @@ extension TaskListViewModel {
         if let task = self.task(at: indexPath) {
             return task.title
         } else {
+            // TODO: Create a list of placeholders and return a random one
             return "Random placeholder"
         }
     }
