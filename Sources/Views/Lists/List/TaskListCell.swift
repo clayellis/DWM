@@ -10,11 +10,14 @@ import UIKit
 
 // TODO: Create a subclass NewTaskListCell that hides the status indicator
 // TODO: Add a clear (x) button to NewTaskListCell to delete all text
-
-// TODO: Add a placeholder to the textView
 // TODO: Add custom delete button that replaces the status indicator while editing
-
 // TODO: Create a style manager for fonts, images, and colors
+
+// Animations:
+// MACRO
+// INDIVIDUAL ELEMENT ANIMATIONS
+// showHighlight(touched: Bool, animated: Bool)
+// hideHighlight(animated: Bool)
 
 class TaskListCell: UITableViewCell {
 
@@ -50,6 +53,7 @@ class TaskListCell: UITableViewCell {
         highlightArea.backgroundColor = UIColor(hexString: "F4F4F4")
         highlightArea.layer.cornerRadius = 10
 
+        statusIndicator.isHidden = true
         statusIndicator.layer.borderWidth = 2
         statusIndicator.layer.masksToBounds = true
         statusIndicator.layer.cornerRadius = Sizes.statusIndicatorRadius
