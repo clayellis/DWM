@@ -6,6 +6,10 @@
 //  Copyright © 2017 Test. All rights reserved.
 //
 
+// TODO: When a list is completed, the "daily" "weekly" "monthly" list item should scale and move to the center of the screen (filling up like 80% of the width)
+// and then the checkmark should appear and confetti pops out with a congrats message or something. The longer the frequency, the more confetti.
+// (daily gets a little confetti, weekly gets a lot, monthly gets a ton)
+
 import UIKit
 
 /// A `UIViewController` subclass for presenting task lists
@@ -19,6 +23,9 @@ class TaskListCarouselViewController: UIViewController {
     let listControl = ListControl()
 
     var taskListControllerCache = [TaskFrequency: TaskListNavigationController]()
+
+    var simulateForwardGesture: UISwipeGestureRecognizer?
+    var simulateBackwardGesture: UISwipeGestureRecognizer?
 
     init(factory: Factory) {
         self.factory = factory
@@ -41,13 +48,29 @@ class TaskListCarouselViewController: UIViewController {
         configureNavigationBar()
         configure(listControl: listControl)
         configure(collectionView: carouselView.collectionView)
+        // TODO: Add a dev and prod configuration and DEV flag to the dev configuration and only execute the following on dev
+        configureDevelopmentGestures()
     }
 
     func configureNavigationBar() {
         navigationItem.titleView = listControl
-
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Sim", style: .plain, target: self, action: #selector(tappedSimulateDayChange(_:)))
     }
+
+    func configureDevelopmentGestures() {
+        simulateForwardGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSimulationForwardGesture(_:)))
+        simulateForwardGesture!.numberOfTouchesRequired = 3
+        simulateForwardGesture!.direction = .right
+        simulateForwardGesture!.delegate = self
+        view.addGestureRecognizer(simulateForwardGesture!)
+
+        simulateBackwardGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSimulationBackwardGesture(_:)))
+        simulateBackwardGesture!.numberOfTouchesRequired = 3
+        simulateBackwardGesture!.direction = .left
+        simulateBackwardGesture!.delegate = self
+        view.addGestureRecognizer(simulateBackwardGesture!)
+    }
+
+    // MARK: Helpers
 
     func taskListController(for taskFrequency: TaskFrequency) -> TaskListNavigationController {
         if let cached = taskListControllerCache[taskFrequency] {
@@ -66,12 +89,10 @@ class TaskListCarouselViewController: UIViewController {
         return taskListController(for: taskFrequency)
     }
 
-    // MARK: Helpers
-
-    func simulateDayChange() {
+    func simulateDayChange(forward: Bool) {
         if let simulator = (factory as? SimulatorFactory) {
             let timeEngine = simulator.makeTimeEngine()
-            timeEngine.simulateDayChange()
+            timeEngine.simulateDayChange(forward: forward)
         }
     }
 }
@@ -79,8 +100,12 @@ class TaskListCarouselViewController: UIViewController {
 // MARK: Selectors
 
 extension TaskListCarouselViewController {
-    @objc func tappedSimulateDayChange(_ button: UIBarButtonItem) {
-        simulateDayChange()
+    @objc func handleSimulationForwardGesture(_ gestureRecognizer: UISwipeGestureRecognizer) {
+        simulateDayChange(forward: true)
+    }
+
+    @objc func handleSimulationBackwardGesture(_ gestureRecognizer: UISwipeGestureRecognizer) {
+        simulateDayChange(forward: false)
     }
 }
 
@@ -147,5 +172,17 @@ extension TaskListCarouselViewController: UICollectionViewDataSource, UICollecti
     func collectionView(_ collectionView: CarouselCollectionView, didChangePagesTo page: Int) {
         listControl.selectedIndex = page
         feedbackManager.triggerListChangeFeedback()
+    }
+}
+
+// MARK: Gesture Recognizer
+
+extension TaskListCarouselViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer == simulateForwardGesture || gestureRecognizer == simulateBackwardGesture {
+            return true
+        } else {
+            return false
+        }
     }
 }
