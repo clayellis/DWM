@@ -131,7 +131,7 @@ extension TaskListViewController: TaskListViewModelDelegate {
         taskListView.tableView.setEditing(editing, animated: true)
     }
 
-    func shouldUpdatedRowSelectionState(to selected: Bool, animated: Bool, at indexPath: IndexPath) {
+    func shouldUpdateRowSelectionState(to selected: Bool, animated: Bool, at indexPath: IndexPath) {
         if selected {
             taskListView.tableView.selectRow(at: indexPath, animated: animated, scrollPosition: .none)
         } else {
