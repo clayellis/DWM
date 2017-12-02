@@ -2,6 +2,7 @@
 
 ## General
 
+- Rename the organization
 - Add documentation
 - Determine what's allowed
     - Tasks can have the same name
