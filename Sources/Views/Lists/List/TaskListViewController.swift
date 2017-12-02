@@ -140,8 +140,8 @@ extension TaskListViewController: TaskListViewModelDelegate {
     }
 
     func updateRowAppearance(toCompleted completed: Bool, at indexPath: IndexPath, animated: Bool) {
-        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
-        cell.applyStyling(asComplete: completed)
+        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? BaseTaskListCell else { return }
+        cell.setCompleted(completed, animated: animated)
     }
 
     func reloadData(with changes: Delta.Changes) {
@@ -159,17 +159,17 @@ extension TaskListViewController: TaskListViewModelDelegate {
     }
 
     func enableInteractionWithTextView(_ shouldEnable: Bool, at indexPath: IndexPath) {
-        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
+        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? BaseTaskListCell else { return }
         cell.textView.isUserInteractionEnabled = shouldEnable
     }
 
     func clearText(at indexPath: IndexPath) {
-        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
+        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? BaseTaskListCell else { return }
         cell.textView.text = ""
     }
 
     func beginEditingTextView(at indexPath: IndexPath) {
-        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
+        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? BaseTaskListCell else { return }
         cell.textView.becomeFirstResponder()
     }
 
@@ -191,6 +191,7 @@ extension TaskListViewController: TaskListViewModelDelegate {
 extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
     func configure(tableView: UITableView) {
         tableView.register(TaskListCell.self, forCellReuseIdentifier: TaskListCell.reuseIdentifier)
+        tableView.register(NewTaskListCell.self, forCellReuseIdentifier: NewTaskListCell.reuseIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.keyboardDismissMode = .onDrag
@@ -219,12 +220,23 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: TaskListCell.reuseIdentifier, for: indexPath) as! TaskListCell
+        let cell: BaseTaskListCell
+        if viewModel.indexPathRepresentsNewTaskRow(indexPath)  {
+            let newTaskCell = tableView.dequeueReusableCell(withIdentifier: NewTaskListCell.reuseIdentifier, for: indexPath) as! NewTaskListCell
+            cell = newTaskCell
 
-        // Add targets
-        cell.statusIndicator.addTarget(self, action: #selector(cellStatusIndicatorTouchDown(_:)), for: .touchDown)
-        cell.statusIndicator.addTarget(self, action: #selector(cellStatusIndicatorTapped(_:)), for: .touchUpInside)
-        cell.deleteButton.addTarget(self, action: #selector(cellDeleteTapped(_:)), for: .touchUpInside)
+            newTaskCell.textView.delegate = newTaskTextViewDelegate
+
+        } else {
+            let taskListCell = tableView.dequeueReusableCell(withIdentifier: TaskListCell.reuseIdentifier, for: indexPath) as! TaskListCell
+            cell = taskListCell
+            taskListCell.textView.delegate = editTaskTextViewDelegate
+
+            // TODO: Cast the cell depending on indexPath (ask the view model) and then add targets accordingly
+            taskListCell.completedButton.addTarget(self, action: #selector(cellStatusIndicatorTouchDown(_:)), for: .touchDown)
+            taskListCell.completedButton.addTarget(self, action: #selector(cellStatusIndicatorTapped(_:)), for: .touchUpInside)
+            taskListCell.deleteButton.addTarget(self, action: #selector(cellDeleteTapped(_:)), for: .touchUpInside)
+        }
 
         // Set values
         cell.textView.text = viewModel.titleForTask(at: indexPath)
@@ -233,15 +245,9 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         // TODO: Find a way to not have to do this here (rather in the delegate method)
         cell.textView.isUserInteractionEnabled = false
 
-        // Set delegates
-        if viewModel.indexPathRepresentsNewTaskRow(indexPath) {
-            cell.textView.delegate = newTaskTextViewDelegate
-        } else {
-            cell.textView.delegate = editTaskTextViewDelegate
-        }
-
-        // Apply styling
-        cell.applyStyling(asComplete: viewModel.indexPathRepresentsCompletedTask(indexPath))
+        // Set completed
+        let isCompleted = viewModel.indexPathRepresentsCompletedTask(indexPath)
+        cell.setCompleted(isCompleted, animated: false)
 
         return cell
     }
