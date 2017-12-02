@@ -74,7 +74,7 @@ class TaskListCarouselViewModel: NSObject, TaskListCarouselViewModelProtocol {
         if incomplete.count > 0 {
             return .text("\(incomplete.count)")
         } else {
-            // TODO: Create check mark image for completed lists
+            // TODO: Make check mark image a little smaller and more "round"
             let context = ListControlItem.IndicatorImageContext(
                 normalImageName: "CheckWhiteCircle",
                 normalHighlightedImageName: "CheckWhiteCircle",
