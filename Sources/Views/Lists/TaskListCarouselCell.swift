@@ -45,7 +45,7 @@ class TaskListCarouselCell: UICollectionViewCell {
 
         layer.shadowOffset = CGSize(width: 0, height: 12)
         layer.shadowRadius = 14
-        layer.shadowOpacity = 0.15 // 0.22
+        layer.shadowOpacity = 0.1 // 0.22
         layer.shadowColor = UIColor.black.cgColor
 
         bufferView.backgroundColor = .white
