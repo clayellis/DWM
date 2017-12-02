@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F046F0D1FD25FCB00140096 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F046F0C1FD25FCB00140096 /* Button.swift */; };
+		6F046F101FD26CB800140096 /* BaseTaskListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F046F0F1FD26CB800140096 /* BaseTaskListCell.swift */; };
+		6F046F121FD26CEA00140096 /* NewTaskListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F046F111FD26CEA00140096 /* NewTaskListCell.swift */; };
 		6F0C10721FC517DF0017D6A5 /* Delta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0C10711FC517DF0017D6A5 /* Delta.swift */; };
 		6F0C10741FC51F980017D6A5 /* DeltaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0C10731FC51F980017D6A5 /* DeltaTests.swift */; };
 		6F0E461F1FD149BF0033399E /* Weak.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0E461E1FD149BF0033399E /* Weak.swift */; };
@@ -92,6 +95,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6F046F0C1FD25FCB00140096 /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
+		6F046F0F1FD26CB800140096 /* BaseTaskListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTaskListCell.swift; sourceTree = "<group>"; };
+		6F046F111FD26CEA00140096 /* NewTaskListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTaskListCell.swift; sourceTree = "<group>"; };
 		6F0C10711FC517DF0017D6A5 /* Delta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delta.swift; sourceTree = "<group>"; };
 		6F0C10731FC51F980017D6A5 /* DeltaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeltaTests.swift; sourceTree = "<group>"; };
 		6F0E461E1FD149BF0033399E /* Weak.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weak.swift; sourceTree = "<group>"; };
@@ -190,6 +196,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6F046F0E1FD26CA700140096 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				6F046F0F1FD26CB800140096 /* BaseTaskListCell.swift */,
+				6F3B52691FC4906A00B3E0E5 /* TaskListCell.swift */,
+				6F046F111FD26CEA00140096 /* NewTaskListCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		6F2D42BC1FC286CD00485A21 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -252,6 +268,7 @@
 				6F41979E1FC0A7DE00DB35F5 /* BaseNavigationController.swift */,
 				6FA1EFB91FCB1B1F00D02DE8 /* Theme.swift */,
 				6FBE24B01FCE8472004955B7 /* Animation.swift */,
+				6F046F0C1FD25FCB00140096 /* Button.swift */,
 				6F4197991FBFB0C500DB35F5 /* Extensions */,
 				6F4197961FBFAF0800DB35F5 /* Lists */,
 			);
@@ -296,7 +313,7 @@
 				6F4197A91FC0BB1600DB35F5 /* TaskListViewController.swift */,
 				6F4197AF1FC1E1AE00DB35F5 /* TaskListViewModel.swift */,
 				6F4197B11FC1E26400DB35F5 /* TaskListView.swift */,
-				6F3B52691FC4906A00B3E0E5 /* TaskListCell.swift */,
+				6F046F0E1FD26CA700140096 /* Cells */,
 				6F5A1F441FD0CB5A00F6D01C /* TextView.swift */,
 				6F5A1F421FD07CCF00F6D01C /* FadeView.swift */,
 				6F82FB541FCC83A300A96CC0 /* FeedbackManager.swift */,
@@ -601,8 +618,11 @@
 				6F7199711FB9675D00617BC0 /* TaskData+CoreDataProperties.swift in Sources */,
 				6FA1EFB01FCA22BB00D02DE8 /* UINavigationControllerExtensions.swift in Sources */,
 				6F3B526A1FC4906A00B3E0E5 /* TaskListCell.swift in Sources */,
+				6F046F0D1FD25FCB00140096 /* Button.swift in Sources */,
+				6F046F121FD26CEA00140096 /* NewTaskListCell.swift in Sources */,
 				6F81B59A1FB747BA00875C74 /* Task.swift in Sources */,
 				6F2D42C71FC2935200485A21 /* DataPopulator.swift in Sources */,
+				6F046F101FD26CB800140096 /* BaseTaskListCell.swift in Sources */,
 				6F7199701FB9675D00617BC0 /* TaskData+CoreDataClass.swift in Sources */,
 				6F4197AA1FC0BB1600DB35F5 /* TaskListViewController.swift in Sources */,
 				6F0C10721FC517DF0017D6A5 /* Delta.swift in Sources */,
