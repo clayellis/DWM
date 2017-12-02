@@ -123,8 +123,6 @@ protocol TaskListViewModelProtocol: class {
 /// A delegate that responds to events sent by a `TaskListViewModel`.
 protocol TaskListViewModelDelegate: class {
 
-    // TODO: Update wording to remove "should"
-
     /// Called when the title should be set.
     /// - parameter newTitle: The new title.
     func setTitle(to newTitle: String)
@@ -478,6 +476,16 @@ extension TaskListViewModel {
     }
 
     func didTapEditButton() {
+        // TODO: Determine if we should be explicit in commit tasks here. It seems to make sense to be explicit. Just have to test if it's okay (doesn't mess anything up)
+        // They're being committed anyways (toggleEditing() > view.endEditing() > textView.didEndEditing() > commit())
+//        if editingTask != nil {
+//            commitEditingTask()
+//        }
+//
+//        if newTask != nil {
+//            commitNewTask()
+//        }
+
         toggleEditing()
     }
 
@@ -661,7 +669,8 @@ extension TaskListViewModel {
 
     func canEditRow(at indexPath: IndexPath) -> Bool {
         guard isEditing else { return false }
-        return !indexPathRepresentsNewTaskRow(indexPath)
+        return true
+//        return !indexPathRepresentsNewTaskRow(indexPath)
     }
 
     func indexPathRepresentsCompletedTask(_ indexPath: IndexPath) -> Bool {
