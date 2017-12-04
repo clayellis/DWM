@@ -100,8 +100,8 @@ final class TimeEngine: TimeEngineProtocol {
         let day: TimeInterval = 86_400 * (forward ? 1 : -1)
         if let currentMode = simulationMode {
             switch currentMode {
-            case .fixed:
-                simulationMode = .offset(day)
+            case .fixed(let fixedDate):
+                simulationMode = .fixed(fixedDate.addingTimeInterval(day))
             case .offset(let currentOffset):
                 simulationMode = .offset(currentOffset + day)
             }
