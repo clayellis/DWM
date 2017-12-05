@@ -140,7 +140,7 @@ extension TaskListViewController: TaskListViewModelDelegate {
     }
 
     func updateRowAppearance(toCompleted completed: Bool, at indexPath: IndexPath, animated: Bool) {
-        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? BaseTaskListCell else { return }
+        guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? TaskListCell else { return }
         cell.setCompleted(completed, animated: animated)
     }
 
@@ -225,16 +225,16 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
             let newTaskCell = tableView.dequeueReusableCell(withIdentifier: NewTaskListCell.reuseIdentifier, for: indexPath) as! NewTaskListCell
             cell = newTaskCell
             newTaskCell.textView.delegate = newTaskTextViewDelegate
-
+            newTaskCell.addButton.addTarget(self, action: #selector(cellAddTapped(_:)), for: .touchUpInside)
         } else {
             let taskListCell = tableView.dequeueReusableCell(withIdentifier: TaskListCell.reuseIdentifier, for: indexPath) as! TaskListCell
             cell = taskListCell
             taskListCell.textView.delegate = editTaskTextViewDelegate
-
-            // TODO: Cast the cell depending on indexPath (ask the view model) and then add targets accordingly
             taskListCell.completedButton.addTarget(self, action: #selector(cellCompleteButtonTouchDown(_:)), for: .touchDown)
             taskListCell.completedButton.addTarget(self, action: #selector(cellCompleteButtonTapped(_:)), for: .touchUpInside)
             taskListCell.deleteButton.addTarget(self, action: #selector(cellDeleteTapped(_:)), for: .touchUpInside)
+            let isCompleted = viewModel.indexPathRepresentsCompletedTask(indexPath)
+            taskListCell.setCompleted(isCompleted, animated: false)
         }
 
         // Set values
@@ -243,10 +243,6 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         cell.textView.isEditable = viewModel.canEditTextView(at: indexPath)
         // TODO: Find a way to not have to do this here (rather in the delegate method)
         cell.textView.isUserInteractionEnabled = false
-
-        // Set completed
-        let isCompleted = viewModel.indexPathRepresentsCompletedTask(indexPath)
-        cell.setCompleted(isCompleted, animated: false)
 
         return cell
     }
@@ -306,6 +302,11 @@ extension TaskListViewController {
         guard let indexPath = self.indexPath(from: button) else { return }
         // TODO: Present some sort of confirmation (in row, action sheet...)
         viewModel.didTapDelete(at: indexPath)
+    }
+
+    @objc func cellAddTapped(_ button: UIButton) {
+        guard let indexPath = self.indexPath(from: button) else { return }
+        viewModel.didTapAdd(at: indexPath)
     }
 }
 

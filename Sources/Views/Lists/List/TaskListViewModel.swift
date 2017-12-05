@@ -32,6 +32,10 @@ protocol TaskListViewModelProtocol: class {
     /// - parameter indexPath: The `IndexPath` of the row containing the tapped delete button.
     func didTapDelete(at indexPath: IndexPath)
 
+    /// Tells the view model that the user tapped add at the index path.
+    /// - paramter indexPath: The `IndexPath` of the row containing the tapped add button.
+    func didTapAdd(at indexPath: IndexPath)
+
     /// Tells the view model that a text view at an index path did begin editing.
     /// - parameter indexPath: The `IndexPath` of the row containing the text view.
     func didBeginEditingText(at indexPath: IndexPath)
@@ -495,6 +499,11 @@ extension TaskListViewModel {
 
     func didTapDelete(at indexPath: IndexPath) {
         deleteTask(at: indexPath)
+    }
+
+    func didTapAdd(at indexPath: IndexPath) {
+        // Treat this a selection
+        didSelectRow(at: indexPath)
     }
 
     func didBeginEditingText(at indexPath: IndexPath) {
