@@ -33,40 +33,41 @@ final class NewTaskListCell: BaseTaskListCell {
 
     // MARK: - Animations
 
-    // MARK: Completed
-
-    override func setCompleted(_ completed: Bool, animated: Bool) {
-        super.setCompleted(completed, animated: animated)
-
-    }
-
     // MARK: Highlighted
 
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
         super.setHighlighted(highlighted, animated: animated)
-
     }
 
     // MARK: Selected
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
     }
 
     // MARK: Editing
 
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
-        let duration: TimeInterval = animated ? 0.15 : 0
+//        let duration: TimeInterval = animated ? 0.15 : 0
         if editing {
-            self.alpha = 0
-            self.animate(
-                .fadeIn(duration: 5)
+//            addButton.alpha = 0
+//            textView.alpha = 0
+//            UIView.animateInParallel(
+//                addButton.animate(.fadeIn(duration: 5)),
+//                textView.animate(.fadeIn(duration: 5))
+//            )
+            contentView.alpha = 0
+            UIView.animateInParallel(
+                contentView.animate(.fadeIn(duration: 5))
             )
         } else {
-            self.animate(
-                .fadeOut(duration: duration)
+//            UIView.animateInParallel(
+//                addButton.animate(.fadeOut(duration: 0.15)),
+//                textView.animate(.fadeOut(duration: 0.15))
+//            )
+            UIView.animateInParallel(
+                contentView.animate(.fadeOut(duration: 0.15))
             )
         }
 

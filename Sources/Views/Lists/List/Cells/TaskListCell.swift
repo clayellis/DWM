@@ -55,13 +55,35 @@ final class TaskListCell: BaseTaskListCell {
 
     // MARK: Completed
 
-    override func setCompleted(_ completed: Bool, animated: Bool) {
-        super.setCompleted(completed, animated: animated)
+    // TODO: prepareSetCompleted(_ completed: Bool, animated: Bool)
+    // Basically setHighlighted, but only called when the view is not in edit mode
+    // ANIMATION:
+    // On down, the complete button (and title) shrinks slightly on a spring (like it's being pressed down and loaded to spring)
+    // and the first stroke of the check mark is drawn going down
+
+    // FIXME: I've seen ghosting when scrolling quickly through a long list of cells where the content of a reused cell
+    // was visible for a second because the textview was being cross dissolved. By using an animated flag we can set the animation duration to 0.
+
+    func setCompleted(_ completed: Bool, animated: Bool) {
+
+        // ANIMATION:
+        // On the up movement, the complete button (and title) springs up past its normal size and shakes (rotationally) with excitement just slightly (not the title)
+        // and the final upwward stroke of the check mark is drawn
+        // The indicator glows a certain color and pulses that color outwards
+
         crossDisolve(on: completedButton) {
             if completed {
                 self.completedButton.isSelected = true
             } else {
                 self.completedButton.isSelected = false
+            }
+        }
+
+        crossDisolve(on: textView) {
+            if completed {
+                self.textView.textColor = UIColor.black.withAlphaComponent(0.2)
+            } else {
+                self.textView.textColor = .black
             }
         }
 
@@ -72,24 +94,23 @@ final class TaskListCell: BaseTaskListCell {
                 self.completedButton.layer.borderColor = UIColor.black.cgColor
             }
         }
+
+//        animateChanges {
+//            if completed {
+//                self.contentView.backgroundColor = UIColor.black.withAlphaComponent(0.01)
+//            } else {
+//                self.contentView.backgroundColor = .white
+//            }
+//        }
     }
 
     // MARK: Highlighted
-
-    // ANIMATION:
-    // On down, the status indicator (and title) shrinks slightly on a spring (like it's being pressed down and loaded to spring)
-    // and the first stroke of the check mark is drawn going down
-
-    // ANIMATION:
-    // On the up movement, the status indicator (and title) springs up past its normal size and shakes (rotationally) with excitement just slightly (not the title)
-    // and the final upwward stroke of the check mark is drawn
-    // The indicator glows a certain color and pulses that color outwards
 
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
         super.setHighlighted(highlighted, animated: animated)
         if highlighted {
             let scalar = AnimationValues.highlightScalar
-            let duration = AnimationValues.highlightedTrueDuration
+            let duration = animated ? AnimationValues.highlightedTrueDuration : 0
             let translationX = AnimationValues.highlightedTranslationX
             UIView.animateInParallel(
                 deleteButton.animateInParallel(
@@ -98,33 +119,29 @@ final class TaskListCell: BaseTaskListCell {
                 )
             )
         } else {
-            let duration: TimeInterval = AnimationValues.highlightedFalseDuration
-            let translationX = -AnimationValues.highlightedTranslationX
+            // Always animate unhighlight
+            let duration = AnimationValues.highlightedFalseDuration
             UIView.animateInParallel(
-                completedButton.animateInParallel(
+                deleteButton.animateInParallel(
                     .resetScale(duration: duration),
-                    .move(byX: translationX, y: 0, duration: duration)
+                    .resetPosition()
                 )
             )
         }
-
-//        crossDisolve(changes: self.completedButton.isHighlighted = highlighted, on: completedButton)
     }
 
     // MARK: Selected
 
-
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
     }
 
     // MARK: Editing
 
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
-        let transformValue: CGFloat = -10
-        let duration: TimeInterval = animated ? 0.15 : 0
+        let transformValue: CGFloat = -15
+        let duration: TimeInterval = animated ? 0.25 : 0
         if editing {
             UIView.animate(
                 completedButton.animateInParallel(
@@ -133,21 +150,13 @@ final class TaskListCell: BaseTaskListCell {
                 ),
                 deleteButton.animateInParallel(
                     .fadeIn(duration: duration),
-                    .move(byX: -transformValue, y: 0, duration: duration)
+                    .resetPosition(duration: duration)
                 )
             )
-            //            UIView.animate(
-            //                textView.animate(
-            //                    .move(byX: transformValue, y: 0, duration: duration),
-            //                    .resetPosition(duration: duration)
-            //                )
-            //            )
         } else {
             // FIXME: setEditing is being called when the cell is selected/highlighted
             // (for instance, after a user taps a task to complete it)
-            // and the status indicator is moving when it shouldn't.
-
-            //            completedButton.transform.tx = transformValue
+            // and the complete button is moving when it shouldn't.
             UIView.animate(
                 deleteButton.animateInParallel(
                     .fadeOut(duration: duration),
@@ -155,15 +164,9 @@ final class TaskListCell: BaseTaskListCell {
                 ),
                 completedButton.animateInParallel(
                     .fadeIn(duration: duration),
-                    .move(byX: -transformValue, y: 0, duration: duration)
+                    .resetPosition(duration: duration)
                 )
             )
-            //            UIView.animate(
-            //                textView.animate(
-            //                    .move(byX: transformValue, y: 0, duration: duration),
-            //                    .resetPosition(duration: duration)
-            //                )
-            //            )
         }
     }
 }

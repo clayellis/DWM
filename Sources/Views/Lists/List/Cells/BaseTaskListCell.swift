@@ -10,8 +10,6 @@ import UIKit
 
 // TODO: !!! Create a style manager for fonts, images, and colors
 
-// TODO: !! Create a subclass NewTaskListCell that hides the status indicator
-
 // TODO: Add a long press to the cell so that you can directly edit a task without having to tap edit, then select the cell. (Long press, enter edit, begin editing)
 // TODO: Add a clear (x) button to NewTaskListCell to delete all text
 
@@ -95,32 +93,10 @@ class BaseTaskListCell: UITableViewCell {
 
     // TODO: Maybe instead of overriding setHighlighted and setEditing, there should be dedicated methods that I call specifically when
     // the cells should be put in editing mode or highlighted mode. That way the system can't apply the animations in times when it shouldn't.
-    // Like in the case where the statusIndicator jumps because the editing method is called (with `false`) when the cell is reloaded
+    // Like in the case where the completeButton jumps because the editing method is called (with `false`) when the cell is reloaded
     // Though, this could be because the animations I'm using to move the views use transforms and the transforms get reset? That's probably it.
     // So I need to fix the animations first (I should have to set the animations up if everything is working correctly)
     // Consider offsetting center and adjust contentScale. Or perhaps do it all by frames.
-
-    // MARK: Completed
-
-    // FIXME: I've seen ghosting when scrolling quickly through a long list of cells where the content of a reused cell
-    // was visible for a second because the textview was being cross dissolved. By using an animated flag we can set the animation duration to 0.
-
-    func setCompleted(_ completed: Bool, animated: Bool) {
-        crossDisolve(on: textView) {
-            if completed {
-                self.textView.textColor = UIColor.black.withAlphaComponent(0.2)
-            } else {
-                self.textView.textColor = .black
-            }
-        }
-//        animateChanges {
-//            if completed {
-//                self.contentView.backgroundColor = UIColor.black.withAlphaComponent(0.01)
-//            } else {
-//                self.contentView.backgroundColor = .white
-//            }
-//        }
-    }
 
     // MARK: Highlighted
 
@@ -144,8 +120,8 @@ class BaseTaskListCell: UITableViewCell {
                 )
             )
         } else {
-            let duration = animated ? AnimationValues.highlightedFalseDuration : 0
-            let translationX = -AnimationValues.highlightedTranslationX
+            // Always animate unhighlight
+            let duration = AnimationValues.highlightedFalseDuration
             UIView.animateInParallel(
                 highlightArea.animateInParallel(
                     .fadeOut(duration: duration),
@@ -156,7 +132,7 @@ class BaseTaskListCell: UITableViewCell {
                 ),
                 primaryButton.animateInParallel(
                     .resetScale(),
-                    .move(byX: translationX, y: 0, duration: duration)
+                    .resetPosition()
                 )
             )
         }
