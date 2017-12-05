@@ -31,8 +31,6 @@ final class TaskListNavigationController: UINavigationController {
     private func configureStyles() {
         navigationBar.prefersLargeTitles = true
         if let titleLabel = navigationBar.subviewWithClassType(UILabel.self) {
-//            titleLabel.adjustsFontSizeToFitWidth = true
-//            titleLabel.allowsDefaultTighteningForTruncation = true
             titleLabel.numberOfLines = 2
             titleLabel.lineBreakMode = .byWordWrapping
         }
