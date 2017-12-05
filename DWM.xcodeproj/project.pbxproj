@@ -269,6 +269,9 @@
 				6FA1EFB91FCB1B1F00D02DE8 /* Theme.swift */,
 				6FBE24B01FCE8472004955B7 /* Animation.swift */,
 				6F046F0C1FD25FCB00140096 /* Button.swift */,
+				6F5A1F441FD0CB5A00F6D01C /* TextView.swift */,
+				6F5A1F421FD07CCF00F6D01C /* FadeView.swift */,
+				6F82FB541FCC83A300A96CC0 /* FeedbackManager.swift */,
 				6F4197991FBFB0C500DB35F5 /* Extensions */,
 				6F4197961FBFAF0800DB35F5 /* Lists */,
 			);
@@ -314,9 +317,6 @@
 				6F4197AF1FC1E1AE00DB35F5 /* TaskListViewModel.swift */,
 				6F4197B11FC1E26400DB35F5 /* TaskListView.swift */,
 				6F046F0E1FD26CA700140096 /* Cells */,
-				6F5A1F441FD0CB5A00F6D01C /* TextView.swift */,
-				6F5A1F421FD07CCF00F6D01C /* FadeView.swift */,
-				6F82FB541FCC83A300A96CC0 /* FeedbackManager.swift */,
 			);
 			path = List;
 			sourceTree = "<group>";
