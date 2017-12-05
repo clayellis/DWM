@@ -43,17 +43,32 @@ extension Animation {
     }
 
     static func scale(by scalar: CGFloat, duration: TimeInterval = 0.3) -> Animation {
-        return Animation(duration: duration, closure: { $0.transform = $0.transform.scaledBy(x: scalar, y: scalar) })
+        return Animation(duration: duration, closure: {
+            $0.transform.a = scalar
+            $0.transform.d = scalar
+//            $0.transform = $0.transform.scaledBy(x: scalar, y: scalar)
+        })
     }
 
     static func resetScale(duration: TimeInterval = 0.3) -> Animation {
-        return Animation(duration: duration, closure: { $0.transform = .identity })
+        return Animation(duration: duration, closure: {
+            $0.transform.a = 1.0
+            $0.transform.d = 1.0
+        })
     }
 
     static func move(byX x: CGFloat, y: CGFloat, duration: TimeInterval = 0.3) -> Animation {
         return Animation(duration: duration, closure: {
-            $0.center.x += x
-            $0.center.y += y
+            $0.transform.tx = x
+            $0.transform.ty = y
+//            $0.transform = $0.transform.translatedBy(x: x, y: y) }
+        })
+    }
+
+    static func resetPosition(duration: TimeInterval = 0.3) -> Animation {
+        return Animation(duration: duration, closure: {
+            $0.transform.tx = 0
+            $0.transform.ty = 0
         })
     }
 
