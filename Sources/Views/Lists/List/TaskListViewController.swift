@@ -224,7 +224,6 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         if viewModel.indexPathRepresentsNewTaskRow(indexPath)  {
             let newTaskCell = tableView.dequeueReusableCell(withIdentifier: NewTaskListCell.reuseIdentifier, for: indexPath) as! NewTaskListCell
             cell = newTaskCell
-
             newTaskCell.textView.delegate = newTaskTextViewDelegate
 
         } else {
@@ -233,8 +232,8 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
             taskListCell.textView.delegate = editTaskTextViewDelegate
 
             // TODO: Cast the cell depending on indexPath (ask the view model) and then add targets accordingly
-            taskListCell.completedButton.addTarget(self, action: #selector(cellStatusIndicatorTouchDown(_:)), for: .touchDown)
-            taskListCell.completedButton.addTarget(self, action: #selector(cellStatusIndicatorTapped(_:)), for: .touchUpInside)
+            taskListCell.completedButton.addTarget(self, action: #selector(cellCompleteButtonTouchDown(_:)), for: .touchDown)
+            taskListCell.completedButton.addTarget(self, action: #selector(cellCompleteButtonTapped(_:)), for: .touchUpInside)
             taskListCell.deleteButton.addTarget(self, action: #selector(cellDeleteTapped(_:)), for: .touchUpInside)
         }
 
@@ -293,13 +292,13 @@ extension TaskListViewController {
         viewModel.didTapToDismissKeyboard()
     }
 
-    @objc func cellStatusIndicatorTouchDown(_ button: UIButton) {
+    @objc func cellCompleteButtonTouchDown(_ button: UIButton) {
         didPlaceFingerInTaskRow()
     }
 
-    @objc func cellStatusIndicatorTapped(_ button: UIButton) {
+    @objc func cellCompleteButtonTapped(_ button: UIButton) {
         guard let indexPath = self.indexPath(from: button) else { return }
-        viewModel.didTapStatusIndicator(at: indexPath)
+        viewModel.didTapCompleteButton(at: indexPath)
         didLiftFingerInTaskRow()
     }
 

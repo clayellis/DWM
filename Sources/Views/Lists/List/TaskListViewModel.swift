@@ -24,9 +24,9 @@ protocol TaskListViewModelProtocol: class {
     /// Tells the view model that the user tapped the edit button
     func didTapEditButton()
 
-    /// Tells the view model that the user tapped the status indicator at the index path.
-    /// - parameter indexPath: The `IndexPath` of the row containing the tapped status indicator.
-    func didTapStatusIndicator(at indexPath: IndexPath)
+    /// Tells the view model that the user tapped the complete button at the index path.
+    /// - parameter indexPath: The `IndexPath` of the row containing the tapped complete button.
+    func didTapCompleteButton(at indexPath: IndexPath)
 
     /// Tells the view model that the user tapped delete at the index path.
     /// - parameter indexPath: The `IndexPath` of the row containing the tapped delete button.
@@ -489,7 +489,7 @@ extension TaskListViewModel {
         toggleEditing()
     }
 
-    func didTapStatusIndicator(at indexPath: IndexPath) {
+    func didTapCompleteButton(at indexPath: IndexPath) {
         toggleTaskCompletionStatus(at: indexPath)
     }
 
