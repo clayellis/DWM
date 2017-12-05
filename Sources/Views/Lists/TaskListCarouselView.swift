@@ -46,6 +46,7 @@ class TaskListCarouselView: UIView, TaskListCarouselViewProtocol {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.alwaysBounceHorizontal = true
         collectionView.decelerationRate = UIScrollViewDecelerationRateFast
+        collectionView.allowsSelection = false
     }
 
     private func configureLayout() {
