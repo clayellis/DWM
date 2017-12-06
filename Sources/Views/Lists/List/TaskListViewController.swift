@@ -27,8 +27,7 @@ final class TaskListViewController: UIViewController {
     let theme: ThemeProtocol
     let feedbackManager: FeedbackManagerProtocol
 
-    private lazy var newTaskTextViewDelegate = NewTaskTextViewDelegate(controller: self)
-    private lazy var editTaskTextViewDelegate = EditTaskTextViewDelegate(controller: self)
+    private lazy var textViewDelegate = TextViewDelegate(controller: self)
 
     init(factory: Factory, for taskFrequency: TaskFrequency) {
         self.factory = factory
@@ -161,6 +160,7 @@ extension TaskListViewController: TaskListViewModelDelegate {
     func enableInteractionWithTextView(_ shouldEnable: Bool, at indexPath: IndexPath) {
         guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? BaseTaskListCell else { return }
         cell.textView.isUserInteractionEnabled = shouldEnable
+        cell.textView.isEditable = shouldEnable
     }
 
     func clearText(at indexPath: IndexPath) {
@@ -170,6 +170,7 @@ extension TaskListViewController: TaskListViewModelDelegate {
 
     func beginEditingTextView(at indexPath: IndexPath) {
         guard let cell = taskListView.tableView.cellForRow(at: indexPath) as? BaseTaskListCell else { return }
+//        cell.textView.isEditable = true
         cell.textView.becomeFirstResponder()
     }
 
@@ -224,12 +225,10 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         if viewModel.indexPathRepresentsNewTaskRow(indexPath)  {
             let newTaskCell = tableView.dequeueReusableCell(withIdentifier: NewTaskListCell.reuseIdentifier, for: indexPath) as! NewTaskListCell
             cell = newTaskCell
-            newTaskCell.textView.delegate = newTaskTextViewDelegate
             newTaskCell.addButton.addTarget(self, action: #selector(cellAddTapped(_:)), for: .touchUpInside)
         } else {
             let taskListCell = tableView.dequeueReusableCell(withIdentifier: TaskListCell.reuseIdentifier, for: indexPath) as! TaskListCell
             cell = taskListCell
-            taskListCell.textView.delegate = editTaskTextViewDelegate
             taskListCell.completedButton.addTarget(self, action: #selector(cellCompleteButtonTouchDown(_:)), for: .touchDown)
             taskListCell.completedButton.addTarget(self, action: #selector(cellCompleteButtonTapped(_:)), for: .touchUpInside)
             taskListCell.deleteButton.addTarget(self, action: #selector(cellDeleteTapped(_:)), for: .touchUpInside)
@@ -243,6 +242,7 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
         cell.textView.isEditable = viewModel.canEditTextView(at: indexPath)
         // TODO: Find a way to not have to do this here (rather in the delegate method)
         cell.textView.isUserInteractionEnabled = false
+        cell.textView.delegate = textViewDelegate
 
         return cell
     }
@@ -312,24 +312,29 @@ extension TaskListViewController {
 
 // MARK: Text View
 
+// FIXME: There was a case once where a word auto corrected in the label, but the editingTask wasn't updated, so when done was tapped, the uncorrected word was displayed
+
 private class TextViewDelegate: NSObject, UITextViewDelegate {
+
     weak var controller: TaskListViewController?
+    var activeIndexPath: IndexPath?
 
     init(controller: TaskListViewController) {
         self.controller = controller
         super.init()
     }
 
-    // TODO: Consider disabling user interaction on the text view (so that the only way to start editing is to select the row)
-    // And once editing begins, enable interaction, once editing ends, disable interaction
-
     func textViewDidBeginEditing(_ textView: UITextView) {
         if let indexPath = controller?.indexPath(from: textView) {
+            activeIndexPath = indexPath
             controller?.viewModel.didBeginEditingText(at: indexPath)
         }
     }
 
     func textViewDidChange(_ textView: UITextView) {
+        if let indexPath = activeIndexPath {
+            controller?.viewModel.didChangeText(at: indexPath, to: textView.text)
+        }
         // If the number of lines change (if the currentHeight != the contentHeight)
         // then the textView should grow/shrink.
         let currentHeight = textView.frame.size.height
@@ -346,8 +351,9 @@ private class TextViewDelegate: NSObject, UITextViewDelegate {
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        if let indexPath = controller?.indexPath(from: textView) {
+        if let indexPath = activeIndexPath {
             controller?.viewModel.didEndEditingText(at: indexPath)
+            activeIndexPath = nil
         }
     }
 
@@ -358,43 +364,6 @@ private class TextViewDelegate: NSObject, UITextViewDelegate {
         } else {
             return true
         }
-    }
-}
-
-// FIXME: There was a case once where a word auto corrected in the label, but the editingTask wasn't updated, so when done was tapped, the uncorrected word was displayed
-
-private final class NewTaskTextViewDelegate: TextViewDelegate {
-    override func textViewDidBeginEditing(_ textView: UITextView) {
-        super.textViewDidBeginEditing(textView)
-        controller?.viewModel.beginCreatingNewTask()
-    }
-
-    override func textViewDidChange(_ textView: UITextView) {
-        super.textViewDidChange(textView)
-        controller?.viewModel.updateNewTask(title: textView.text)
-    }
-
-    override func textViewDidEndEditing(_ textView: UITextView) {
-        super.textViewDidEndEditing(textView)
-        controller?.viewModel.commitNewTask()
-    }
-}
-
-private final class EditTaskTextViewDelegate: TextViewDelegate {
-    override func textViewDidBeginEditing(_ textView: UITextView) {
-        super.textViewDidBeginEditing(textView)
-        guard let indexPath = controller?.indexPath(from: textView) else { return }
-        controller?.viewModel.beginEditingTask(at: indexPath)
-    }
-
-    override func textViewDidChange(_ textView: UITextView) {
-        super.textViewDidChange(textView)
-        controller?.viewModel.updateEditingTask(title: textView.text)
-    }
-
-    override func textViewDidEndEditing(_ textView: UITextView) {
-        super.textViewDidEndEditing(textView)
-        controller?.viewModel.commitEditingTask()
     }
 }
 

@@ -40,33 +40,17 @@ protocol TaskListViewModelProtocol: class {
     /// - parameter indexPath: The `IndexPath` of the row containing the text view.
     func didBeginEditingText(at indexPath: IndexPath)
 
+    /// Tells the view model that a text view at an index path changed its text.
+    /// - parameter indexPath: The `IndexPath` of the row containing the text view.
+    /// - parameter text: The new text.
+    func didChangeText(at indexPath: IndexPath, to text: String)
+
     /// Tells the view model that a the text view at an index path did end editing.
     /// - parameter indexPath: The `IndexPath` of the row containing the text view.
     func didEndEditingText(at indexPath: IndexPath)
 
     /// Tells the view model that the user tapped to dismiss the keyboard
     func didTapToDismissKeyboard()
-
-    /// Tells the view model to begin editing the task at the index path.
-    /// - parameter indexPath: The `IndexPath` of the row to edit.
-    func beginEditingTask(at indexPath: IndexPath)
-
-    /// Tells the view model to update the title of the editing task.
-    /// - parameter title: The udpated title.
-    func updateEditingTask(title: String)
-
-    /// Tells the view model to commit the editing task edits.
-    func commitEditingTask()
-
-    /// Tells the view model to begin creating a new task.
-    func beginCreatingNewTask()
-
-    /// Tells the view model to update the new task title.
-    /// - parameter title: The updated title.
-    func updateNewTask(title: String)
-
-    /// Tells the view model to commit the new task edits.
-    func commitNewTask()
 
     /// Tells the view model that the keyboard's frame will change.
     /// - parameter fromFrame: The keyboard's current frame.
@@ -318,8 +302,9 @@ extension TaskListViewModel {
             var taskRows = tasks.map(toTaskRow)
             if let newTask = newTask {
                 taskRows.append(.newEditingTask(newTask.title))
+            } else {
+                taskRows.append(.newTask)
             }
-            taskRows.append(.newTask)
             data.append(.incomplete(taskRows))
             data.append(.complete([]))
         } else {
@@ -451,75 +436,18 @@ extension TaskListViewModel {
             reloadData()
         }
     }
-}
-
-// MARK: - Protocol
-
-// MARK: Inputs
-
-extension TaskListViewModel {
-
-    func didSelectRow(at indexPath: IndexPath) {
-        if isEditing {
-            if indexPathRepresentsNewTaskRow(indexPath) {
-                beginCreatingNewTask()
-            } else {
-                if let currentEditingTask = editingTask,
-                    let currentEditingTaskIndexPath = self.indexPath(of: currentEditingTask) {
-                    delegate?.updateRowSelectionState(to: false, animated: false, at: currentEditingTaskIndexPath)
-                }
-
-                beginEditingTask(at: indexPath)
-            }
-            delegate?.beginEditingTextView(at: indexPath)
-            delegate?.updateRowSelectionState(to: true, animated: true, at: indexPath)
-        } else {
-            delegate?.updateRowSelectionState(to: false, animated: true, at: indexPath)
-            toggleTaskCompletionStatus(at: indexPath)
-        }
-    }
-
-    func didTapEditButton() {
-        // TODO: Determine if we should be explicit in commit tasks here. It seems to make sense to be explicit. Just have to test if it's okay (doesn't mess anything up)
-        // They're being committed anyways (toggleEditing() > view.endEditing() > textView.didEndEditing() > commit())
-//        if editingTask != nil {
-//            commitEditingTask()
-//        }
-//
-//        if newTask != nil {
-//            commitNewTask()
-//        }
-
-        toggleEditing()
-    }
-
-    func didTapCompleteButton(at indexPath: IndexPath) {
-        toggleTaskCompletionStatus(at: indexPath)
-    }
-
-    func didTapDelete(at indexPath: IndexPath) {
-        deleteTask(at: indexPath)
-    }
-
-    func didTapAdd(at indexPath: IndexPath) {
-        // Treat this a selection
-        didSelectRow(at: indexPath)
-    }
-
-    func didBeginEditingText(at indexPath: IndexPath) {
-        delegate?.enableInteractionWithTextView(true, at: indexPath)
-    }
-
-    func didEndEditingText(at indexPath: IndexPath) {
-        delegate?.enableInteractionWithTextView(false, at: indexPath)
-    }
-
-    func didTapToDismissKeyboard() {
-        delegate?.dismissKeyboard()
-    }
 
     func beginEditingTask(at indexPath: IndexPath) {
+        if let currentEditingTask = editingTask,
+            let currentEditingTaskIndexPath = self.indexPath(of: currentEditingTask) {
+            guard indexPath != currentEditingTaskIndexPath else { return }
+            delegate?.enableInteractionWithTextView(false, at: currentEditingTaskIndexPath)
+            delegate?.updateRowSelectionState(to: false, animated: false, at: currentEditingTaskIndexPath)
+        }
         editingTask = self.task(at: indexPath)
+        delegate?.enableInteractionWithTextView(true, at: indexPath)
+        delegate?.updateRowSelectionState(to: true, animated: true, at: indexPath)
+        delegate?.beginEditingTextView(at: indexPath)
     }
 
     func updateEditingTask(title: String) {
@@ -534,6 +462,7 @@ extension TaskListViewModel {
         // TODO: Disallow task titles to be completely empty
         taskManager.updateTitle(of: editingTask, to: editingTask.title)
         if let indexPath = self.indexPath(of: editingTask) {
+            delegate?.enableInteractionWithTextView(false, at: indexPath)
             delegate?.updateRowSelectionState(to: false, animated: true, at: indexPath)
         }
         self.editingTask = nil
@@ -541,8 +470,13 @@ extension TaskListViewModel {
     }
 
     func beginCreatingNewTask() {
+        guard newTask == nil else { return }
         newTask = Task(title: "", frequency: taskFrequency)
-//        reloadData()
+        if let indexPath = indexPath(of: .newTask) {
+            delegate?.enableInteractionWithTextView(true, at: indexPath)
+            delegate?.beginEditingTextView(at: indexPath)
+            delegate?.updateRowSelectionState(to: true, animated: true, at: indexPath)
+        }
     }
 
     func updateNewTask(title: String) {
@@ -557,15 +491,88 @@ extension TaskListViewModel {
         }
 
         if let indexPath = indexPath(of: .newEditingTask(newTask.title)) {
+            delegate?.enableInteractionWithTextView(false, at: indexPath)
             delegate?.updateRowSelectionState(to: false, animated: true, at: indexPath)
             delegate?.clearText(at: indexPath)
         } else if let indexPath = indexPath(of: .newTask) {
+            delegate?.enableInteractionWithTextView(false, at: indexPath)
             delegate?.updateRowSelectionState(to: false, animated: true, at: indexPath)
             delegate?.clearText(at: indexPath)
         }
 
         self.newTask = nil
         reloadData()
+    }
+}
+
+// MARK: - Protocol
+
+// MARK: Inputs
+
+extension TaskListViewModel {
+    func didSelectRow(at indexPath: IndexPath) {
+        if isEditing {
+            if indexPathRepresentsNewTaskRow(indexPath) {
+                beginCreatingNewTask()
+            } else {
+                beginEditingTask(at: indexPath)
+            }
+        } else {
+            delegate?.updateRowSelectionState(to: false, animated: true, at: indexPath)
+            toggleTaskCompletionStatus(at: indexPath)
+        }
+    }
+
+    func didTapEditButton() {
+        if editingTask != nil {
+            commitEditingTask()
+        }
+
+        if newTask != nil {
+            commitNewTask()
+        }
+
+        toggleEditing()
+    }
+
+    func didTapCompleteButton(at indexPath: IndexPath) {
+        toggleTaskCompletionStatus(at: indexPath)
+    }
+
+    func didTapDelete(at indexPath: IndexPath) {
+        deleteTask(at: indexPath)
+    }
+
+    func didTapAdd(at indexPath: IndexPath) {
+        beginCreatingNewTask()
+    }
+
+    func didBeginEditingText(at indexPath: IndexPath) {
+        if self.indexPathRepresentsNewTaskRow(indexPath) {
+            beginCreatingNewTask()
+        } else {
+            beginEditingTask(at: indexPath)
+        }
+    }
+
+    func didChangeText(at indexPath: IndexPath, to text: String) {
+        if indexPathRepresentsNewTaskRow(indexPath) {
+            updateNewTask(title: text)
+        } else {
+            updateEditingTask(title: text)
+        }
+    }
+
+    func didEndEditingText(at indexPath: IndexPath) {
+        if self.indexPathRepresentsNewTaskRow(indexPath) {
+            commitNewTask()
+        } else {
+            commitEditingTask()
+        }
+    }
+
+    func didTapToDismissKeyboard() {
+        delegate?.dismissKeyboard()
     }
 
     func keyboardFrameWillChange(from fromFrame: CGRect, to toFrame: CGRect) {
