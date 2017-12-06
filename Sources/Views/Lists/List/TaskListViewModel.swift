@@ -684,9 +684,7 @@ extension TaskListViewModel {
     }
 
     func canEditRow(at indexPath: IndexPath) -> Bool {
-        guard isEditing else { return false }
-        return true
-//        return !indexPathRepresentsNewTaskRow(indexPath)
+        return isEditing
     }
 
     func indexPathRepresentsCompletedTask(_ indexPath: IndexPath) -> Bool {
