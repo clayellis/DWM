@@ -36,6 +36,9 @@ protocol TaskListViewModelProtocol: class {
     /// - paramter indexPath: The `IndexPath` of the row containing the tapped add button.
     func didTapAdd(at indexPath: IndexPath)
 
+    /// Tells the view model that the user tapped the stand-in for the new task row.
+    func didTapStandIn()
+
     /// Tells the view model that a text view at an index path did begin editing.
     /// - parameter indexPath: The `IndexPath` of the row containing the text view.
     func didBeginEditingText(at indexPath: IndexPath)
@@ -158,6 +161,11 @@ protocol TaskListViewModelDelegate: class {
 
     /// Called when the task list's bottom content inset should be set.
     func setTaskListBottomInset(to newInset: CGFloat)
+
+    /// Called when the controller should prepare for creating a new task at an index path.
+    /// - parameter indexPath: The `IndexPath` of the new task.
+    /// - parameter completion: When the controller is finished preparing, it should call this closure.
+    func prepareForNewTask(at indexPath: IndexPath, completion complete: @escaping () -> Void)
 }
 
 /// Describes a list of tasks
@@ -545,6 +553,13 @@ extension TaskListViewModel {
 
     func didTapAdd(at indexPath: IndexPath) {
         beginCreatingNewTask()
+    }
+
+    func didTapStandIn() {
+        guard let newTaskIndexPath = indexPath(of: .newTask) else { return }
+        delegate?.prepareForNewTask(at: newTaskIndexPath) {
+            self.beginCreatingNewTask()
+        }
     }
 
     func didBeginEditingText(at indexPath: IndexPath) {
