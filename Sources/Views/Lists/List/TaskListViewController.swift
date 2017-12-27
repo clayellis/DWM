@@ -26,6 +26,7 @@ final class TaskListViewController: UIViewController {
     let taskListView: TaskListViewProtocol & UIView
     let theme: ThemeProtocol
     let feedbackManager: FeedbackManagerProtocol
+    var onDidEndScrollingAnimation: (() -> Void)?
 
     private lazy var textViewDelegate = TextViewDelegate(controller: self)
 
@@ -55,6 +56,7 @@ final class TaskListViewController: UIViewController {
         viewModel.delegate = self
         configureNavigationBar()
         configureGestureRecognizers()
+        configureTargets()
         configure(tableView: taskListView.tableView)
     }
 
@@ -85,6 +87,10 @@ final class TaskListViewController: UIViewController {
         view.addGestureRecognizer(tapToDismissGestureRecognizer)
     }
 
+    func configureTargets() {
+//        taskListView.standIn.addTarget(self, action: #selector(standInTapped(_:)), for: .touchUpInside)
+    }
+
     func observeNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(_:)), name: .UIKeyboardWillChangeFrame, object: nil)
     }
@@ -110,6 +116,26 @@ final class TaskListViewController: UIViewController {
     func didLiftFingerInTaskRow() {
 
     }
+
+    var _isEditing = false
+
+    func updateStandInVisibility() {
+//        if _isEditing {
+//            if let newTaskListCell = taskListView.tableView.visibleCells.flatMap({ $0 as? NewTaskListCell }).first {
+//                let newTaskListCellOrigin = taskListView.convert(newTaskListCell.frame.origin, from: taskListView.tableView)
+//                let standInOrigin = taskListView.standIn.frame.origin
+//                if newTaskListCellOrigin.y < standInOrigin.y {
+//                    taskListView.standIn.isHidden = true
+//                } else {
+//                    taskListView.standIn.isHidden = false
+//                }
+//            } else {
+//                taskListView.standIn.isHidden = false
+//            }
+//        } else {
+//            taskListView.standIn.isHidden = true
+//        }
+    }
 }
 
 // MARK: View Model Delegate
@@ -124,10 +150,12 @@ extension TaskListViewController: TaskListViewModelDelegate {
     }
 
     func changeEditingState(to editing: Bool) {
+        _isEditing = editing
         if !editing {
             view.endEditing(true)
         }
         taskListView.tableView.setEditing(editing, animated: true)
+        updateStandInVisibility()
     }
 
     func updateRowSelectionState(to selected: Bool, animated: Bool, at indexPath: IndexPath) {
@@ -184,6 +212,14 @@ extension TaskListViewController: TaskListViewModelDelegate {
 
     func setTaskListBottomInset(to newInset: CGFloat) {
         taskListView.tableView.contentInset.bottom = newInset
+    }
+
+    func prepareForNewTask(at indexPath: IndexPath, completion complete: @escaping () -> Void) {
+        taskListView.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        onDidEndScrollingAnimation = { [weak self] in
+            self?.onDidEndScrollingAnimation = nil
+            complete()
+        }
     }
 }
 
@@ -267,6 +303,14 @@ extension TaskListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return viewModel.canEditRow(at: indexPath)
     }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        updateStandInVisibility()
+    }
+
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        onDidEndScrollingAnimation?()
+    }
 }
 
 // MARK: Selectors
@@ -307,6 +351,10 @@ extension TaskListViewController {
     @objc func cellAddTapped(_ button: UIButton) {
         guard let indexPath = self.indexPath(from: button) else { return }
         viewModel.didTapAdd(at: indexPath)
+    }
+
+    @objc func standInTapped(_ button: UIButton) {
+        viewModel.didTapStandIn()
     }
 }
 
