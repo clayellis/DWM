@@ -67,18 +67,18 @@ class BaseTaskListCell: UITableViewCell {
         contentView.addAutoLayoutSubview(textView)
         textView.setContentCompressionResistancePriority(.required, for: .vertical)
         NSLayoutConstraint.activate([
-            highlightArea.leftAnchor.constraint(equalTo: contentView.leftMargin, constant: -Sizes.highlightAreaOffset),
-            highlightArea.rightAnchor.constraint(equalTo: contentView.rightMargin, constant: Sizes.highlightAreaOffset),
-            highlightArea.topAnchor.constraint(equalTo: contentView.topMargin, constant: -Sizes.highlightAreaOffset),
-            highlightArea.bottomAnchor.constraint(equalTo: contentView.bottomMargin, constant: Sizes.highlightAreaOffset),
+            highlightArea.leftAnchor.constraint(equalTo: contentView.leftMargin, constant: -Sizes.highlightAreaOffset, priority: .defaultHigh),
+            highlightArea.rightAnchor.constraint(equalTo: contentView.rightMargin, constant: Sizes.highlightAreaOffset, priority: .defaultHigh),
+            highlightArea.topAnchor.constraint(equalTo: contentView.topMargin, constant: -Sizes.highlightAreaOffset, priority: .defaultHigh),
+            highlightArea.bottomAnchor.constraint(equalTo: contentView.bottomMargin, constant: Sizes.highlightAreaOffset, priority: .defaultHigh),
 
-            primaryButton.leftAnchor.constraint(equalTo: contentView.leftMargin),
-            primaryButton.centerYAnchor.constraint(equalTo: contentView.centerYMargin),
+            primaryButton.leftAnchor.constraint(equalTo: contentView.leftMargin, priority: .defaultHigh),
+            primaryButton.centerYAnchor.constraint(equalTo: contentView.centerYMargin, priority: .defaultHigh),
 
-            textView.leftAnchor.constraint(equalTo: primaryButton.rightAnchor, constant: 15),
-            textView.rightAnchor.constraint(equalTo: contentView.rightMargin),
-            textView.topAnchor.constraint(equalTo: contentView.topMargin),
-            textView.bottomAnchor.constraint(equalTo: contentView.bottomMargin)
+            textView.leftAnchor.constraint(equalTo: primaryButton.rightAnchor, constant: 15, priority: .defaultHigh),
+            textView.rightAnchor.constraint(equalTo: contentView.rightMargin, priority: .defaultHigh),
+            textView.topAnchor.constraint(equalTo: contentView.topMargin, priority: .defaultHigh),
+            textView.bottomAnchor.constraint(equalTo: contentView.bottomMargin, priority: .defaultHigh)
             ])
     }
 
