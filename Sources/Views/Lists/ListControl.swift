@@ -200,7 +200,7 @@ class ListControlItem: UIButton {
                 if proposedSize.height > proposedSize.width {
                     label.bounds.size.width = label.bounds.size.height
                 } else {
-                    let insets = UIEdgeInsets(top: 0, left: 2.5, bottom: 0, right: 2.5)
+                    let insets = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 4)
                     label.bounds.size.width = proposedSize.width + insets.horizontal
                 }
 
