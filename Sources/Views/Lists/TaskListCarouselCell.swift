@@ -43,8 +43,10 @@ class TaskListCarouselCell: UICollectionViewCell {
         contentView.layer.cornerRadius = Sizes.cornerRadius
         contentView.clipsToBounds = true
 
-        layer.shadowOffset = CGSize(width: 0, height: 12)
-        layer.shadowRadius = 14
+//        layer.shadowOffset = CGSize(width: 0, height: 12)
+//        layer.shadowRadius = 14
+        layer.shadowOffset = CGSize(width: 0, height: 8)
+        layer.shadowRadius = 8
         layer.shadowOpacity = 0.1 // 0.22
         layer.shadowColor = UIColor.black.cgColor
 
