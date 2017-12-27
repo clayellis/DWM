@@ -28,7 +28,6 @@ final class NewTaskListCell: BaseTaskListCell {
 
     override func configureLayout() {
         super.configureLayout()
-
     }
 
     // MARK: - Animations
